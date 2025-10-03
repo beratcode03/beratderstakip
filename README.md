@@ -2,7 +2,7 @@
 # Berat Cankır 
 # Ders Analiz/Takip Projesi
 
-Bu proje MIT Lisansı kapsamında korunmaktadır. Proje kodları, dokümantasyonu ve tüm yazılım bileşenleri, yalnızca orijinal yazar tarafından sağlanan izin doğrultusunda kullanılabilir.  
+Bu proje Telif Hakkı ve lisans kapsamında korunmaktadır. Proje kodları, dokümantasyonu ve tüm yazılım bileşenleri, yalnızca orijinal yazar tarafından sağlanan izin doğrultusunda kullanılabilir.  
 
 Herhangi bir üçüncü tarafın, yazılımı kopyalaması, dağıtması, çoğaltması veya değiştirmesi durumunda, önceden yazılı izin alınması zorunludur. Özellikle projenin isimlendirilmesinde veya yazarlık bilgilerinde değişiklik yapmak, orijinal yazarın adı belirtilmeden kullanım yapmak kesinlikle yasaktır.  
 
