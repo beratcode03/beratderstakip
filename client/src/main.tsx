@@ -1,0 +1,13 @@
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(<App />);
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+//BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
+
