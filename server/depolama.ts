@@ -372,12 +372,14 @@ export class MemStorage implements IStorage {
   }
 
   // Yeni işlevsellik için yöntemler
+  // Note: Calendar view includes deleted items for historical accuracy
   async getTasksByDate(dateISO: string): Promise<Task[]> {
     const allTasks = Array.from(this.tasks.values());
     const today = new Date().toISOString().split('T')[0];
     
     return allTasks.filter(task => {
       if (task.archived) return false;
+      // Deleted items are included in calendar view
       
       // Eğer görevin son tarihi varsa, istenen tarihle eşleşip eşleşmediğini kontrol et
       if (task.dueDate) {
@@ -387,15 +389,16 @@ export class MemStorage implements IStorage {
 
       // Görevin son tarihi yoksa, bugün için tüm görevleri göster (tamamlanmış veya bekleyen)
       if (dateISO === today) {
-        return true; // Bugün için tüm görevleri göster
+        return !task.deleted; // Bugün için silinen görevleri gösterme
       }
       
       return false;
     });
   }
 
+  // Note: Daily summary/heatmap includes deleted items for historical accuracy
   async getDailySummary(rangeDays: number = 30): Promise<any> {
-    const tasks = await this.getTasks();
+    const allTasks = Array.from(this.tasks.values());
     const moods = await this.getMoods();
     
     const today = new Date();
@@ -406,7 +409,7 @@ export class MemStorage implements IStorage {
       date.setDate(today.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
       
-      const dayTasks = tasks.filter(task => {
+      const dayTasks = allTasks.filter(task => {
         if (!task.completedAt) return false;
         const completedDate = new Date(task.completedAt).toISOString().split('T')[0];
         return completedDate === dateStr;
@@ -421,7 +424,7 @@ export class MemStorage implements IStorage {
       summaryData.push({
         date: dateStr,
         tasksCompleted: dayTasks.length,
-        totalTasks: tasks.filter(task => {
+        totalTasks: allTasks.filter(task => {
           if (!task.createdAt) return false;
           const createdDate = new Date(task.createdAt).toISOString().split('T')[0];
           return createdDate <= dateStr;
