@@ -71,7 +71,7 @@ app.use((req, res, next) => {
   }
 
   const port = parseInt(process.env.PORT || "5000", 10);
-  const host = process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0";
+  const host = process.env.NODE_ENV === "production" ? "127.0.0.1" : "localhost";
 
   server.listen(port, host, () => {
     log(`Dersime dönebilirim !!! Site Link : http://${host}:${port}`);
