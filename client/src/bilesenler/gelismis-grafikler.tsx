@@ -122,9 +122,13 @@ function AdvancedChartsComponent() {
     queryKey: ["/api/question-logs"],
   });
 
-  const isLoading = isLoadingExams || isLoadingQuestions;
+  const { data: examSubjectNets = [], isLoading: isLoadingExamNets } = useQuery<any[]>({
+    queryKey: ["/api/exam-subject-nets"],
+  });
 
-  // Konu bazında eksik konuları toplar - SADECE DENEME VERİLERİ
+  const isLoading = isLoadingExams || isLoadingQuestions || isLoadingExamNets;
+
+  // Konu bazında eksik konuları toplar - DENEME VE EXAM SUBJECT NETS VERİLERİ
   const missingTopics = useMemo(() => {
     const topicMap = new Map<string, MissingTopic>();
 
@@ -142,7 +146,8 @@ function AdvancedChartsComponent() {
                 'fen': 'Fen',
                 'fizik': 'Fizik',
                 'kimya': 'Kimya',
-                'biyoloji': 'Biyoloji'
+                'biyoloji': 'Biyoloji',
+                'geometri': 'Geometri'
               };
               const subjectName = subjectNameMap[subjectKey] || subjectKey;
               // TYT/AYT bilgisini de konuya ekle
@@ -175,10 +180,47 @@ function AdvancedChartsComponent() {
       }
     });
 
+    // examSubjectNets'ten de yanlış konuları işle
+    examSubjectNets.forEach((subjectNet: any) => {
+      if (subjectNet.wrong_topics_json) {
+        try {
+          const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
+          if (Array.isArray(wrongTopics)) {
+            const subjectWithExamType = `${subjectNet.exam_type} ${subjectNet.subject}`;
+            const exam = examResults.find((e: any) => e.id === subjectNet.exam_id);
+            const examDate = exam ? exam.exam_date : new Date().toISOString();
+            
+            wrongTopics.forEach((topicItem: any) => {
+              const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic;
+              if (topicName) {
+                const topic = normalizeTopic(topicName);
+                const key = `${subjectWithExamType}-${topic}`;
+                if (topicMap.has(key)) {
+                  const existing = topicMap.get(key)!;
+                  existing.frequency += 2; // examSubjectNets'ten gelen verilere daha fazla ağırlık ver
+                  existing.lastSeen = examDate > existing.lastSeen ? examDate : existing.lastSeen;
+                } else {
+                  topicMap.set(key, {
+                    topic,
+                    subject: subjectWithExamType,
+                    source: 'exam',
+                    frequency: 2,
+                    lastSeen: examDate
+                  });
+                }
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Error parsing wrong_topics_json from examSubjectNets:', e);
+        }
+      }
+    });
+
     return Array.from(topicMap.values())
-      .filter(topic => topic.frequency >= 3)
+      .filter(topic => topic.frequency >= 1) // Sadece 1 kez bile görülen konuları göster
       .sort((a, b) => b.frequency - a.frequency);
-  }, [examResults]);
+  }, [examResults, examSubjectNets]);
 
   // Net Analiz Verilerini İşleyin - Uygun olmayan sınav türleri için null göstermesi için düzeltildi
   const netAnalysisData = useMemo(() => {
@@ -436,7 +478,7 @@ function AdvancedChartsComponent() {
               category?: 'kavram' | 'hesaplama' | 'analiz' | 'dikkatsizlik';
             }> = [];
 
-            // Soru günlüklerini işle - SADECE SORU GÜNLÜĞÜ VERİLERİ
+            // Soru günlüklerini işle - SORU GÜNLÜĞÜ VERİLERİ
             questionLogs.forEach(log => {
               if (log.wrong_topics && log.wrong_topics.length > 0) {
                 // Öncelikle wrong_topics_json'dan yapılandırılmış verileri ayrıştırmayı deneyin
@@ -483,6 +525,35 @@ function AdvancedChartsComponent() {
                       });
                     }
                   });
+                }
+              }
+            });
+
+            // examSubjectNets'ten de yanlış konuları işle - DENEME VERİLERİ
+            examSubjectNets.forEach((subjectNet: any) => {
+              if (subjectNet.wrong_topics_json) {
+                try {
+                  const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
+                  if (Array.isArray(wrongTopics)) {
+                    const exam = examResults.find((e: any) => e.id === subjectNet.exam_id);
+                    const examDate = exam ? exam.exam_date : new Date().toISOString();
+                    
+                    wrongTopics.forEach((topicItem: any) => {
+                      const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic;
+                      if (topicName) {
+                        allWrongTopicData.push({
+                          topic: normalizeTopic(topicName),
+                          source: 'exam',
+                          subject: subjectNet.subject,
+                          exam_type: subjectNet.exam_type,
+                          wrong_count: parseInt(subjectNet.wrong_count) || 0,
+                          study_date: examDate
+                        });
+                      }
+                    });
+                  }
+                } catch (e) {
+                  console.error('Error parsing wrong_topics_json from examSubjectNets:', e);
                 }
               }
             });

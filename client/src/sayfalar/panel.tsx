@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/bilesenler/baslik";
-import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar, FileText } from "lucide-react";
 import { Task, Goal, QuestionLog, InsertQuestionLog, ExamResult, InsertExamResult } from "@shared/sema";
 import { DashboardSummaryCards } from "@/bilesenler/panel-ozet-kartlar";
 import { AdvancedCharts } from "@/bilesenler/gelismis-grafikler";
@@ -2055,17 +2055,64 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Yanlış Konular */}
-                <div>
-                  <label className="block text-sm font-medium mb-1">Yanlış Yapılan Konular</label>
-                  <Textarea
-                    value={newExamResult.wrongTopicsText}
-                    onChange={(e) => setNewExamResult({...newExamResult, wrongTopicsText: e.target.value})}
-                    placeholder="konu1, konu2, konu3 şeklinde virgülle ayırarak yazın..."
-                    className="h-20"
-                    data-testid="textarea-branch-wrong-topics"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Virgülle ayırarak birden fazla konu girebilirsiniz</p>
+                {/* Yanlış Konular - Geliştirilmiş Önizleme ile */}
+                <div className="bg-gradient-to-br from-red-50/80 via-white/60 to-orange-50/60 dark:from-red-950/30 dark:via-gray-800/60 dark:to-orange-950/30 rounded-2xl p-5 border-2 border-red-200/50 dark:border-red-700/40 shadow-lg backdrop-blur-sm">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg">
+                      <Search className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-red-800 dark:text-red-200 flex items-center gap-2">
+                        🔍 Yanlış Konu Analizi
+                        {parseInt(newExamResult.subjects[newExamResult.selectedSubject]?.wrong) > 0 && (
+                          <div className="text-xs bg-red-100 dark:bg-red-900/40 px-2 py-1 rounded-full text-red-700 dark:text-red-300">
+                            {parseInt(newExamResult.subjects[newExamResult.selectedSubject]?.wrong)} yanlış
+                          </div>
+                        )}
+                      </label>
+                      <p className="text-xs text-red-600/80 dark:text-red-400/80 mt-1">
+                        Eksik konuları belirterek öncelik listesine ekleyin
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Textarea
+                      value={newExamResult.wrongTopicsText}
+                      onChange={(e) => setNewExamResult({...newExamResult, wrongTopicsText: e.target.value})}
+                      placeholder="Örnek: cümle çözümleme, sözcük türleri, yazım kuralları..."
+                      className="h-20 bg-white/90 dark:bg-gray-800/90 border-red-300/60 dark:border-red-600/50 focus:border-red-500 dark:focus:border-red-400 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-800/50 rounded-xl shadow-sm"
+                      data-testid="textarea-branch-wrong-topics"
+                    />
+                    <p className="text-xs text-gray-500/80 dark:text-gray-400/80">Virgülle ayırarak birden fazla konu girebilirsiniz</p>
+                    
+                    {newExamResult.wrongTopicsText && newExamResult.wrongTopicsText.trim() && (
+                      <div className="flex items-center gap-2 p-3 bg-red-100/60 dark:bg-red-900/30 rounded-xl border border-red-200/60 dark:border-red-700/40">
+                        <Lightbulb className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+                        <div className="text-xs text-red-700/90 dark:text-red-300/90">
+                          <strong>{newExamResult.wrongTopicsText.split(',').filter(t => t.trim()).length} konu</strong> öncelik listesine eklenecek ve hata sıklığı analizinde gösterilecek
+                        </div>
+                      </div>
+                    )}
+                    
+                    {newExamResult.wrongTopicsText && newExamResult.wrongTopicsText.trim() && (
+                      <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 border border-purple-200/60 dark:border-purple-700/40">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="p-1.5 bg-purple-500 rounded-lg">
+                            <FileText className="h-3.5 w-3.5 text-white" />
+                          </div>
+                          <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">Konu Önizlemesi</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {newExamResult.wrongTopicsText.split(',').filter(t => t.trim()).map((topic, index) => (
+                            <div key={index} className="px-3 py-1.5 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 rounded-lg border border-purple-200 dark:border-purple-700 text-xs font-medium text-purple-800 dark:text-purple-200 shadow-sm">
+                              {topic.trim()}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

@@ -2383,7 +2383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   reportData.totalQuestions > 0
                     ? `
                 <div style="background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%); padding: 30px; border-radius: 18px; margin-bottom: 30px; border-left: 6px solid #10B981;">
-                  <h3 style="color: #1E293B; margin: 0 0 25px 0; font-size: 20px; font-weight: bold;">📊 DOĞRU, YANLIŞ VE BOŞ ANALİZİ</h3>
+                  <h3 style="color: #1E293B; margin: 0 0 25px 0; font-size: 20px; font-weight: bold;">📊 Çözülen Tüm Sorular</h3>
                   <div style="display: table; width: 100%; margin-bottom: 20px;">
                     <div style="display: table-cell; width: 33.33%; padding-right: 7px;">
                       <div style="background: white; padding: 25px; border-radius: 14px; text-align: center; border: 3px solid #10B981;">
