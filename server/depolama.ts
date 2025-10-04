@@ -217,7 +217,7 @@ export class MemStorage implements IStorage {
   // Görev işlemleri
   async getTasks(): Promise<Task[]> {
     return Array.from(this.tasks.values())
-      .filter(task => !task.archived)
+      .filter(task => !task.archived && !task.deleted)
       .sort((a, b) => {
         // Öncelik sırasına göre (yüksek -> orta -> düşük) ve ardından oluşturulma tarihine göre sırala
         const priorityOrder = { high: 0, medium: 1, low: 2 };
@@ -249,6 +249,8 @@ export class MemStorage implements IStorage {
       completedAt: null,
       archived: insertTask.archived ?? false,
       archivedAt: null,
+      deleted: false,
+      deletedAt: null,
       dueDate: insertTask.dueDate ?? null,
       recurrenceType: insertTask.recurrenceType ?? "none",
       recurrenceEndDate: insertTask.recurrenceEndDate ?? null,
@@ -275,9 +277,17 @@ export class MemStorage implements IStorage {
   }
 
   async deleteTask(id: string): Promise<boolean> {
-    const result = this.tasks.delete(id);
-    if (result) await this.saveToFile();
-    return result;
+    const task = this.tasks.get(id);
+    if (!task) return false;
+    
+    const updatedTask: Task = {
+      ...task,
+      deleted: true,
+      deletedAt: new Date().toISOString(),
+    };
+    this.tasks.set(id, updatedTask);
+    await this.saveToFile();
+    return true;
   }
 
   async toggleTaskComplete(id: string): Promise<Task | undefined> {
@@ -314,7 +324,7 @@ export class MemStorage implements IStorage {
 
   async getArchivedTasks(): Promise<Task[]> {
     return Array.from(this.tasks.values())
-      .filter(task => task.archived)
+      .filter(task => task.archived && !task.deleted)
       .sort((a, b) => {
         return new Date(b.archivedAt || b.createdAt || 0).getTime() - new Date(a.archivedAt || a.createdAt || 0).getTime();
       });
@@ -324,6 +334,7 @@ export class MemStorage implements IStorage {
     const allTasks = Array.from(this.tasks.values());
     return allTasks.filter(task => {
       if (task.archived) return false;
+      if (task.deleted) return false;
       if (!task.dueDate) return false;
       const taskDate = task.dueDate.split('T')[0];
       return taskDate >= startDate && taskDate <= endDate;
@@ -477,9 +488,11 @@ export class MemStorage implements IStorage {
 
   // Soru günlüğü işlemleri
   async getQuestionLogs(): Promise<QuestionLog[]> {
-    return Array.from(this.questionLogs.values()).sort((a, b) => 
-      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-    );
+    return Array.from(this.questionLogs.values())
+      .filter(log => !log.deleted)
+      .sort((a, b) => 
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
   }
 
   async createQuestionLog(insertLog: InsertQuestionLog): Promise<QuestionLog> {
@@ -501,6 +514,8 @@ export class MemStorage implements IStorage {
       wrong_topics_json: insertLog.wrong_topics_json ?? null,
       time_spent_minutes: insertLog.time_spent_minutes ?? null,
       study_date: insertLog.study_date,
+      deleted: false,
+      deletedAt: null,
       createdAt: new Date(),
     };
     this.questionLogs.set(id, log);
@@ -517,9 +532,17 @@ export class MemStorage implements IStorage {
   }
 
   async deleteQuestionLog(id: string): Promise<boolean> {
-    const result = this.questionLogs.delete(id);
-    if (result) await this.saveToFile();
-    return result;
+    const log = this.questionLogs.get(id);
+    if (!log) return false;
+    
+    const updatedLog: QuestionLog = {
+      ...log,
+      deleted: true,
+      deletedAt: new Date().toISOString(),
+    };
+    this.questionLogs.set(id, updatedLog);
+    await this.saveToFile();
+    return true;
   }
 
   async deleteAllQuestionLogs(): Promise<boolean> {
@@ -530,9 +553,11 @@ export class MemStorage implements IStorage {
   
   // Sınav sonucu işlemleri
   async getExamResults(): Promise<ExamResult[]> {
-    return Array.from(this.examResults.values()).sort((a, b) => 
-      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-    );
+    return Array.from(this.examResults.values())
+      .filter(result => !result.deleted)
+      .sort((a, b) => 
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
   }
 
   async createExamResult(insertResult: InsertExamResult): Promise<ExamResult> {
@@ -542,11 +567,15 @@ export class MemStorage implements IStorage {
       exam_name: insertResult.exam_name,
       exam_date: insertResult.exam_date,
       exam_type: insertResult.exam_type ?? null,
+      exam_scope: insertResult.exam_scope ?? null,
+      selected_subject: insertResult.selected_subject ?? null,
       notes: insertResult.notes ?? null,
       ranking: insertResult.ranking ?? null,
       tyt_net: insertResult.tyt_net ?? "0",
       ayt_net: insertResult.ayt_net ?? "0",
       subjects_data: insertResult.subjects_data ?? null,
+      deleted: false,
+      deletedAt: null,
       createdAt: new Date(),
     };
     this.examResults.set(id, result);
@@ -555,13 +584,17 @@ export class MemStorage implements IStorage {
   }
 
   async deleteExamResult(id: string): Promise<boolean> {
-    const deleted = this.examResults.delete(id);
-    if (deleted) {
-      // İlişkili sınav konu netlerini cascade olarak sil
-      await this.deleteExamSubjectNetsByExamId(id);
-      await this.saveToFile();
-    }
-    return deleted;
+    const examResult = this.examResults.get(id);
+    if (!examResult) return false;
+    
+    const updatedResult: ExamResult = {
+      ...examResult,
+      deleted: true,
+      deletedAt: new Date().toISOString(),
+    };
+    this.examResults.set(id, updatedResult);
+    await this.saveToFile();
+    return true;
   }
 
   async deleteAllExamResults(): Promise<boolean> {
@@ -777,9 +810,11 @@ export class MemStorage implements IStorage {
 
   // Çalışma saati işlemleri
   async getStudyHours(): Promise<StudyHours[]> {
-    return Array.from(this.studyHours.values()).sort((a, b) => 
-      new Date(b.study_date).getTime() - new Date(a.study_date).getTime()
-    );
+    return Array.from(this.studyHours.values())
+      .filter(sh => !sh.deleted)
+      .sort((a, b) => 
+        new Date(b.study_date).getTime() - new Date(a.study_date).getTime()
+      );
   }
 
   async getStudyHoursByDate(date: string): Promise<StudyHours | undefined> {
@@ -794,6 +829,8 @@ export class MemStorage implements IStorage {
       hours: insertHours.hours ?? 0,
       minutes: insertHours.minutes ?? 0,
       seconds: insertHours.seconds ?? 0,
+      deleted: false,
+      deletedAt: null,
       createdAt: new Date(),
     };
     this.studyHours.set(id, studyHours);
@@ -817,9 +854,17 @@ export class MemStorage implements IStorage {
   }
 
   async deleteStudyHours(id: string): Promise<boolean> {
-    const result = this.studyHours.delete(id);
-    if (result) await this.saveToFile();
-    return result;
+    const studyHour = this.studyHours.get(id);
+    if (!studyHour) return false;
+    
+    const updatedStudyHour: StudyHours = {
+      ...studyHour,
+      deleted: true,
+      deletedAt: new Date().toISOString(),
+    };
+    this.studyHours.set(id, updatedStudyHour);
+    await this.saveToFile();
+    return true;
   }
 }
 // PostgreSQL veritabanı bağlantısı
