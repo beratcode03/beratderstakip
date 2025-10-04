@@ -26,18 +26,12 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
     priority: "low" | "medium" | "high";
     category: "genel" | "turkce" | "sosyal" | "matematik" | "fizik" | "kimya" | "biyoloji" | "tyt-geometri" | "ayt-geometri" | "ayt-matematik" | "ayt-fizik" | "ayt-kimya" | "ayt-biyoloji";
     color: string;
-    dueDate: string;
-    recurrenceType: "none" | "weekly" | "monthly";
-    recurrenceEndDate: string;
   }>({
     title: "",
     description: "",
     priority: "medium",
     category: "genel",
-    color: "#8B5CF6", 
-    dueDate: new Date().toISOString().split('T')[0], 
-    recurrenceType: "none",
-    recurrenceEndDate: "",
+    color: "#8B5CF6",
   });
 
   const { toast } = useToast();
@@ -70,10 +64,7 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
       description: "",
       priority: "medium",
       category: "genel",
-      color: "#8B5CF6", 
-      dueDate: new Date().toISOString().split('T')[0], 
-      recurrenceType: "none",
-      recurrenceEndDate: "",
+      color: "#8B5CF6",
     });
   };
 
@@ -89,15 +80,14 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
       return;
     }
 
+    const today = new Date().toISOString().split('T')[0];
     createTaskMutation.mutate({
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
       priority: formData.priority,
       category: formData.category,
       color: formData.color,
-      dueDate: formData.dueDate,
-      recurrenceType: formData.recurrenceType,
-      recurrenceEndDate: formData.recurrenceEndDate || undefined,
+      dueDate: today,
       completed: false,
     });
   };

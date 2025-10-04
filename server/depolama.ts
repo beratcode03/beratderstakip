@@ -38,6 +38,7 @@ export interface IStorage {
   
   // Soru günlüğü işlemi
   getQuestionLogs(): Promise<QuestionLog[]>;
+  getArchivedQuestionLogs(): Promise<QuestionLog[]>;
   createQuestionLog(log: InsertQuestionLog): Promise<QuestionLog>;
   getQuestionLogsByDateRange(startDate: string, endDate: string): Promise<QuestionLog[]>;
   deleteQuestionLog(id: string): Promise<boolean>;
@@ -50,6 +51,7 @@ export interface IStorage {
   
   // Sınav sonucu işlemleri
   getExamResults(): Promise<ExamResult[]>;
+  getArchivedExamResults(): Promise<ExamResult[]>;
   createExamResult(result: InsertExamResult): Promise<ExamResult>;
   deleteExamResult(id: string): Promise<boolean>;
   deleteAllExamResults(): Promise<boolean>;
@@ -64,10 +66,14 @@ export interface IStorage {
   
   // Çalışma saati işlemleri
   getStudyHours(): Promise<StudyHours[]>;
+  getArchivedStudyHours(): Promise<StudyHours[]>;
   getStudyHoursByDate(date: string): Promise<StudyHours | undefined>;
   createStudyHours(studyHours: InsertStudyHours): Promise<StudyHours>;
   updateStudyHours(id: string, updates: Partial<InsertStudyHours>): Promise<StudyHours | undefined>;
   deleteStudyHours(id: string): Promise<boolean>;
+  
+  // Auto-archive işlemleri
+  autoArchiveOldData(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -492,7 +498,15 @@ export class MemStorage implements IStorage {
   // Soru günlüğü işlemleri
   async getQuestionLogs(): Promise<QuestionLog[]> {
     return Array.from(this.questionLogs.values())
-      .filter(log => !log.deleted)
+      .filter(log => !log.deleted && !log.archived)
+      .sort((a, b) => 
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
+  }
+
+  async getArchivedQuestionLogs(): Promise<QuestionLog[]> {
+    return Array.from(this.questionLogs.values())
+      .filter(log => !log.deleted && log.archived)
       .sort((a, b) => 
         new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
       );
@@ -519,6 +533,8 @@ export class MemStorage implements IStorage {
       study_date: insertLog.study_date,
       deleted: false,
       deletedAt: null,
+      archived: false,
+      archivedAt: null,
       createdAt: new Date(),
     };
     this.questionLogs.set(id, log);
@@ -557,7 +573,15 @@ export class MemStorage implements IStorage {
   // Sınav sonucu işlemleri
   async getExamResults(): Promise<ExamResult[]> {
     return Array.from(this.examResults.values())
-      .filter(result => !result.deleted)
+      .filter(result => !result.deleted && !result.archived)
+      .sort((a, b) => 
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
+  }
+
+  async getArchivedExamResults(): Promise<ExamResult[]> {
+    return Array.from(this.examResults.values())
+      .filter(result => !result.deleted && result.archived)
       .sort((a, b) => 
         new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
       );
@@ -565,9 +589,27 @@ export class MemStorage implements IStorage {
 
   async createExamResult(insertResult: InsertExamResult): Promise<ExamResult> {
     const id = randomUUID();
+    
+    let displayName = insertResult.exam_name;
+    
+    if (insertResult.exam_scope === "full") {
+      if (insertResult.exam_type) {
+        displayName = `Genel ${insertResult.exam_type} Deneme`;
+      } else {
+        displayName = "Genel Deneme";
+      }
+    } else if (insertResult.exam_scope === "branch") {
+      const parts = [];
+      if (insertResult.exam_type) parts.push(insertResult.exam_type);
+      if (insertResult.selected_subject) parts.push(insertResult.selected_subject);
+      parts.push("Branş Denemesi");
+      displayName = parts.join(" ");
+    }
+    
     const result: ExamResult = {
       id,
       exam_name: insertResult.exam_name,
+      display_name: displayName,
       exam_date: insertResult.exam_date,
       exam_type: insertResult.exam_type ?? null,
       exam_scope: insertResult.exam_scope ?? null,
@@ -579,6 +621,8 @@ export class MemStorage implements IStorage {
       subjects_data: insertResult.subjects_data ?? null,
       deleted: false,
       deletedAt: null,
+      archived: false,
+      archivedAt: null,
       createdAt: new Date(),
     };
     this.examResults.set(id, result);
@@ -814,7 +858,15 @@ export class MemStorage implements IStorage {
   // Çalışma saati işlemleri
   async getStudyHours(): Promise<StudyHours[]> {
     return Array.from(this.studyHours.values())
-      .filter(sh => !sh.deleted)
+      .filter(sh => !sh.deleted && !sh.archived)
+      .sort((a, b) => 
+        new Date(b.study_date).getTime() - new Date(a.study_date).getTime()
+      );
+  }
+
+  async getArchivedStudyHours(): Promise<StudyHours[]> {
+    return Array.from(this.studyHours.values())
+      .filter(sh => !sh.deleted && sh.archived)
       .sort((a, b) => 
         new Date(b.study_date).getTime() - new Date(a.study_date).getTime()
       );
@@ -834,6 +886,8 @@ export class MemStorage implements IStorage {
       seconds: insertHours.seconds ?? 0,
       deleted: false,
       deletedAt: null,
+      archived: false,
+      archivedAt: null,
       createdAt: new Date(),
     };
     this.studyHours.set(id, studyHours);
@@ -868,6 +922,81 @@ export class MemStorage implements IStorage {
     this.studyHours.set(id, updatedStudyHour);
     await this.saveToFile();
     return true;
+  }
+
+  async autoArchiveOldData(): Promise<void> {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    let hasChanges = false;
+
+    for (const [id, log] of this.questionLogs.entries()) {
+      if (!log.archived && !log.deleted) {
+        const logDate = new Date(log.study_date);
+        if (logDate < oneDayAgo) {
+          const updated = {
+            ...log,
+            archived: true,
+            archivedAt: now.toISOString(),
+          };
+          this.questionLogs.set(id, updated);
+          hasChanges = true;
+        }
+      }
+    }
+
+    for (const [id, result] of this.examResults.entries()) {
+      if (!result.archived && !result.deleted) {
+        const examDate = new Date(result.exam_date);
+        if (examDate < oneDayAgo) {
+          const updated = {
+            ...result,
+            archived: true,
+            archivedAt: now.toISOString(),
+          };
+          this.examResults.set(id, updated);
+          hasChanges = true;
+        }
+      }
+    }
+
+    for (const [id, sh] of this.studyHours.entries()) {
+      if (!sh.archived && !sh.deleted) {
+        const shDate = new Date(sh.study_date);
+        if (shDate < oneDayAgo) {
+          const updated = {
+            ...sh,
+            archived: true,
+            archivedAt: now.toISOString(),
+          };
+          this.studyHours.set(id, updated);
+          hasChanges = true;
+        }
+      }
+    }
+
+    for (const [id, task] of this.tasks.entries()) {
+      if (!task.archived && !task.deleted && task.dueDate) {
+        const taskDate = task.dueDate.split('T')[0];
+        if (taskDate < yesterdayStr) {
+          const updated = {
+            ...task,
+            archived: true,
+            archivedAt: now.toISOString(),
+          };
+          this.tasks.set(id, updated);
+          hasChanges = true;
+        }
+      }
+    }
+
+    if (hasChanges) {
+      await this.saveToFile();
+      console.log("✅ Eski veriler otomatik olarak arşivlendi");
+    }
   }
 }
 // PostgreSQL veritabanı bağlantısı

@@ -61,12 +61,15 @@ export const questionLogs = pgTable("question_logs", {
   study_date: text("study_date").notNull(),
   deleted: boolean("deleted").notNull().default(false),
   deletedAt: text("deleted_at"),
+  archived: boolean("archived").notNull().default(false),
+  archivedAt: text("archived_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const examResults = pgTable("exam_results", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   exam_name: text("exam_name").notNull(),
+  display_name: text("display_name"),
   exam_date: text("exam_date").notNull(),
   exam_type: text("exam_type", { enum: ["TYT", "AYT"] }),
   exam_scope: text("exam_scope", { enum: ["full", "branch"] }),
@@ -78,6 +81,8 @@ export const examResults = pgTable("exam_results", {
   notes: text("notes"),
   deleted: boolean("deleted").notNull().default(false),
   deletedAt: text("deleted_at"),
+  archived: boolean("archived").notNull().default(false),
+  archivedAt: text("archived_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -116,6 +121,8 @@ export const studyHours = pgTable("study_hours", {
   seconds: integer("seconds").notNull().default(0),
   deleted: boolean("deleted").notNull().default(false),
   deletedAt: text("deleted_at"),
+  archived: boolean("archived").notNull().default(false),
+  archivedAt: text("archived_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -124,6 +131,20 @@ export const setupCompleted = pgTable("setup_completed", {
   completed: boolean("completed").notNull().default(false),
   completedAt: text("completed_at"),
   termsAccepted: boolean("terms_accepted").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const installations = pgTable("installations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userName: text("user_name"),
+  userEmail: text("user_email"),
+  ipAddress: text("ip_address"),
+  location: text("location"),
+  computerSpecs: text("computer_specs"),
+  operatingSystem: text("operating_system"),
+  browserInfo: text("browser_info"),
+  installDate: text("install_date").notNull(),
+  lastActivity: text("last_activity"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -171,10 +192,12 @@ export const insertQuestionLogSchema = z.object({
   time_spent_minutes: z.number().nullable().optional(),
   study_date: z.string(),
   deleted: z.boolean().optional(),
+  archived: z.boolean().optional(),
 });
 
 export const insertExamResultSchema = z.object({
   exam_name: z.string(),
+  display_name: z.string().optional(),
   exam_date: z.string(),
   exam_type: z.enum(["TYT", "AYT"]).optional(),
   exam_scope: z.enum(["full", "branch"]).optional(),
@@ -185,6 +208,7 @@ export const insertExamResultSchema = z.object({
   ranking: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
   deleted: z.boolean().optional(),
+  archived: z.boolean().optional(),
 });
 
 export const insertFlashcardSchema = z.object({
@@ -215,6 +239,19 @@ export const insertStudyHoursSchema = z.object({
   minutes: z.number().default(0),
   seconds: z.number().default(0),
   deleted: z.boolean().optional(),
+  archived: z.boolean().optional(),
+});
+
+export const insertInstallationSchema = z.object({
+  userName: z.string().nullable().optional(),
+  userEmail: z.string().nullable().optional(),
+  ipAddress: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+  computerSpecs: z.string().nullable().optional(),
+  operatingSystem: z.string().nullable().optional(),
+  browserInfo: z.string().nullable().optional(),
+  installDate: z.string(),
+  lastActivity: z.string().nullable().optional(),
 });
 
 export type InsertTask = z.infer<typeof insertTaskSchema>;
@@ -234,3 +271,5 @@ export type ExamSubjectNet = typeof examSubjectNets.$inferSelect;
 export type InsertStudyHours = z.infer<typeof insertStudyHoursSchema>;
 export type StudyHours = typeof studyHours.$inferSelect;
 export type SetupCompleted = typeof setupCompleted.$inferSelect;
+export type InsertInstallation = z.infer<typeof insertInstallationSchema>;
+export type Installation = typeof installations.$inferSelect;
