@@ -10,6 +10,7 @@ import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { Button } from "@/bilesenler/arayuz/button";
 import { useToast } from "@/hooks/use-toast";
 import { EditTaskModal } from "@/bilesenler/gorev-duzenle-modal";
+import { MidnightCountdown } from "@/bilesenler/geceyarisi-geri-sayim";
 
 interface TasksSectionProps {
   onAddTask: () => void;
@@ -271,9 +272,10 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     <div className="space-y-6">
       {/* Görev Ekle başlığı */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
+        <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-bold text-foreground">Görevlerim</h2>
           <p className="text-muted-foreground">Bugün tamamlanacak görevler</p>
+          <MidnightCountdown />
         </div>
         <Button 
           onClick={onAddTask}

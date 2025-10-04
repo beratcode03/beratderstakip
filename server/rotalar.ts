@@ -1044,6 +1044,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/question-logs/archived", async (req, res) => {
+    try {
+      const logs = await storage.getArchivedQuestionLogs();
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch archived question logs" });
+    }
+  });
+
   // Konu istatistikleri routes
   app.get("/api/topics/stats", async (req, res) => {
     try {
@@ -1203,6 +1212,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete exam result" });
+    }
+  });
+
+  app.get("/api/exam-results/archived", async (req, res) => {
+    try {
+      const results = await storage.getArchivedExamResults();
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch archived exam results" });
     }
   });
 
@@ -3161,6 +3179,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Çalışma saati kaydı silindi" });
     } catch (error) {
       res.status(500).json({ message: "Çalışma saati silinirken hata oluştu" });
+    }
+  });
+
+  app.get("/api/study-hours/archived", async (req, res) => {
+    try {
+      const studyHours = await storage.getArchivedStudyHours();
+      res.json(studyHours);
+    } catch (error) {
+      res.status(500).json({ message: "Arşivlenmiş çalışma saatleri getirilirken hata oluştu" });
+    }
+  });
+
+  // Auto-archive route - otomatik olarak eski verileri arşivle
+  app.post("/api/auto-archive", async (req, res) => {
+    try {
+      await storage.autoArchiveOldData();
+      res.json({ message: "Eski veriler başarıyla arşivlendi" });
+    } catch (error) {
+      res.status(500).json({ message: "Auto-archive işlemi başarısız oldu" });
     }
   });
 

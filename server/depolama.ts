@@ -926,17 +926,14 @@ export class MemStorage implements IStorage {
 
   async autoArchiveOldData(): Promise<void> {
     const now = new Date();
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const today = now.toISOString().split('T')[0];
     
     let hasChanges = false;
 
     for (const [id, log] of this.questionLogs.entries()) {
-      if (!log.archived && !log.deleted) {
-        const logDate = new Date(log.study_date);
-        if (logDate < oneDayAgo) {
+      if (!log.archived && !log.deleted && log.study_date) {
+        const logDateStr = log.study_date.split('T')[0];
+        if (logDateStr < today) {
           const updated = {
             ...log,
             archived: true,
@@ -949,9 +946,9 @@ export class MemStorage implements IStorage {
     }
 
     for (const [id, result] of this.examResults.entries()) {
-      if (!result.archived && !result.deleted) {
-        const examDate = new Date(result.exam_date);
-        if (examDate < oneDayAgo) {
+      if (!result.archived && !result.deleted && result.exam_date) {
+        const examDateStr = result.exam_date.split('T')[0];
+        if (examDateStr < today) {
           const updated = {
             ...result,
             archived: true,
@@ -964,9 +961,9 @@ export class MemStorage implements IStorage {
     }
 
     for (const [id, sh] of this.studyHours.entries()) {
-      if (!sh.archived && !sh.deleted) {
-        const shDate = new Date(sh.study_date);
-        if (shDate < oneDayAgo) {
+      if (!sh.archived && !sh.deleted && sh.study_date) {
+        const shDateStr = sh.study_date.split('T')[0];
+        if (shDateStr < today) {
           const updated = {
             ...sh,
             archived: true,
@@ -980,8 +977,8 @@ export class MemStorage implements IStorage {
 
     for (const [id, task] of this.tasks.entries()) {
       if (!task.archived && !task.deleted && task.dueDate) {
-        const taskDate = task.dueDate.split('T')[0];
-        if (taskDate < yesterdayStr) {
+        const taskDateStr = task.dueDate.split('T')[0];
+        if (taskDateStr < today) {
           const updated = {
             ...task,
             archived: true,

@@ -649,7 +649,7 @@ export default function Dashboard() {
     })),
     ...examResults.slice(0, 5).map(exam => ({
       type: 'exam',
-      title: `${exam.exam_name} - TYT: ${exam.tyt_net}`,
+      title: `${exam.display_name || exam.exam_name} - TYT: ${exam.tyt_net}`,
       date: exam.exam_date,
       icon: BarChart3
     })),
@@ -1443,7 +1443,7 @@ export default function Dashboard() {
                     {selectedHeatmapDay.dayActivities.exams.map((exam: any, index: number) => (
                       <div key={index} className="p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
                         <div className="flex justify-between items-center">
-                          <span className="font-medium">{exam.exam_name}</span>
+                          <span className="font-medium">{exam.display_name || exam.exam_name}</span>
                           <div className="text-xs text-muted-foreground">
                             TYT: {exam.tyt_net} {exam.ayt_net !== "0" && `• AYT: ${exam.ayt_net}`}
                           </div>

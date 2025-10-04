@@ -9,6 +9,7 @@ import express from "express";
 import { registerRoutes } from "./rotalar";
 import { log, serveStatic } from "./static";
 import { validateEnvironmentVariables } from "./env-validation";
+import { storage } from "./depolama";
 
 validateEnvironmentVariables();
 
@@ -75,6 +76,45 @@ app.use((req, res, next) => {
   server.listen(port, host, () => {
     log(`Dersime dönebilirim !!! Site Link : http://${host}:${port}`);
   });
+
+  // Otomatik arşivleme zamanlayıcısı - Her gece 00:00'da çalışır
+  function scheduleAutoArchive() {
+    const now = new Date();
+    const night = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0, 0, 0, 0
+    );
+    const msUntilMidnight = night.getTime() - now.getTime();
+
+    setTimeout(() => {
+      log("🕛 Gece yarısı - Otomatik arşivleme başlatılıyor...");
+      storage.autoArchiveOldData()
+        .then(() => {
+          log("✅ Otomatik arşivleme tamamlandı");
+        })
+        .catch((error) => {
+          console.error("❌ Otomatik arşivleme hatası:", error);
+        });
+      
+      // Bir sonraki gün için tekrar zamanla
+      setInterval(() => {
+        log("🕛 Gece yarısı - Otomatik arşivleme başlatılıyor...");
+        storage.autoArchiveOldData()
+          .then(() => {
+            log("✅ Otomatik arşivleme tamamlandı");
+          })
+          .catch((error) => {
+            console.error("❌ Otomatik arşivleme hatası:", error);
+          });
+      }, 24 * 60 * 60 * 1000);
+    }, msUntilMidnight);
+
+    log(`⏰ Otomatik arşivleme zamanlayıcısı ayarlandı - ${Math.round(msUntilMidnight / 1000 / 60)} dakika sonra çalışacak`);
+  }
+
+  scheduleAutoArchive();
 })();
 //BERATCANKIR OZEL ANALİZ TAKIP SISTEMI
 //BERATCANKIR OZEL ANALİZ TAKIP SISTEMI

@@ -979,7 +979,7 @@ export default function Homepage() {
                                     <div className="flex items-center text-sm">
                                       <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
                                       <span className="font-medium">Deneme:</span>
-                                      <span className="ml-2 text-muted-foreground">{exam.exam_name}</span>
+                                      <span className="ml-2 text-muted-foreground">{exam.display_name || exam.exam_name}</span>
                                     </div>
                                     <div className="text-xs text-purple-600 bg-purple-100 dark:bg-purple-900/20 px-2 py-1 rounded-full">
                                       TYT: {exam.tyt_net} | AYT: {exam.ayt_net}

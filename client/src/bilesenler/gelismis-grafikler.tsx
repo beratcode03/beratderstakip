@@ -230,7 +230,7 @@ function AdvancedChartsComponent() {
       
       return {
         date: new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }),
-        examName: exam.exam_name,
+        examName: exam.display_name || exam.exam_name,
         // Uygun olmayan sınav türleri için null kullanın, böylece sıfır göstermek yerine satırı kırar
         tytNet: examType === 'TYT' ? (parseFloat(exam.tyt_net) || 0) : null,
         aytNet: examType === 'AYT' ? (parseFloat(exam.ayt_net) || 0) : null,
