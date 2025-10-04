@@ -15,6 +15,8 @@ export const tasks = pgTable("tasks", {
   color: text("color").default("#8B5CF6"), // Varsayılan mor renk
   completed: boolean("completed").notNull().default(false),
   completedAt: text("completed_at"),
+  archived: boolean("archived").notNull().default(false),
+  archivedAt: text("archived_at"),
   dueDate: text("due_date"),
   recurrenceType: text("recurrence_type", { enum: ["none", "weekly", "monthly"] }).notNull().default("none"),
   recurrenceEndDate: text("recurrence_end_date"), // İsteğe bağlı - yinelenen görevlerin oluşturulmasını ne zaman durdurmak istediğiniz
@@ -115,6 +117,7 @@ export const insertTaskSchema = z.object({
   category: z.enum(["genel", "turkce", "sosyal", "matematik", "fizik", "kimya", "biyoloji", "tyt-geometri", "ayt-geometri", "ayt-matematik", "ayt-fizik", "ayt-kimya", "ayt-biyoloji"]).default("genel"),
   color: z.string().optional(),
   completed: z.boolean().optional(),
+  archived: z.boolean().optional(),
   dueDate: z.string().nullable().optional(),
   recurrenceType: z.enum(["none", "weekly", "monthly"]).default("none"),
   recurrenceEndDate: z.string().nullable().optional(),

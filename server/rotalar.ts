@@ -88,6 +88,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/tasks/:id/archive", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const task = await storage.archiveTask(id);
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      res.json(task);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to archive task" });
+    }
+  });
+
+  app.get("/api/tasks/archived", async (req, res) => {
+    try {
+      const tasks = await storage.getArchivedTasks();
+      res.json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch archived tasks" });
+    }
+  });
+
+  app.get("/api/tasks/by-date-range", async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: "Start date and end date are required" });
+      }
+      const tasks = await storage.getTasksByDateRange(startDate as string, endDate as string);
+      res.json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch tasks by date range" });
+    }
+  });
+
   app.delete("/api/tasks/:id", async (req, res) => {
     try {
       const { id } = req.params;

@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Edit2, Trash2, Undo2, Calendar, CheckCircle2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Undo2, Calendar, CheckCircle2, Archive, ArchiveRestore } from "lucide-react";
 import { Task } from "@shared/sema";
 import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { Button } from "@/bilesenler/arayuz/button";
@@ -16,13 +16,48 @@ interface TasksSectionProps {
 }
 
 export function TasksSection({ onAddTask }: TasksSectionProps) {
-  const [filter, setFilter] = useState<"all" | "pending" | "completed" | "high" | "weekly" | "monthly">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "completed" | "high" | "weekly" | "monthly" | "archived">("all");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const { toast } = useToast();
 
   const { data: tasks = [] } = useQuery<Task[]>({
     queryKey: ["/api/tasks"],
+  });
+
+  const { data: archivedTasks = [] } = useQuery<Task[]>({
+    queryKey: ["/api/tasks/archived"],
+    enabled: filter === "archived",
+  });
+
+  const { data: dateRangeTasks = [] } = useQuery<Task[]>({
+    queryKey: ["/api/tasks/by-date-range", startDate, endDate],
+    queryFn: () => fetch(`/api/tasks/by-date-range?startDate=${startDate}&endDate=${endDate}`).then(res => res.json()),
+    enabled: showDateRangePicker && !!startDate && !!endDate,
+  });
+
+  const archiveTaskMutation = useMutation({
+    mutationFn: (taskId: string) => 
+      apiRequest("PATCH", `/api/tasks/${taskId}/archive`),
+    onSuccess: () => {
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/tasks"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/tasks/archived"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/calendar"] });
+      toast({
+        title: "Görev arşivlendi",
+        description: "Görev başarıyla arşivlendi.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Hata",
+        description: "Görev arşivlenemedi.",
+        variant: "destructive",
+      });
+    },
   });
 
   const toggleTaskMutation = useMutation({
@@ -65,7 +100,11 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     },
   });
 
-  const filteredTasks = tasks.filter(task => {
+  const displayTasks = showDateRangePicker && startDate && endDate ? dateRangeTasks : 
+                       filter === "archived" ? archivedTasks : tasks;
+
+  const filteredTasks = displayTasks.filter(task => {
+    if (filter === "archived") return true;
     switch (filter) {
       case "pending":
         return !task.completed;
@@ -197,6 +236,10 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     toggleTaskMutation.mutate(taskId);
   };
 
+  const handleArchiveTask = (taskId: string) => {
+    archiveTaskMutation.mutate(taskId);
+  };
+
   const handleDeleteTask = (taskId: string) => {
     deleteTaskMutation.mutate(taskId);
   };
@@ -204,6 +247,24 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const handleEditTask = (task: Task) => {
     setEditingTask(task);
     setIsEditModalOpen(true);
+  };
+
+  const handleDateRangeSearch = () => {
+    if (!startDate || !endDate) {
+      toast({
+        title: "Uyarı",
+        description: "Lütfen başlangıç ve bitiş tarihlerini seçin.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowDateRangePicker(true);
+  };
+
+  const clearDateRange = () => {
+    setStartDate("");
+    setEndDate("");
+    setShowDateRangePicker(false);
   };
 
   return (
@@ -292,6 +353,62 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         >
           🗓️ Aylık
         </button>
+        <button
+          onClick={() => { setFilter("archived"); clearDateRange(); }}
+          className={`px-3 py-1 rounded-full text-sm transition-colors ${
+            filter === "archived"
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-secondary-foreground hover:bg-accent"
+          }`}
+          data-testid="filter-archived"
+        >
+          <Archive className="h-3 w-3 inline mr-1" />
+          Arşiv
+        </button>
+      </div>
+
+      {/* Tarih Aralığı Seçici */}
+      <div className="flex flex-col sm:flex-row items-center gap-3 p-4 bg-muted/50 rounded-lg">
+        <Calendar className="h-5 w-5 text-muted-foreground" />
+        <div className="flex flex-col sm:flex-row items-center gap-3 flex-1">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
+            placeholder="Başlangıç Tarihi"
+            data-testid="input-start-date"
+          />
+          <span className="text-muted-foreground">-</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
+            placeholder="Bitiş Tarihi"
+            data-testid="input-end-date"
+          />
+          <Button
+            onClick={handleDateRangeSearch}
+            variant="outline"
+            size="sm"
+            className="w-full sm:w-auto"
+            data-testid="button-search-date-range"
+          >
+            Ara
+          </Button>
+          {showDateRangePicker && (
+            <Button
+              onClick={clearDateRange}
+              variant="ghost"
+              size="sm"
+              className="w-full sm:w-auto"
+              data-testid="button-clear-date-range"
+            >
+              Temizle
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Görev Listesi */}
@@ -403,6 +520,16 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
                       data-testid={`button-edit-task-${task.id}`}
                     >
                       <Edit2 className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  )}
+                  {!task.archived && (
+                    <button
+                      onClick={() => handleArchiveTask(task.id)}
+                      className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                      title="Arşivle"
+                      data-testid={`button-archive-task-${task.id}`}
+                    >
+                      <Archive className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     </button>
                   )}
                   <button

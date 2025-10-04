@@ -18,6 +18,9 @@ export interface IStorage {
   updateTask(id: string, updates: Partial<InsertTask>): Promise<Task | undefined>;
   deleteTask(id: string): Promise<boolean>;
   toggleTaskComplete(id: string): Promise<Task | undefined>;
+  archiveTask(id: string): Promise<Task | undefined>;
+  getArchivedTasks(): Promise<Task[]>;
+  getTasksByDateRange(startDate: string, endDate: string): Promise<Task[]>;
   getTasksByDate(dateISO: string): Promise<Task[]>;
   getDailySummary(rangeDays: number): Promise<any>;
   
@@ -213,18 +216,20 @@ export class MemStorage implements IStorage {
 
   // Görev işlemleri
   async getTasks(): Promise<Task[]> {
-    return Array.from(this.tasks.values()).sort((a, b) => {
-      // Öncelik sırasına göre (yüksek -> orta -> düşük) ve ardından oluşturulma tarihine göre sırala
-      const priorityOrder = { high: 0, medium: 1, low: 2 };
-      const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder];
-      const bPriority = priorityOrder[b.priority as keyof typeof priorityOrder];
-      
-      if (aPriority !== bPriority) {
-        return aPriority - bPriority;
-      }
-      
-      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
-    });
+    return Array.from(this.tasks.values())
+      .filter(task => !task.archived)
+      .sort((a, b) => {
+        // Öncelik sırasına göre (yüksek -> orta -> düşük) ve ardından oluşturulma tarihine göre sırala
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder];
+        const bPriority = priorityOrder[b.priority as keyof typeof priorityOrder];
+        
+        if (aPriority !== bPriority) {
+          return aPriority - bPriority;
+        }
+        
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      });
   }
 
   async getTask(id: string): Promise<Task | undefined> {
@@ -242,6 +247,8 @@ export class MemStorage implements IStorage {
       color: insertTask.color ?? "#8B5CF6", // mor
       completed: insertTask.completed ?? false,
       completedAt: null,
+      archived: insertTask.archived ?? false,
+      archivedAt: null,
       dueDate: insertTask.dueDate ?? null,
       recurrenceType: insertTask.recurrenceType ?? "none",
       recurrenceEndDate: insertTask.recurrenceEndDate ?? null,
@@ -289,6 +296,44 @@ export class MemStorage implements IStorage {
     return updatedTask;
   }
 
+  async archiveTask(id: string): Promise<Task | undefined> {
+    const task = this.tasks.get(id);
+    if (!task) {
+      return undefined;
+    }
+
+    const updatedTask: Task = {
+      ...task,
+      archived: true,
+      archivedAt: new Date().toISOString(),
+    };
+    this.tasks.set(id, updatedTask);
+    await this.saveToFile();
+    return updatedTask;
+  }
+
+  async getArchivedTasks(): Promise<Task[]> {
+    return Array.from(this.tasks.values())
+      .filter(task => task.archived)
+      .sort((a, b) => {
+        return new Date(b.archivedAt || b.createdAt || 0).getTime() - new Date(a.archivedAt || a.createdAt || 0).getTime();
+      });
+  }
+
+  async getTasksByDateRange(startDate: string, endDate: string): Promise<Task[]> {
+    const allTasks = Array.from(this.tasks.values());
+    return allTasks.filter(task => {
+      if (task.archived) return false;
+      if (!task.dueDate) return false;
+      const taskDate = task.dueDate.split('T')[0];
+      return taskDate >= startDate && taskDate <= endDate;
+    }).sort((a, b) => {
+      const aDate = a.dueDate ? a.dueDate.split('T')[0] : '';
+      const bDate = b.dueDate ? b.dueDate.split('T')[0] : '';
+      return bDate.localeCompare(aDate);
+    });
+  }
+
   // Ruh hali işlemleri
   async getMoods(): Promise<Mood[]> {
     return Array.from(this.moods.values()).sort((a, b) => 
@@ -317,10 +362,12 @@ export class MemStorage implements IStorage {
 
   // Yeni işlevsellik için yöntemler
   async getTasksByDate(dateISO: string): Promise<Task[]> {
-    const tasks = await this.getTasks();
+    const allTasks = Array.from(this.tasks.values());
     const today = new Date().toISOString().split('T')[0];
     
-    return tasks.filter(task => {
+    return allTasks.filter(task => {
+      if (task.archived) return false;
+      
       // Eğer görevin son tarihi varsa, istenen tarihle eşleşip eşleşmediğini kontrol et
       if (task.dueDate) {
         const taskDate = task.dueDate.split('T')[0];
@@ -788,7 +835,7 @@ const db = drizzle(sqlConnection);
 export class DbStorage implements IStorage {
   // Görev işlemleri
   async getTasks(): Promise<Task[]> {
-    return await db.select().from(tasks).orderBy(desc(tasks.createdAt));
+    return await db.select().from(tasks).where(eq(tasks.archived, false)).orderBy(desc(tasks.createdAt));
   }
 
   async getTask(id: string): Promise<Task | undefined> {
@@ -822,12 +869,40 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
+  async archiveTask(id: string): Promise<Task | undefined> {
+    const result = await db.update(tasks).set({
+      archived: true,
+      archivedAt: new Date().toISOString(),
+    } as any).where(eq(tasks.id, id)).returning();
+    return result[0];
+  }
+
+  async getArchivedTasks(): Promise<Task[]> {
+    return await db.select().from(tasks).where(eq(tasks.archived, true)).orderBy(desc(tasks.archivedAt));
+  }
+
+  async getTasksByDateRange(startDate: string, endDate: string): Promise<Task[]> {
+    const allTasks = await db.select().from(tasks);
+    return allTasks.filter(task => {
+      if (task.archived) return false;
+      if (!task.dueDate) return false;
+      const taskDate = task.dueDate.split('T')[0];
+      return taskDate >= startDate && taskDate <= endDate;
+    }).sort((a, b) => {
+      const aDate = a.dueDate ? a.dueDate.split('T')[0] : '';
+      const bDate = b.dueDate ? b.dueDate.split('T')[0] : '';
+      return bDate.localeCompare(aDate);
+    });
+  }
+
   async getTasksByDate(dateISO: string): Promise<Task[]> {
     const today = new Date().toISOString().split('T')[0];
     
     const allTasks = await db.select().from(tasks);
     
     return allTasks.filter(task => {
+      if (task.archived) return false;
+      
       if (task.dueDate) {
         const taskDate = task.dueDate.split('T')[0];
         return taskDate === dateISO;
