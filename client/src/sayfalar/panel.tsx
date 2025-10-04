@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/bilesenler/baslik";
-import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar, FileText } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar, FileText, Archive } from "lucide-react";
 import { Task, Goal, QuestionLog, InsertQuestionLog, ExamResult, InsertExamResult } from "@shared/sema";
 import { DashboardSummaryCards } from "@/bilesenler/panel-ozet-kartlar";
 import { AdvancedCharts } from "@/bilesenler/gelismis-grafikler";
@@ -121,6 +121,26 @@ export default function Dashboard() {
     hours: 0,
     minutes: 0,
     seconds: 0,
+  });
+
+  // Arşivlenen Veriler Modal Durumu
+  const [showArchivedDataModal, setShowArchivedDataModal] = useState(false);
+  const [archivedTab, setArchivedTab] = useState<'questions' | 'exams' | 'tasks'>('questions');
+
+  // Arşivlenen verileri getir
+  const { data: archivedQuestions = [] } = useQuery<QuestionLog[]>({
+    queryKey: ["/api/question-logs/archived"],
+    enabled: showArchivedDataModal,
+  });
+
+  const { data: archivedExams = [] } = useQuery<ExamResult[]>({
+    queryKey: ["/api/exam-results/archived"],
+    enabled: showArchivedDataModal,
+  });
+
+  const { data: archivedTasks = [] } = useQuery<Task[]>({
+    queryKey: ["/api/tasks/archived"],
+    enabled: showArchivedDataModal,
   });
 
   // Tüm mutasyonları sil
@@ -677,8 +697,8 @@ export default function Dashboard() {
           </h1>
           <p className="text-lg text-muted-foreground">Çalışma verilerim için kapsamlı analiz ve kişiselleştirilmiş sayfa</p>
           
-          {/* Çalışma Saati Ekle Butonu */}
-          <div className="mt-6 flex justify-center">
+          {/* Çalışma Saati Ekle ve Arşiv Butonları */}
+          <div className="mt-6 flex justify-center gap-4">
             <Button
               onClick={() => setShowStudyHoursModal(true)}
               className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
@@ -686,6 +706,15 @@ export default function Dashboard() {
             >
               <Clock className="mr-2 h-5 w-5" />
               ⏱️ Çalıştığım Süreyi Ekle
+            </Button>
+            <Button
+              onClick={() => setShowArchivedDataModal(true)}
+              variant="outline"
+              className="border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              data-testid="button-view-archived"
+            >
+              <Archive className="mr-2 h-5 w-5" />
+              📁 Arşivlenen Veriler
             </Button>
           </div>
         </div>
@@ -3244,6 +3273,140 @@ export default function Dashboard() {
               data-testid="button-cancel-study-hours"
             >
               İptal
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Arşivlenen Veriler Modalı */}
+      <Dialog open={showArchivedDataModal} onOpenChange={setShowArchivedDataModal}>
+        <DialogContent className="sm:max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              📁 Arşivlenen Veriler
+            </DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground">
+              Gece yarısında otomatik olarak arşivlenen eski verileriniz
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Tabs */}
+            <div className="flex gap-2 border-b pb-2">
+              <Button
+                variant={archivedTab === 'questions' ? 'default' : 'outline'}
+                onClick={() => setArchivedTab('questions')}
+                className="flex-1"
+              >
+                📝 Sorular ({archivedQuestions.length})
+              </Button>
+              <Button
+                variant={archivedTab === 'exams' ? 'default' : 'outline'}
+                onClick={() => setArchivedTab('exams')}
+                className="flex-1"
+              >
+                🎯 Denemeler ({archivedExams.length})
+              </Button>
+              <Button
+                variant={archivedTab === 'tasks' ? 'default' : 'outline'}
+                onClick={() => setArchivedTab('tasks')}
+                className="flex-1"
+              >
+                ✓ Görevler ({archivedTasks.length})
+              </Button>
+            </div>
+
+            {/* Tab Content */}
+            <div className="min-h-[300px]">
+              {archivedTab === 'questions' && (
+                <div className="space-y-3">
+                  {archivedQuestions.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <BookX className="h-12 w-12 mx-auto mb-3 opacity-40" />
+                      <p>Arşivlenmiş soru kaydı yok</p>
+                    </div>
+                  ) : (
+                    archivedQuestions.map((log) => (
+                      <div key={log.id} className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-semibold text-foreground">{log.exam_type} {log.subject}</div>
+                            <div className="text-sm text-muted-foreground">{new Date(log.study_date).toLocaleDateString('tr-TR')}</div>
+                          </div>
+                          <div className="text-right">
+                            <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400">
+                              {log.correct_count}D {log.wrong_count}Y {log.blank_count}B
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {archivedTab === 'exams' && (
+                <div className="space-y-3">
+                  {archivedExams.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <FlaskConical className="h-12 w-12 mx-auto mb-3 opacity-40" />
+                      <p>Arşivlenmiş deneme yok</p>
+                    </div>
+                  ) : (
+                    archivedExams.map((exam) => (
+                      <div key={exam.id} className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-semibold text-foreground">{exam.display_name || exam.exam_name}</div>
+                            <div className="text-sm text-muted-foreground">{new Date(exam.exam_date).toLocaleDateString('tr-TR')}</div>
+                          </div>
+                          <div className="text-right">
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">
+                              TYT: {exam.tyt_net} | AYT: {exam.ayt_net}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {archivedTab === 'tasks' && (
+                <div className="space-y-3">
+                  {archivedTasks.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <Target className="h-12 w-12 mx-auto mb-3 opacity-40" />
+                      <p>Arşivlenmiş görev yok</p>
+                    </div>
+                  ) : (
+                    archivedTasks.map((task) => (
+                      <div key={task.id} className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="font-semibold text-foreground">{task.title}</div>
+                            {task.description && <div className="text-sm text-muted-foreground mt-1">{task.description}</div>}
+                          </div>
+                          {task.completed && (
+                            <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 ml-2">
+                              ✓ Tamamlandı
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowArchivedDataModal(false)}
+            >
+              Kapat
             </Button>
           </div>
         </DialogContent>
