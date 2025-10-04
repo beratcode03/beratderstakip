@@ -796,7 +796,11 @@ export default function Dashboard() {
                             const startWeek = range.start;
                             const endWeek = range.end;
                             const centerWeek = Math.floor((startWeek + endWeek) / 2);
-                            const leftPercentage = (centerWeek / Math.max(heatmapWeeks.length - 1, 1)) * 100;
+                            let leftPercentage = (centerWeek / Math.max(heatmapWeeks.length - 1, 1)) * 100;
+                            
+                            // Etiketin taşmasını önlemek için sınırları kontrol et
+                            leftPercentage = Math.max(8, Math.min(92, leftPercentage));
+                            
                             const isCurrentMonth = monthIndex === currentMonth;
                             const weekSpan = endWeek - startWeek + 1;
                             
@@ -805,7 +809,7 @@ export default function Dashboard() {
                               monthLabels.push(
                                 <div 
                                   key={`month-${monthIndex}`} 
-                                  className={`absolute text-xs font-semibold px-2 py-1 rounded-lg transition-all duration-300 transform -translate-x-1/2 ${
+                                  className={`absolute text-xs font-semibold px-2 py-1 rounded-lg transition-all duration-300 transform -translate-x-1/2 whitespace-nowrap ${
                                     isCurrentMonth 
                                       ? 'text-white bg-purple-500 border border-purple-400 shadow-lg' 
                                       : 'text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-600'

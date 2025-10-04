@@ -219,7 +219,7 @@ function AdvancedChartsComponent() {
                 const key = `${subjectWithExamType}-${topic}`;
                 if (topicMap.has(key)) {
                   const existing = topicMap.get(key)!;
-                  existing.frequency += 2; // examSubjectNets'ten gelen verilere daha fazla ağırlık ver
+                  existing.frequency += 2;
                   existing.lastSeen = examDate > existing.lastSeen ? examDate : existing.lastSeen;
                 } else {
                   topicMap.set(key, {
@@ -239,10 +239,67 @@ function AdvancedChartsComponent() {
       }
     });
 
+    // Soru günlüklerinden yanlış konuları işle
+    allQuestionLogs.forEach((log: QuestionLog) => {
+      if (log.wrong_topics) {
+        try {
+          const wrongTopics = typeof log.wrong_topics === 'string' 
+            ? JSON.parse(log.wrong_topics) 
+            : log.wrong_topics;
+          
+          if (Array.isArray(wrongTopics) && wrongTopics.length > 0) {
+            const subjectNameMap: {[key: string]: string} = {
+              'turkce': 'Türkçe',
+              'Türkçe': 'Türkçe',
+              'matematik': 'Matematik',
+              'Matematik': 'Matematik',
+              'sosyal': 'Sosyal',
+              'Sosyal': 'Sosyal',
+              'fen': 'Fen',
+              'Fen': 'Fen',
+              'fizik': 'Fizik',
+              'Fizik': 'Fizik',
+              'kimya': 'Kimya',
+              'Kimya': 'Kimya',
+              'biyoloji': 'Biyoloji',
+              'Biyoloji': 'Biyoloji',
+              'geometri': 'Geometri',
+              'Geometri': 'Geometri'
+            };
+            const subjectName = subjectNameMap[log.subject] || log.subject;
+            const subjectWithType = `Soru ${subjectName}`;
+            
+            wrongTopics.forEach((topicItem: any) => {
+              const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic || topicItem.name;
+              if (topicName) {
+                const topic = normalizeTopic(topicName);
+                const key = `${subjectWithType}-${topic}`;
+                if (topicMap.has(key)) {
+                  const existing = topicMap.get(key)!;
+                  existing.frequency += 1;
+                  existing.lastSeen = log.study_date > existing.lastSeen ? log.study_date : existing.lastSeen;
+                } else {
+                  topicMap.set(key, {
+                    topic,
+                    subject: subjectWithType,
+                    source: 'question',
+                    frequency: 1,
+                    lastSeen: log.study_date
+                  });
+                }
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Error parsing wrong_topics from question log:', e);
+        }
+      }
+    });
+
     return Array.from(topicMap.values())
-      .filter(topic => topic.frequency >= 1) // Sadece 1 kez bile görülen konuları göster
+      .filter(topic => topic.frequency >= 1)
       .sort((a, b) => b.frequency - a.frequency);
-  }, [examResults, examSubjectNets]);
+  }, [allExamResults, allQuestionLogs, examSubjectNets]);
 
   // Net Analiz Verilerini İşleyin - Uygun olmayan sınav türleri için null göstermesi için düzeltildi
   const netAnalysisData = useMemo(() => {
