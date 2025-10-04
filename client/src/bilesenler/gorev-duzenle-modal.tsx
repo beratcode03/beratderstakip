@@ -192,17 +192,11 @@ export function EditTaskModal({ open, onOpenChange, task }: EditTaskModalProps) 
             </div>
           </div>
 
-          {/* Son Tarih */}
-          <div>
-            <Label htmlFor="edit-task-due-date">Son Tarih</Label>
-            <Input
-              id="edit-task-due-date"
-              type="date"
-              value={formData.dueDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-              className="w-full"
-              data-testid="input-edit-task-due-date"
-            />
+          {/* Görevler otomatik olarak bugün için ayarlanır */}
+          <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-3">
+            <p className="text-sm text-purple-800 dark:text-purple-200">
+              📌 Görevler otomatik olarak bugün için ayarlanır ve gece yarısında arşivlenir.
+            </p>
           </div>
 
           {/* Renk Seçici */}
