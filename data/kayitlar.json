@@ -1,24 +1,5 @@
 {
-  "tasks": [
-    {
-      "id": "f7432b82-5a77-40a8-bc22-4254193ff403",
-      "title": "b",
-      "description": "b",
-      "priority": "medium",
-      "category": "genel",
-      "color": "#8B5CF6",
-      "completed": false,
-      "completedAt": null,
-      "archived": true,
-      "archivedAt": "2025-10-04T20:38:02.264Z",
-      "deleted": true,
-      "deletedAt": "2025-10-04T20:38:14.443Z",
-      "dueDate": "2025-10-04",
-      "recurrenceType": "none",
-      "recurrenceEndDate": null,
-      "createdAt": "2025-10-04T20:38:01.017Z"
-    }
-  ],
+  "tasks": [],
   "moods": [],
   "goals": [],
   "questionLogs": [],
