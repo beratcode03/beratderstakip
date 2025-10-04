@@ -98,6 +98,16 @@ The application can be deployed on Replit using:
 This project is licensed under MIT License. See LICENSE file for details.
 
 ## Recent Changes
+- **2025-10-04**: Bug Fixes and Enhancements
+  - **Fixed Critical Bug**: Wrong topics from exam results now appear correctly in "🎯 Eksik Olduğum Konular" and "🔍 Hata Sıklığı Analizi" sections
+    - Added examSubjectNets data fetching to frontend
+    - Lowered frequency filter from >=3 to >=1 so new topics appear immediately
+    - Updated analysis sections to process exam wrong_topics_json data
+  - **Added Enhancement**: Wrong topics preview in exam entry form (branch mode)
+    - Visual preview shows topics before submission
+    - Matches full exam mode preview styling
+  - **Updated Text**: Changed email report section title from "DOĞRU, YANLIŞ VE BOŞ ANALİZİ" to "Çözülen Tüm Sorular"
+  
 - **2025-10-04**: Imported from GitHub and configured for Replit environment
   - Set up development workflow on port 5000
   - Verified MemStorage (file-based) functionality
