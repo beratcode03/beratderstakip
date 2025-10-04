@@ -1171,7 +1171,7 @@ export default function Dashboard() {
                             </div>
                             <div>
                               <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-200 transition-colors">
-                                {examType} #{examNumber} • {examDate.toLocaleDateString('tr-TR', { 
+                                {exam.display_name || exam.exam_name} • {examDate.toLocaleDateString('tr-TR', { 
                                   day: 'numeric', 
                                   month: 'numeric', 
                                   year: 'numeric' 
@@ -1300,13 +1300,13 @@ export default function Dashboard() {
                               {examEmoji}
                             </div>
                             <div className="text-xs text-muted-foreground">
-                              {examType} #{examNumber}
+                              {examDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                             </div>
                           </div>
                           
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Award className="h-4 w-4" />
-                            <span>{examDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>
+                            <span>{exam.display_name || exam.exam_name}</span>
                           </div>
                         </div>
                       </CardContent>
@@ -1972,13 +1972,25 @@ export default function Dashboard() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="turkce">Türkçe</SelectItem>
-                      <SelectItem value="sosyal">Sosyal Bilimler</SelectItem>
-                      <SelectItem value="matematik">Matematik</SelectItem>
-                      <SelectItem value="geometri">Geometri</SelectItem>
-                      <SelectItem value="fizik">Fizik</SelectItem>
-                      <SelectItem value="kimya">Kimya</SelectItem>
-                      <SelectItem value="biyoloji">Biyoloji</SelectItem>
+                      {newExamResult.exam_type === "TYT" ? (
+                        <>
+                          <SelectItem value="turkce">Türkçe</SelectItem>
+                          <SelectItem value="sosyal">Sosyal Bilimler</SelectItem>
+                          <SelectItem value="matematik">Matematik</SelectItem>
+                          <SelectItem value="geometri">Geometri</SelectItem>
+                          <SelectItem value="fizik">Fizik</SelectItem>
+                          <SelectItem value="kimya">Kimya</SelectItem>
+                          <SelectItem value="biyoloji">Biyoloji</SelectItem>
+                        </>
+                      ) : (
+                        <>
+                          <SelectItem value="matematik">Matematik</SelectItem>
+                          <SelectItem value="geometri">Geometri</SelectItem>
+                          <SelectItem value="fizik">Fizik</SelectItem>
+                          <SelectItem value="kimya">Kimya</SelectItem>
+                          <SelectItem value="biyoloji">Biyoloji</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
