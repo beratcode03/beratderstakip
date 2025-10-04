@@ -517,7 +517,9 @@ export class MemStorage implements IStorage {
     
     // Yanlış konuları normalleştirerek konu öneklerini kaldırın
     const normalizedWrongTopics = insertLog.wrong_topics ? 
-      insertLog.wrong_topics.map(topic => this.normalizeTopic(topic)) : [];
+      insertLog.wrong_topics
+        .filter(topic => topic != null && topic !== '')
+        .map(topic => this.normalizeTopic(String(topic))) : [];
     
     const log: QuestionLog = {
       id,
@@ -655,6 +657,9 @@ export class MemStorage implements IStorage {
   // TYT/AYT konu öneklerini kaldırarak konu adlarını normalleştirin
   private normalizeTopic(topic: string): string {
     // TYT veya AYT ile başlayan ve ardından herhangi bir karakter dizisi, boşluk, tire ve ardından gerçek konu adı gelen konuları normalleştir
+    if (typeof topic !== 'string') {
+      return String(topic || '').trim();
+    }
     return topic.replace(/^(TYT|AYT)\s+[^-]+\s+-\s+/, '').trim();
   }
 

@@ -42,6 +42,7 @@ interface SubjectAnalysisData {
 
 function AdvancedChartsComponent() {
   const [analysisMode, setAnalysisMode] = useState<'net' | 'subject'>('net');
+  const [includeArchived, setIncludeArchived] = useState<boolean>(false);
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
   const [celebratingTopics, setCelebratingTopics] = useState<Set<string>>(new Set());
   const [completedErrorTopics, setCompletedErrorTopics] = useState<Set<string>>(new Set());
@@ -118,8 +119,18 @@ function AdvancedChartsComponent() {
     queryKey: ["/api/exam-results"],
   });
   
+  const { data: archivedExamResults = [] } = useQuery<ExamResult[]>({
+    queryKey: ["/api/exam-results/archived"],
+    enabled: includeArchived,
+  });
+  
   const { data: questionLogs = [], isLoading: isLoadingQuestions } = useQuery<QuestionLog[]>({
     queryKey: ["/api/question-logs"],
+  });
+  
+  const { data: archivedQuestionLogs = [] } = useQuery<QuestionLog[]>({
+    queryKey: ["/api/question-logs/archived"],
+    enabled: includeArchived,
   });
 
   const { data: examSubjectNets = [], isLoading: isLoadingExamNets } = useQuery<any[]>({
@@ -128,12 +139,23 @@ function AdvancedChartsComponent() {
 
   const isLoading = isLoadingExams || isLoadingQuestions || isLoadingExamNets;
 
+  // Merge active and archived data based on includeArchived flag
+  const allExamResults = useMemo(() => 
+    includeArchived ? [...examResults, ...archivedExamResults] : examResults,
+    [includeArchived, examResults, archivedExamResults]
+  );
+  
+  const allQuestionLogs = useMemo(() => 
+    includeArchived ? [...questionLogs, ...archivedQuestionLogs] : questionLogs,
+    [includeArchived, questionLogs, archivedQuestionLogs]
+  );
+
   // Konu bazında eksik konuları toplar - DENEME VE EXAM SUBJECT NETS VERİLERİ
   const missingTopics = useMemo(() => {
     const topicMap = new Map<string, MissingTopic>();
 
     // Sınav sonuçlarını işleyin - eksik konuları subjects_data'dan çıkarmamız gerekiyor
-    examResults.forEach(exam => {
+    allExamResults.forEach(exam => {
       if (exam.subjects_data) {
         try {
           const subjectsData = JSON.parse(exam.subjects_data);
@@ -187,7 +209,7 @@ function AdvancedChartsComponent() {
           const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
           if (Array.isArray(wrongTopics)) {
             const subjectWithExamType = `${subjectNet.exam_type} ${subjectNet.subject}`;
-            const exam = examResults.find((e: any) => e.id === subjectNet.exam_id);
+            const exam = allExamResults.find((e: any) => e.id === subjectNet.exam_id);
             const examDate = exam ? exam.exam_date : new Date().toISOString();
             
             wrongTopics.forEach((topicItem: any) => {
@@ -479,7 +501,7 @@ function AdvancedChartsComponent() {
             }> = [];
 
             // Soru günlüklerini işle - SORU GÜNLÜĞÜ VERİLERİ
-            questionLogs.forEach(log => {
+            allQuestionLogs.forEach(log => {
               if (log.wrong_topics && log.wrong_topics.length > 0) {
                 // Öncelikle wrong_topics_json'dan yapılandırılmış verileri ayrıştırmayı deneyin
                 let structuredTopics: Array<{
@@ -535,7 +557,7 @@ function AdvancedChartsComponent() {
                 try {
                   const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
                   if (Array.isArray(wrongTopics)) {
-                    const exam = examResults.find((e: any) => e.id === subjectNet.exam_id);
+                    const exam = allExamResults.find((e: any) => e.id === subjectNet.exam_id);
                     const examDate = exam ? exam.exam_date : new Date().toISOString();
                     
                     wrongTopics.forEach((topicItem: any) => {
@@ -749,35 +771,49 @@ function AdvancedChartsComponent() {
             </div>
 
             {/* Analiz Modu Değiştirme */}
-            <div className="flex bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl p-1 border border-indigo-200/50 dark:border-indigo-700/50">
-              <Button
-                variant={analysisMode === 'net' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setAnalysisMode('net')}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                  analysisMode === 'net' 
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
-                    : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
-                }`}
-                data-testid="button-analysis-net"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                📈 Net Analiz
-              </Button>
-              <Button
-                variant={analysisMode === 'subject' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setAnalysisMode('subject')}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                  analysisMode === 'subject' 
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
-                    : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
-                }`}
-                data-testid="button-analysis-subject"
-              >
-                <Target className="h-4 w-4 mr-2" />
-                🎯 Ders Analiz
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl p-1 border border-indigo-200/50 dark:border-indigo-700/50">
+                <Button
+                  variant={analysisMode === 'net' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setAnalysisMode('net')}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    analysisMode === 'net' 
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
+                      : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
+                  }`}
+                  data-testid="button-analysis-net"
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  📈 Net Analiz
+                </Button>
+                <Button
+                  variant={analysisMode === 'subject' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setAnalysisMode('subject')}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    analysisMode === 'subject' 
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
+                      : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
+                  }`}
+                  data-testid="button-analysis-subject"
+                >
+                  <Target className="h-4 w-4 mr-2" />
+                  🎯 Ders Analiz
+                </Button>
+              </div>
+              
+              {/* Arşivlenmiş verileri dahil et checkbox'ı */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-100/50 dark:bg-purple-900/30 rounded-xl border border-purple-200/50 dark:border-purple-700/50">
+                <Checkbox 
+                  id="include-archived" 
+                  checked={includeArchived}
+                  onCheckedChange={(checked) => setIncludeArchived(checked as boolean)}
+                />
+                <label htmlFor="include-archived" className="text-sm font-medium text-purple-700 dark:text-purple-300 cursor-pointer whitespace-nowrap">
+                  📦 Arşivlenmiş verileri dahil et
+                </label>
+              </div>
             </div>
           </div>
         </CardHeader>
