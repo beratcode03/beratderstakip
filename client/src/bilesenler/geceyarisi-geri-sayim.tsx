@@ -37,7 +37,7 @@ export function MidnightCountdown() {
     <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-900 dark:text-purple-200 rounded-lg border border-purple-200 dark:border-purple-800">
       <Clock className="h-4 w-4" />
       <div className="flex flex-col">
-        <span className="text-xs font-medium">Gece Yarısına</span>
+        <span className="text-xs font-medium">Görevlerin Arşivlenmesine</span>
         <span className="text-sm font-bold font-mono">{timeUntilMidnight}</span>
       </div>
     </div>

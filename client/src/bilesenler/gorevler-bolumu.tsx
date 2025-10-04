@@ -275,16 +275,18 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-bold text-foreground">Görevlerim</h2>
           <p className="text-muted-foreground">Bugün tamamlanacak görevler</p>
+        </div>
+        <div className="flex flex-col items-end gap-3">
+          <Button 
+            onClick={onAddTask}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            data-testid="button-add-task"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Yeni Görev
+          </Button>
           <MidnightCountdown />
         </div>
-        <Button 
-          onClick={onAddTask}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
-          data-testid="button-add-task"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Yeni Görev
-        </Button>
       </div>
 
       {/* Filtreler */}
@@ -369,49 +371,51 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         </button>
       </div>
 
-      {/* Tarih Aralığı Seçici */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 p-4 bg-muted/50 rounded-lg">
-        <Calendar className="h-5 w-5 text-muted-foreground" />
-        <div className="flex flex-col sm:flex-row items-center gap-3 flex-1">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
-            placeholder="Başlangıç Tarihi"
-            data-testid="input-start-date"
-          />
-          <span className="text-muted-foreground">-</span>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
-            placeholder="Bitiş Tarihi"
-            data-testid="input-end-date"
-          />
-          <Button
-            onClick={handleDateRangeSearch}
-            variant="outline"
-            size="sm"
-            className="w-full sm:w-auto"
-            data-testid="button-search-date-range"
-          >
-            Ara
-          </Button>
-          {showDateRangePicker && (
+      {/* Tarih Aralığı Seçici - Only show when Archive filter is active */}
+      {filter === "archived" && (
+        <div className="flex flex-col sm:flex-row items-center gap-3 p-4 bg-muted/50 rounded-lg">
+          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <div className="flex flex-col sm:flex-row items-center gap-3 flex-1">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
+              placeholder="Başlangıç Tarihi"
+              data-testid="input-start-date"
+            />
+            <span className="text-muted-foreground">-</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
+              placeholder="Bitiş Tarihi"
+              data-testid="input-end-date"
+            />
             <Button
-              onClick={clearDateRange}
-              variant="ghost"
+              onClick={handleDateRangeSearch}
+              variant="outline"
               size="sm"
               className="w-full sm:w-auto"
-              data-testid="button-clear-date-range"
+              data-testid="button-search-date-range"
             >
-              Temizle
+              Ara
             </Button>
-          )}
+            {showDateRangePicker && (
+              <Button
+                onClick={clearDateRange}
+                variant="ghost"
+                size="sm"
+                className="w-full sm:w-auto"
+                data-testid="button-clear-date-range"
+              >
+                Temizle
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Görev Listesi */}
       <div className="space-y-3">
