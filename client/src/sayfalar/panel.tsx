@@ -1875,15 +1875,7 @@ export default function Dashboard() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Deneme Adı</label>
-                <Input
-                  value={newExamResult.exam_name}
-                  onChange={(e) => setNewExamResult({...newExamResult, exam_name: e.target.value})}
-                  placeholder="YKS Deneme"
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Tarih</label>
                 <Input
@@ -2930,30 +2922,37 @@ export default function Dashboard() {
                   let tytNet = 0;
                   let aytNet = 0;
                   let submittedSubjects = { ...newExamResult.subjects };
+                  let generatedExamName = '';
+
+                  const getSubjectDisplayName = (subjectKey: string) => {
+                    const subjectMap: {[key: string]: string} = {
+                      'sosyal': 'Sosyal Bilimler',
+                      'turkce': 'Türkçe',
+                      'matematik': 'Matematik',
+                      'geometri': 'Geometri',
+                      'fizik': 'Fizik',
+                      'kimya': 'Kimya',
+                      'biyoloji': 'Biyoloji',
+                      'fen': 'Fen Bilimleri'
+                    };
+                    return subjectMap[subjectKey] || subjectKey;
+                  };
 
                   if (newExamResult.examScope === "branch") {
-                    // Branş Denemesi: Yanlış konuları parse et ve sadece seçilen ders için net hesapla
                     const selectedSubject = newExamResult.selectedSubject;
                     const subjectData = newExamResult.subjects[selectedSubject];
+                    const subjectDisplayName = getSubjectDisplayName(selectedSubject);
                     
-                    // Yanlış konuları parse et
+                    generatedExamName = `${newExamResult.exam_type} ${subjectDisplayName} Branş Denemesi`;
+                    
                     const wrongTopics = newExamResult.wrongTopicsText
                       .split(',')
                       .map(t => {
                         const cleanTopic = t.trim();
-                        const subjectDisplayName = selectedSubject === 'sosyal' ? 'Sosyal Bilimler' :
-                                                   selectedSubject === 'turkce' ? 'Türkçe' :
-                                                   selectedSubject === 'matematik' ? 'Matematik' :
-                                                   selectedSubject === 'geometri' ? 'Geometri' :
-                                                   selectedSubject === 'fizik' ? 'Fizik' :
-                                                   selectedSubject === 'kimya' ? 'Kimya' :
-                                                   selectedSubject === 'biyoloji' ? 'Biyoloji' :
-                                                   selectedSubject;
                         return cleanTopic ? `${newExamResult.exam_type} ${subjectDisplayName} - ${cleanTopic}` : '';
                       })
                       .filter(t => t.length > 0);
                     
-                    // Seçilen dersin verilerini güncelle
                     submittedSubjects = {
                       turkce: { correct: "", wrong: "", blank: "", wrong_topics: [] },
                       matematik: { correct: "", wrong: "", blank: "", wrong_topics: [] },
@@ -2969,12 +2968,10 @@ export default function Dashboard() {
                       }
                     };
                     
-                    // Sadece seçilen ders için net hesapla
                     const correct = parseInt(subjectData.correct) || 0;
                     const wrong = parseInt(subjectData.wrong) || 0;
                     const branchNet = Math.max(0, correct - (wrong * 0.25));
                     
-                    // TYT/AYT'ye göre net'i ayarla
                     if (newExamResult.exam_type === "TYT") {
                       tytNet = branchNet;
                       aytNet = 0;
@@ -2983,7 +2980,8 @@ export default function Dashboard() {
                       aytNet = branchNet;
                     }
                   } else {
-                    // Tam Deneme: Tüm dersleri hesapla
+                    generatedExamName = `Genel ${newExamResult.exam_type} Deneme`;
+                    
                     const tytSubjects = ['turkce', 'sosyal', 'matematik', 'fen'];
                     const aytSubjects = ['matematik', 'fizik', 'kimya', 'biyoloji'];
                     
@@ -3007,15 +3005,17 @@ export default function Dashboard() {
                   }
                   
                   createExamResultMutation.mutate({
-                    exam_name: newExamResult.exam_name,
+                    exam_name: generatedExamName,
                     exam_date: newExamResult.exam_date,
                     exam_type: newExamResult.exam_type,
+                    exam_scope: newExamResult.examScope,
+                    selected_subject: newExamResult.examScope === 'branch' ? newExamResult.selectedSubject : undefined,
                     tyt_net: Math.max(0, tytNet).toFixed(2),
                     ayt_net: Math.max(0, aytNet).toFixed(2),
                     subjects_data: JSON.stringify(submittedSubjects)
                   });
                 }}
-                disabled={!newExamResult.exam_name || createExamResultMutation.isPending}
+                disabled={createExamResultMutation.isPending}
                 className="flex-1"
                 data-testid="button-save-exam"
               >
