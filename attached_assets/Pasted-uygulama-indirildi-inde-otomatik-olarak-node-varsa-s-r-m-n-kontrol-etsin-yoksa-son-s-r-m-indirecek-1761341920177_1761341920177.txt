@@ -1,0 +1,16 @@
+uygulama indirildiğinde otomatik olarak node varsa sürümünü kontrol etsin yoksa son sürümü indirecek şekilde ayarla uygulama için gerekli şeyleri kendi indirsin .exe li electron uygulaması kurulurken.
+uygulamadaki hataları çöz ara didik didik et her dosyayı her kodu tek tek
+uygulamadaki eklenen tüm dosyaların hangi tarihte eklendiğini değiştir 16.09.2025 saati de 03:03:03 yap(tüm görevleri yaptıktan sonra işin bitince son görev olarak yap bunu)
+her dosyanın başındaki ve sonundaki 3 adet olan BERAT CANKIR yorum satırlarını sil ve tekrar ekle
+ihlal log kısmını tamamen çalışacak hale getir talimatlar.md kısmına yaz
+uygulamayı .exe kurulumu yapıp indirdikten sonra uygulamanın veritabanı komple silinmiş olmasına rağmen önceki günlere ait veriler halen duruyor senlik bir hataysa derhal düzelt eğer benim cache(dosya yollarını komple silip sıfırdan kurmam mı gerek)hatasıysa söyle yapmam gerekenleri
+yapılacaklar kısmında görev eklerken AYT Dersleri yazan kısımda alttaki derslerin başından AYT ibaresini kaldır bir tek geometrinin başında kalsın TYT Geometride de olduğu gibi
+Anasayfadaki Tarih kısmında gösterilen verilerde örneğin ben olduğumuz gün bir görev planlamışsam görev planlandı olarak gözüksün Aktivite Detayları kısmında Planlandı butonu koy orda gözüksün eğer görev yapılırsa Görev kısmında gözüksün
+örneğin bir sayı ekleyeceğim saat deneme,soru veya çalışma süresi veya net hesaplama kısmında örneğin 15 yazcam ama 0 varken yazmaya çalışınca 015 oluyo onu düzelt 0 varken yazdıgımda kaç yazıyosam o gözüksün
+deneme ekleme kısmında Genel Deneme kısmından yalnızca tyt denemesi ekledim fakat tarih kısmında gözüken veride TYT: 80.00 | AYT: 30.00 yazıyor fakat yalnızca tyt denemesi eklememe rağmen yalnızca TYT gözükmüyor ayt de gözüküyor fakat ayt denemesi girişi hiç yapmadım onu düzel derhal.(sorunun matematik doğru yalnış verisinden kaynaklandıgını düşünüyorum tytdeki matı da ayt olarak mı algılıyor acaba iyi araştır)
+eğer yalnızca TYT denemesiyse yalnızca TYT verisi AYT ise yalnızca AYT neti gözüksün.ayrıca Genel AYT Deneme eklediğimde de bazılarını tyt olarak sayıyor örneğin fizik ve geoyu tyt olarak aldı yani onları düzgün ayarla tyt dersi ise tytyi ayt ise ayt verisi olarak gösterecek bunu kökten çöz !.
+Branş Deneme Ortalamaları kısmındaki her derse özel net ortalaması kısmı var ya onu Genel Deneme Ortalamaları kısmına da yap tyt türkçe sosyal mat geo fen ayt mat geo fizik kimya biyoloji olarak gözüksün. 
+Yeni Görev Ekle kısmında Bitiş Tarihi kısmını Görevin Bitirilme Tarihi olarak değiştir ve açılan tarih kısmını Yeni Deneme Sonucu kısmındaki Tarih seçme kısmındaki kaliteli yap tüm tarih seçme kısımlarını öyle yap.
+hava durumu kısmının doğruluğunu arttır open weather api kalsın.
+Aktiviteleri göster kısmındaki veride undefined soru yazıyor onu düzgün bir şey yap 
+📊 Deneme Analiz Sistemi kısmında Genel ve Branş Deneme Analiz kısımlarında tarih ve o tarihteki denemeleri açılır listeden verileni bakma,seçebilme özelliği ekle seçtiğimiz tarihte yaptıgımız denemelerin verilerini görebilelim

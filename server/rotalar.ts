@@ -1195,14 +1195,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 // Branş denemesinde kullanıcının seçtiği exam_type'ı kullan
                 examType = (validatedData.exam_type as "TYT" | "AYT") || "TYT";
               } else {
-                // Tam denemede ders bazında otomatik belirle
-                const isTYTSubject = [
-                  "turkce",
-                  "matematik",
-                  "sosyal",
-                  "fen",
-                ].includes(subjectName);
-                examType = isTYTSubject ? "TYT" : "AYT";
+                // Tam denemede validatedData.exam_type'a göre belirle
+                if (validatedData.exam_type === "TYT") {
+                  // TYT denemesi - yalnızca TYT dersleri
+                  const isTYTSubject = [
+                    "turkce",
+                    "matematik",
+                    "sosyal",
+                    "fen",
+                    "geometri"
+                  ].includes(subjectName);
+                  examType = isTYTSubject ? "TYT" : "AYT";
+                } else {
+                  // AYT denemesi - yalnızca AYT dersleri
+                  const isAYTSubject = [
+                    "matematik",
+                    "fizik",
+                    "kimya",
+                    "biyoloji",
+                    "geometri"
+                  ].includes(subjectName);
+                  examType = isAYTSubject ? "AYT" : "TYT";
+                }
               }
               
               const mappedSubjectName =
@@ -3643,5 +3657,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   return httpServer;
 }
+
+// BERAT CANKIR
+// BERAT BİLAL CANKIR
+// CANKIR
 
 

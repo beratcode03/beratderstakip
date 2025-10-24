@@ -1002,10 +1002,12 @@ export default function Homepage() {
                                     <div className="flex items-center text-sm">
                                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                       <span className="font-medium">Soru:</span>
-                                      <span className="ml-2 text-muted-foreground">{log.exam_type} {log.subject}</span>
+                                      <span className="ml-2 text-muted-foreground">
+                                        {log.exam_type || ''} {log.subject || 'Soru Çözümü'}
+                                      </span>
                                     </div>
                                     <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-                                      {log.correct_count} doğru
+                                      {log.correct_count || 0} doğru
                                     </div>
                                   </div>
                                 ))}
@@ -1024,7 +1026,13 @@ export default function Homepage() {
                                       ) : exam.exam_type === 'AYT' ? (
                                         `AYT: ${exam.ayt_net}`
                                       ) : (
-                                        <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                        parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) > 0 ? (
+                                          <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                        ) : parseFloat(exam.tyt_net) > 0 ? (
+                                          `TYT: ${exam.tyt_net}`
+                                        ) : (
+                                          `AYT: ${exam.ayt_net}`
+                                        )
                                       )}
                                     </div>
                                   </div>
@@ -1202,10 +1210,12 @@ export default function Homepage() {
                                     <div className="flex items-center text-sm">
                                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                       <span className="font-medium">Soru:</span>
-                                      <span className="ml-2 text-muted-foreground">{log.exam_type} {log.subject}</span>
+                                      <span className="ml-2 text-muted-foreground">
+                                        {log.exam_type || ''} {log.subject || 'Soru Çözümü'}
+                                      </span>
                                     </div>
                                     <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-                                      {log.correct_count} doğru
+                                      {log.correct_count || 0} doğru
                                     </div>
                                   </div>
                                 ))}
@@ -1224,7 +1234,13 @@ export default function Homepage() {
                                       ) : exam.exam_type === 'AYT' ? (
                                         `AYT: ${exam.ayt_net}`
                                       ) : (
-                                        <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                        parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) > 0 ? (
+                                          <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                        ) : parseFloat(exam.tyt_net) > 0 ? (
+                                          `TYT: ${exam.tyt_net}`
+                                        ) : (
+                                          `AYT: ${exam.ayt_net}`
+                                        )
                                       )}
                                     </div>
                                   </div>
@@ -1442,4 +1458,6 @@ export default function Homepage() {
   );
 }
 
-
+// BERAT CANKIR
+// BERAT BİLAL CANKIR
+// CANKIR
