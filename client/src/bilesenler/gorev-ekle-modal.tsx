@@ -157,7 +157,7 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
 
           {/* Görev Tarihi */}
           <div>
-            <Label htmlFor="task-due-date">Bitiş Tarihi</Label>
+            <Label htmlFor="task-due-date">Görevin Bitirilme Tarihi</Label>
             <Input
               id="task-due-date"
               type="date"
@@ -210,10 +210,10 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
                   <SelectItem value="biyoloji">Biyoloji</SelectItem>
                   <SelectItem value="tyt-geometri">TYT Geometri</SelectItem>
                   <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-b border-t">AYT Dersleri</div>
-                  <SelectItem value="ayt-matematik">AYT Matematik</SelectItem>
-                  <SelectItem value="ayt-fizik">AYT Fizik</SelectItem>
-                  <SelectItem value="ayt-kimya">AYT Kimya</SelectItem>
-                  <SelectItem value="ayt-biyoloji">AYT Biyoloji</SelectItem>
+                  <SelectItem value="ayt-matematik">Matematik</SelectItem>
+                  <SelectItem value="ayt-fizik">Fizik</SelectItem>
+                  <SelectItem value="ayt-kimya">Kimya</SelectItem>
+                  <SelectItem value="ayt-biyoloji">Biyoloji</SelectItem>
                   <SelectItem value="ayt-geometri">AYT Geometri</SelectItem>
                 </SelectContent>
               </Select>

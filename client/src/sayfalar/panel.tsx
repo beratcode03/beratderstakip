@@ -680,27 +680,33 @@ export default function Dashboard() {
       };
     }
     
-    // TYT Net Hesapla
+    // TYT ve AYT Net Hesapla - SADECE seçilen sınav tipi için hesaplama yap
     let tytNet = 0;
-    tytSubjects.forEach(subjectKey => {
-      const subject = updatedSubjects[subjectKey];
-      if (subject) {
-        const correct = parseInt(subject.correct) || 0;
-        const wrong = parseInt(subject.wrong) || 0;
-        tytNet += correct - (wrong * 0.25);
-      }
-    });
-    
-    // AYT Net Hesapla
     let aytNet = 0;
-    aytSubjects.forEach(subjectKey => {
-      const subject = updatedSubjects[subjectKey];
-      if (subject) {
-        const correct = parseInt(subject.correct) || 0;
-        const wrong = parseInt(subject.wrong) || 0;
-        aytNet += correct - (wrong * 0.25);
-      }
-    });
+    
+    // TYT seçildiyse sadece TYT netini hesapla
+    if (newExamResult.exam_type === 'TYT') {
+      tytSubjects.forEach(subjectKey => {
+        const subject = updatedSubjects[subjectKey];
+        if (subject) {
+          const correct = parseInt(subject.correct) || 0;
+          const wrong = parseInt(subject.wrong) || 0;
+          tytNet += correct - (wrong * 0.25);
+        }
+      });
+    }
+    
+    // AYT seçildiyse sadece AYT netini hesapla
+    if (newExamResult.exam_type === 'AYT') {
+      aytSubjects.forEach(subjectKey => {
+        const subject = updatedSubjects[subjectKey];
+        if (subject) {
+          const correct = parseInt(subject.correct) || 0;
+          const wrong = parseInt(subject.wrong) || 0;
+          aytNet += correct - (wrong * 0.25);
+        }
+      });
+    }
     
     createExamResultMutation.mutate({
       exam_name: newExamResult.exam_name,

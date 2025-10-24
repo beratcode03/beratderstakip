@@ -1019,7 +1019,13 @@ export default function Homepage() {
                                       <span className="ml-2 text-muted-foreground">{typeof (exam.display_name || exam.exam_name) === 'string' ? (exam.display_name || exam.exam_name) : 'Deneme'}</span>
                                     </div>
                                     <div className="text-xs text-purple-600 bg-purple-100 dark:bg-purple-900/20 px-2 py-1 rounded-full">
-                                      TYT: {exam.tyt_net} | AYT: {exam.ayt_net}
+                                      {exam.exam_type === 'TYT' ? (
+                                        `TYT: ${exam.tyt_net}`
+                                      ) : exam.exam_type === 'AYT' ? (
+                                        `AYT: ${exam.ayt_net}`
+                                      ) : (
+                                        <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                      )}
                                     </div>
                                   </div>
                                 ))}
@@ -1213,7 +1219,13 @@ export default function Homepage() {
                                       <span className="ml-2 text-muted-foreground">{typeof (exam.display_name || exam.exam_name) === 'string' ? (exam.display_name || exam.exam_name) : 'Deneme'}</span>
                                     </div>
                                     <div className="text-xs text-purple-600 bg-purple-100 dark:bg-purple-900/20 px-2 py-1 rounded-full">
-                                      TYT: {exam.tyt_net} | AYT: {exam.ayt_net}
+                                      {exam.exam_type === 'TYT' ? (
+                                        `TYT: ${exam.tyt_net}`
+                                      ) : exam.exam_type === 'AYT' ? (
+                                        `AYT: ${exam.ayt_net}`
+                                      ) : (
+                                        <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
+                                      )}
                                     </div>
                                   </div>
                                 ))}
