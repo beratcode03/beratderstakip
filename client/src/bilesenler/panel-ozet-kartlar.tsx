@@ -644,47 +644,7 @@ export function DashboardSummaryCards() {
             </div>
             
             <div className="space-y-6">
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-tyt-average">
-                      {netAverages.tytAvg}
-                    </div>
-                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">TYT Net Ortalama</div>
-                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min((parseFloat(netAverages.tytAvg) / 120) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400">TYT</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-green-600 dark:text-green-400 mb-1" data-testid="text-ayt-average">
-                      {netAverages.aytAvg}
-                    </div>
-                    <div className="text-sm font-medium text-green-700 dark:text-green-300">AYT Net Ortalama</div>
-                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min((parseFloat(netAverages.aytAvg) / 80) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="ml-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                    <span className="text-xs font-bold text-green-600 dark:text-green-400">AYT</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Ders Bazlı Net Ortalamaları */}
+              {/* Ders Bazlı Net Ortalamaları - ÜST */}
               <div className="space-y-4">
                 {/* TYT Ders Ortalamaları */}
                 <div>
@@ -736,6 +696,48 @@ export function DashboardSummaryCards() {
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+              </div>
+              
+              {/* TYT Net Ortalama - ORTA */}
+              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-tyt-average">
+                      {netAverages.tytAvg}
+                    </div>
+                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">TYT Net Ortalama</div>
+                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min((parseFloat(netAverages.tytAvg) / 120) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400">TYT</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* AYT Net Ortalama - ORTA */}
+              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-3xl font-black text-green-600 dark:text-green-400 mb-1" data-testid="text-ayt-average">
+                      {netAverages.aytAvg}
+                    </div>
+                    <div className="text-sm font-medium text-green-700 dark:text-green-300">AYT Net Ortalama</div>
+                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min((parseFloat(netAverages.aytAvg) / 80) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="ml-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                    <span className="text-xs font-bold text-green-600 dark:text-green-400">AYT</span>
                   </div>
                 </div>
               </div>
@@ -1002,6 +1004,62 @@ export function DashboardSummaryCards() {
                   </div>
                   <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
                     <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Ders Bazlı Ortalama Netler */}
+              <div className="space-y-4">
+                {/* TYT Ders Ortalamaları */}
+                <div>
+                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">TYT Ders Bazlı Ortalama Netler</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Türkçe', 'Matematik', 'Fen Bilimleri', 'Sosyal Bilimler'].map((subject) => {
+                      const avg = generalSubjectAverages.tyt[subject] || 0;
+                      const count = generalSubjectAverages.tytCounts[subject] || 0;
+                      const subjectColors: {[key: string]: string} = {
+                        'Türkçe': 'from-red-500 to-red-600',
+                        'Matematik': 'from-blue-500 to-blue-600',
+                        'Fen Bilimleri': 'from-cyan-500 to-cyan-600',
+                        'Sosyal Bilimler': 'from-orange-500 to-orange-600'
+                      };
+                      return (
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
+                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
+                            {avg.toFixed(1)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
+                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                {/* AYT Ders Ortalamaları */}
+                <div>
+                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">AYT Ders Bazlı Ortalama Netler</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
+                      const avg = generalSubjectAverages.ayt[subject] || 0;
+                      const count = generalSubjectAverages.aytCounts[subject] || 0;
+                      const subjectColors: {[key: string]: string} = {
+                        'Matematik': 'from-blue-500 to-blue-600',
+                        'Geometri': 'from-purple-500 to-purple-600',
+                        'Fizik': 'from-violet-500 to-violet-600',
+                        'Kimya': 'from-pink-500 to-pink-600',
+                        'Biyoloji': 'from-cyan-500 to-cyan-600'
+                      };
+                      return (
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
+                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
+                            {avg.toFixed(1)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
+                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
