@@ -2112,7 +2112,10 @@ export default function Dashboard() {
                 <Input
                   type="number"
                   value={newQuestion.time_spent_minutes}
-                  onChange={(e) => setNewQuestion({...newQuestion, time_spent_minutes: e.target.value})}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/^0+(?=\d)/, '');
+                    setNewQuestion({...newQuestion, time_spent_minutes: value});
+                  }}
                   placeholder="45"
                   min="0"
                 />
@@ -2513,7 +2516,10 @@ export default function Dashboard() {
                   <Input
                     type="number"
                     value={newExamResult.time_spent_minutes}
-                    onChange={(e) => setNewExamResult({...newExamResult, time_spent_minutes: e.target.value})}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/^0+(?=\d)/, '');
+                      setNewExamResult({...newExamResult, time_spent_minutes: value});
+                    }}
                     placeholder="120"
                     min="0"
                     className="bg-white dark:bg-gray-800"

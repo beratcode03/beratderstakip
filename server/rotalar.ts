@@ -1197,12 +1197,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               } else {
                 // Tam denemede validatedData.exam_type'a göre belirle
                 if (validatedData.exam_type === "TYT") {
-                  // TYT denemesi - yalnızca TYT dersleri
+                  // TYT denemesi - TYT dersleri (Fizik, Kimya, Biyoloji dahil)
                   const isTYTSubject = [
                     "turkce",
                     "matematik",
                     "sosyal",
                     "fen",
+                    "fizik",
+                    "kimya",
+                    "biyoloji",
                     "geometri"
                   ].includes(subjectName);
                   examType = isTYTSubject ? "TYT" : "AYT";

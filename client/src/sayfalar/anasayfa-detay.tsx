@@ -527,16 +527,23 @@ export default function Homepage() {
       return completedDate === dateStr;
     });
     
+    const scheduledTasks = allTasks.filter(task => {
+      if (!task.dueDate || task.completedAt) return false;
+      const taskDate = task.dueDate.split('T')[0];
+      return taskDate === dateStr;
+    });
+    
     const dayQuestionLogs = allQuestionLogs.filter(log => log.study_date === dateStr);
     const dayExamResults = allExamResults.filter(exam => exam.exam_date === dateStr);
     const dayStudyHours = allStudyHours.filter(sh => sh.study_date === dateStr);
     
     return {
       tasks: completedTasks,
+      scheduledTasks: scheduledTasks,
       questionLogs: dayQuestionLogs,
       examResults: dayExamResults,
       studyHours: dayStudyHours,
-      total: completedTasks.length + dayQuestionLogs.length + dayExamResults.length,
+      total: completedTasks.length + scheduledTasks.length + dayQuestionLogs.length + dayExamResults.length,
       performanceTotal: completedTasks.length + dayQuestionLogs.length + dayExamResults.length
     };
   }, [allTasks, allQuestionLogs, allExamResults, allStudyHours]);
@@ -996,6 +1003,22 @@ export default function Homepage() {
                                   </div>
                                 ))}
                                 
+                                {/* Planlanmış görevleri göster */}
+                                {(activityFilter === 'all' || activityFilter === 'tasks') && activities.scheduledTasks && activities.scheduledTasks.map((task: Task) => (
+                                  <div key={`scheduled-${task.id}`} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
+                                    <div className="flex items-center text-sm">
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                      <span className="font-medium">Görev:</span>
+                                      <span className="ml-2 text-muted-foreground">{task.title}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
+                                        📅 Planlandı
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                                
                                 {/* Soru günlüklerini göster */}
                                 {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => (
                                   <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
@@ -1003,7 +1026,7 @@ export default function Homepage() {
                                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                       <span className="font-medium">Soru:</span>
                                       <span className="ml-2 text-muted-foreground">
-                                        {log.exam_type || ''} {log.subject || 'Soru Çözümü'}
+                                        {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
                                       </span>
                                     </div>
                                     <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
@@ -1026,13 +1049,7 @@ export default function Homepage() {
                                       ) : exam.exam_type === 'AYT' ? (
                                         `AYT: ${exam.ayt_net}`
                                       ) : (
-                                        parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) > 0 ? (
-                                          <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
-                                        ) : parseFloat(exam.tyt_net) > 0 ? (
-                                          `TYT: ${exam.tyt_net}`
-                                        ) : (
-                                          `AYT: ${exam.ayt_net}`
-                                        )
+                                        `Net: ${parseFloat(exam.tyt_net) > 0 ? exam.tyt_net : exam.ayt_net}`
                                       )}
                                     </div>
                                   </div>
@@ -1204,6 +1221,22 @@ export default function Homepage() {
                                   </div>
                                 ))}
                                 
+                                {/* Planlanmış görevleri göster */}
+                                {(activityFilter === 'all' || activityFilter === 'tasks') && activities.scheduledTasks && activities.scheduledTasks.map((task: Task) => (
+                                  <div key={`scheduled-${task.id}`} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
+                                    <div className="flex items-center text-sm">
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                      <span className="font-medium">Görev:</span>
+                                      <span className="ml-2 text-muted-foreground">{task.title}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
+                                        📅 Planlandı
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                                
                                 {/* Soru günlüklerini göster */}
                                 {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => (
                                   <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
@@ -1211,7 +1244,7 @@ export default function Homepage() {
                                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                       <span className="font-medium">Soru:</span>
                                       <span className="ml-2 text-muted-foreground">
-                                        {log.exam_type || ''} {log.subject || 'Soru Çözümü'}
+                                        {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
                                       </span>
                                     </div>
                                     <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
@@ -1234,13 +1267,7 @@ export default function Homepage() {
                                       ) : exam.exam_type === 'AYT' ? (
                                         `AYT: ${exam.ayt_net}`
                                       ) : (
-                                        parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) > 0 ? (
-                                          <>TYT: {exam.tyt_net} | AYT: {exam.ayt_net}</>
-                                        ) : parseFloat(exam.tyt_net) > 0 ? (
-                                          `TYT: ${exam.tyt_net}`
-                                        ) : (
-                                          `AYT: ${exam.ayt_net}`
-                                        )
+                                        `Net: ${parseFloat(exam.tyt_net) > 0 ? exam.tyt_net : exam.ayt_net}`
                                       )}
                                     </div>
                                   </div>
