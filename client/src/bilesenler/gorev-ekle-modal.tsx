@@ -242,7 +242,7 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
             </div>
             {formData.recurrenceType !== "none" && (
               <div>
-                <Label htmlFor="task-recurrence-end">Bitiş Tarihi</Label>
+                <Label htmlFor="task-recurrence-end">Tekrarın Bitiş Tarihi</Label>
                 <Input
                   id="task-recurrence-end"
                   type="date"

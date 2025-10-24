@@ -227,13 +227,13 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       case "ayt-geometri":
         return "AYT Geometri";
       case "ayt-matematik":
-        return "AYT Matematik";
+        return "Matematik";
       case "ayt-fizik":
-        return "AYT Fizik";
+        return "Fizik";
       case "ayt-kimya":
-        return "AYT Kimya";
+        return "Kimya";
       case "ayt-biyoloji":
-        return "AYT Biyoloji";
+        return "Biyoloji";
       default:
         return "";
     }
@@ -416,7 +416,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="px-3 py-2 border border-border rounded-md bg-background text-foreground w-full sm:w-auto"
-              placeholder="Bitiş Tarihi"
+              placeholder="Görevin Bitirilme Tarihi"
               data-testid="input-end-date"
             />
             <Button

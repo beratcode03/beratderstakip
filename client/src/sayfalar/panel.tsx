@@ -44,6 +44,14 @@ const toTitleCase = (str: string): string => {
     .join(' ');
 };
 
+// Sayı inputlarından önde gelen sıfırları temizleyen yardımcı fonksiyon
+const cleanNumberInput = (value: string): string => {
+  // Boş string veya sadece "0" ise olduğu gibi bırak
+  if (value === '' || value === '0') return value;
+  // Önde gelen sıfırları temizle (örn: "015" -> "15")
+  return value.replace(/^0+/, '') || '0';
+};
+
 interface DailySummary {
   date: string;
   tasksCompleted: number;
@@ -1978,7 +1986,20 @@ export default function Dashboard() {
                             {exam.deleted && <span className="ml-2 text-xs text-red-500">(silinen)</span>}
                           </span>
                           <div className="text-xs text-muted-foreground">
-                            TYT: {exam.tyt_net} {exam.ayt_net !== "0" && `• AYT: ${exam.ayt_net}`}
+                            {exam.exam_type === 'TYT' ? (
+                              `TYT: ${exam.tyt_net}`
+                            ) : exam.exam_type === 'AYT' ? (
+                              `AYT: ${exam.ayt_net}`
+                            ) : (
+                              // Exam_type yoksa netlere göre karar ver
+                              parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) > 0 ? (
+                                `TYT: ${exam.tyt_net} • AYT: ${exam.ayt_net}`
+                              ) : parseFloat(exam.tyt_net) > 0 ? (
+                                `TYT: ${exam.tyt_net}`
+                              ) : (
+                                `AYT: ${exam.ayt_net}`
+                              )
+                            )}
                           </div>
                         </div>
                       </div>
@@ -2960,7 +2981,8 @@ export default function Dashboard() {
                         max="40"
                         value={newExamResult.subjects.turkce.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.turkce.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.turkce.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Türkçe'] - wrong - blank;
@@ -2983,7 +3005,8 @@ export default function Dashboard() {
                         max="40"
                         value={newExamResult.subjects.turkce.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.turkce.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.turkce.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Türkçe'] - correct - blank;
@@ -3006,7 +3029,8 @@ export default function Dashboard() {
                         max="40"
                         value={newExamResult.subjects.turkce.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.turkce.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.turkce.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Türkçe'] - correct - wrong;
@@ -3083,7 +3107,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.sosyal.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.sosyal.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.sosyal.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Sosyal Bilimler'] - wrong - blank;
@@ -3106,7 +3131,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.sosyal.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.sosyal.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.sosyal.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Sosyal Bilimler'] - correct - blank;
@@ -3129,7 +3155,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.sosyal.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.sosyal.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.sosyal.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Sosyal Bilimler'] - correct - wrong;
@@ -3206,7 +3233,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.matematik.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.matematik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Matematik'] - wrong - blank;
@@ -3229,7 +3257,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.matematik.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.matematik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Matematik'] - correct - blank;
@@ -3252,7 +3281,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.matematik.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.matematik.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Matematik'] - correct - wrong;
@@ -3329,7 +3359,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+                          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.geometri.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.geometri.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Geometri'] - wrong - blank;
@@ -3352,7 +3383,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+                          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.geometri.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.geometri.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Geometri'] - correct - blank;
@@ -3375,7 +3407,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+                          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.geometri.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.geometri.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Geometri'] - correct - wrong;
@@ -3452,7 +3485,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.fen.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.fen.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.fen.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Fen Bilimleri'] - wrong - blank;
@@ -3475,7 +3509,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.fen.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.fen.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.fen.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Fen Bilimleri'] - correct - blank;
@@ -3498,7 +3533,8 @@ export default function Dashboard() {
                         max="20"
                         value={newExamResult.subjects.fen.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.fen.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.fen.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.TYT['Fen Bilimleri'] - correct - wrong;
@@ -3589,7 +3625,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.matematik.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.matematik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Matematik'] - wrong - blank;
@@ -3612,7 +3649,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.matematik.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.matematik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Matematik'] - correct - blank;
@@ -3635,7 +3673,8 @@ export default function Dashboard() {
                         max="30"
                         value={newExamResult.subjects.matematik.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.matematik.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.matematik.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Matematik'] - correct - wrong;
@@ -3695,7 +3734,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.geometri.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.geometri.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Geometri'] - wrong - blank;
@@ -3718,7 +3758,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.geometri.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.geometri.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Geometri'] - correct - blank;
@@ -3741,7 +3782,8 @@ export default function Dashboard() {
                         max="10"
                         value={newExamResult.subjects.geometri.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.geometri.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.geometri.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Geometri'] - correct - wrong;
@@ -3801,7 +3843,8 @@ export default function Dashboard() {
                         max="14"
                         value={newExamResult.subjects.fizik.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.fizik.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.fizik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Fizik'] - wrong - blank;
@@ -3824,7 +3867,8 @@ export default function Dashboard() {
                         max="14"
                         value={newExamResult.subjects.fizik.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.fizik.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.fizik.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Fizik'] - correct - blank;
@@ -3847,7 +3891,8 @@ export default function Dashboard() {
                         max="14"
                         value={newExamResult.subjects.fizik.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.fizik.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.fizik.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Fizik'] - correct - wrong;
@@ -3907,7 +3952,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.kimya.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.kimya.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.kimya.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Kimya'] - wrong - blank;
@@ -3930,7 +3976,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.kimya.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.kimya.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.kimya.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Kimya'] - correct - blank;
@@ -3953,7 +4000,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.kimya.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.kimya.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.kimya.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Kimya'] - correct - wrong;
@@ -4013,7 +4061,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.biyoloji.correct}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const wrong = parseInt(newExamResult.subjects.biyoloji.wrong) || 0;
                           const blank = parseInt(newExamResult.subjects.biyoloji.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Biyoloji'] - wrong - blank;
@@ -4036,7 +4085,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.biyoloji.wrong}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.biyoloji.correct) || 0;
                           const blank = parseInt(newExamResult.subjects.biyoloji.blank) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Biyoloji'] - correct - blank;
@@ -4059,7 +4109,8 @@ export default function Dashboard() {
                         max="13"
                         value={newExamResult.subjects.biyoloji.blank}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 0;
+                          const cleanedValue = cleanNumberInput(e.target.value);
+          const value = parseInt(cleanedValue) || 0;
                           const correct = parseInt(newExamResult.subjects.biyoloji.correct) || 0;
                           const wrong = parseInt(newExamResult.subjects.biyoloji.wrong) || 0;
                           const maxAllowed = SUBJECT_LIMITS.AYT['Biyoloji'] - correct - wrong;
@@ -4187,26 +4238,33 @@ export default function Dashboard() {
                     } else {
                       generatedExamName = `Genel ${newExamResult.exam_type} Deneme`;
                       
-                      const tytSubjects = ['turkce', 'sosyal', 'matematik', 'fen'];
-                      const aytSubjects = ['matematik', 'fizik', 'kimya', 'biyoloji'];
+                      // TYT dersleri: Türkçe, Sosyal, Matematik, Geometri, Fen, Fizik, Kimya, Biyoloji
+                      const tytSubjects = ['turkce', 'sosyal', 'matematik', 'geometri', 'fen', 'fizik', 'kimya', 'biyoloji'];
+                      // AYT dersleri: Matematik, Geometri, Fizik, Kimya, Biyoloji
+                      const aytSubjects = ['matematik', 'geometri', 'fizik', 'kimya', 'biyoloji'];
                       
-                      tytSubjects.forEach(subjectKey => {
-                        const subject = newExamResult.subjects[subjectKey];
-                        if (subject) {
-                          const correct = parseInt(subject.correct) || 0;
-                          const wrong = parseInt(subject.wrong) || 0;
-                          tytNet += correct - (wrong * 0.25);
-                        }
-                      });
-                      
-                      aytSubjects.forEach(subjectKey => {
-                        const subject = newExamResult.subjects[subjectKey];
-                        if (subject) {
-                          const correct = parseInt(subject.correct) || 0;
-                          const wrong = parseInt(subject.wrong) || 0;
-                          aytNet += correct - (wrong * 0.25);
-                        }
-                      });
+                      // SADECE seçilen sınav tipi için hesaplama yap
+                      if (newExamResult.exam_type === 'TYT') {
+                        tytSubjects.forEach(subjectKey => {
+                          const subject = newExamResult.subjects[subjectKey];
+                          if (subject) {
+                            const correct = parseInt(subject.correct) || 0;
+                            const wrong = parseInt(subject.wrong) || 0;
+                            tytNet += correct - (wrong * 0.25);
+                          }
+                        });
+                        aytNet = 0; // AYT netini 0 yap
+                      } else if (newExamResult.exam_type === 'AYT') {
+                        aytSubjects.forEach(subjectKey => {
+                          const subject = newExamResult.subjects[subjectKey];
+                          if (subject) {
+                            const correct = parseInt(subject.correct) || 0;
+                            const wrong = parseInt(subject.wrong) || 0;
+                            aytNet += correct - (wrong * 0.25);
+                          }
+                        });
+                        tytNet = 0; // TYT netini 0 yap
+                      }
                     }
                     
                     createExamResultMutation.mutate({
