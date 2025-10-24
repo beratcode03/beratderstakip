@@ -515,11 +515,76 @@ export function DashboardSummaryCards() {
     };
   };
 
+  // Genel Deneme Ders Bazlı Ortalamalarını hesapla - ARŞİVLENMİŞLER DAHİL
+  const calculateGeneralExamSubjectAverages = () => {
+    // Sadece genel denemeleri al ve son 5'ini kullan (calculateNetAverages ile aynı mantık)
+    const generalExams = allExamResults.filter(exam => exam.exam_scope === 'full');
+    const sortedExams = [...generalExams].sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime());
+    const last5Exams = sortedExams.slice(0, 5);
+    
+    const tytSubjects = ['Türkçe', 'Matematik', 'Fen Bilimleri', 'Sosyal Bilimler'];
+    const aytSubjects = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
+    
+    const tytAverages: { [key: string]: number } = {};
+    const aytAverages: { [key: string]: number } = {};
+    const tytCounts: { [key: string]: number } = {};
+    const aytCounts: { [key: string]: number } = {};
+    
+    // exam_subject_nets'ten veri topla (sadece son 5 deneme için)
+    last5Exams.forEach(exam => {
+      const examType = exam.exam_type;
+      if (!examType) return;
+      
+      const subjectNets = examSubjectNets.filter(net => net.exam_id === exam.id);
+      subjectNets.forEach(net => {
+        const subject = net.subject;
+        const correct = Number(net.correct) || 0;
+        const wrong = Number(net.wrong) || 0;
+        const netScore = correct - (wrong * 0.25);
+        
+        if (examType === 'TYT') {
+          if (!tytAverages[subject]) {
+            tytAverages[subject] = 0;
+            tytCounts[subject] = 0;
+          }
+          tytAverages[subject] += netScore;
+          tytCounts[subject]++;
+        } else if (examType === 'AYT') {
+          if (!aytAverages[subject]) {
+            aytAverages[subject] = 0;
+            aytCounts[subject] = 0;
+          }
+          aytAverages[subject] += netScore;
+          aytCounts[subject]++;
+        }
+      });
+    });
+    
+    const tytResults: { [key: string]: number } = {};
+    const aytResults: { [key: string]: number } = {};
+    
+    for (const subject of tytSubjects) {
+      tytResults[subject] = tytCounts[subject] > 0 ? tytAverages[subject] / tytCounts[subject] : 0;
+    }
+    
+    for (const subject of aytSubjects) {
+      aytResults[subject] = aytCounts[subject] > 0 ? aytAverages[subject] / aytCounts[subject] : 0;
+    }
+    
+    return { 
+      tyt: tytResults, 
+      ayt: aytResults, 
+      tytCounts, 
+      aytCounts
+    };
+  };
+
   const netAverages = calculateNetAverages();
   const questionStats = calculateQuestionStats();
   const studyHoursStats = calculateStudyHoursStats();
   const subjectPerformance = calculateSubjectPerformance();
   const branchAverages = calculateBranchExamAverages();
+  const generalSubjectAverages = calculateGeneralExamSubjectAverages();
 
   if (isLoading) {
     return (
@@ -615,6 +680,62 @@ export function DashboardSummaryCards() {
                   </div>
                   <div className="ml-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
                     <span className="text-xs font-bold text-green-600 dark:text-green-400">AYT</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Ders Bazlı Net Ortalamaları */}
+              <div className="space-y-4">
+                {/* TYT Ders Ortalamaları */}
+                <div>
+                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">TYT Ders Bazlı Ortalamalar</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Türkçe', 'Matematik', 'Fen Bilimleri', 'Sosyal Bilimler'].map((subject) => {
+                      const avg = generalSubjectAverages.tyt[subject] || 0;
+                      const count = generalSubjectAverages.tytCounts[subject] || 0;
+                      const subjectColors: {[key: string]: string} = {
+                        'Türkçe': 'from-red-500 to-red-600',
+                        'Matematik': 'from-blue-500 to-blue-600',
+                        'Fen Bilimleri': 'from-cyan-500 to-cyan-600',
+                        'Sosyal Bilimler': 'from-orange-500 to-orange-600'
+                      };
+                      return (
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
+                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
+                            {avg.toFixed(1)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
+                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                {/* AYT Ders Ortalamaları */}
+                <div>
+                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">AYT Ders Bazlı Ortalamalar</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
+                      const avg = generalSubjectAverages.ayt[subject] || 0;
+                      const count = generalSubjectAverages.aytCounts[subject] || 0;
+                      const subjectColors: {[key: string]: string} = {
+                        'Matematik': 'from-blue-500 to-blue-600',
+                        'Geometri': 'from-purple-500 to-purple-600',
+                        'Fizik': 'from-violet-500 to-violet-600',
+                        'Kimya': 'from-pink-500 to-pink-600',
+                        'Biyoloji': 'from-cyan-500 to-cyan-600'
+                      };
+                      return (
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
+                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
+                            {avg.toFixed(1)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
+                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
