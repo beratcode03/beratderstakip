@@ -5,7 +5,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ReferenceLine } from "recharts";
-import { TrendingUp, Target, Brain, AlertTriangle, BarChart3, Book, Calculator, Atom, FlaskConical, Dna, User, Calendar, TrendingDown, Check, CheckCircle } from "lucide-react";
+import { TrendingUp, Target, Brain, AlertTriangle, BarChart3, Book, Calculator, Atom, FlaskConical, Dna, User, Calendar, TrendingDown, Check, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { ExamResult, QuestionLog } from "@shared/sema";
 import { useMemo, useState, memo, useCallback, useEffect } from "react";
 import { Button } from "@/bilesenler/arayuz/button";
@@ -673,26 +673,30 @@ function AdvancedChartsComponent() {
             </div>
             
             {/* Tarih Seçici */}
-            <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-100/50 to-orange-100/50 dark:from-red-900/30 dark:to-orange-900/30 rounded-xl border border-red-200/50 dark:border-red-700/50">
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id="use-date-filter-topics" 
-                  checked={useDateFilter}
-                  onCheckedChange={(checked) => {
-                    setUseDateFilter(checked as boolean);
-                    if (!checked) setSelectedDate(null);
-                  }}
-                />
-                <label htmlFor="use-date-filter-topics" className="text-sm font-medium text-red-700 dark:text-red-300 cursor-pointer whitespace-nowrap">
-                  📅 Tarih Filtrele
-                </label>
-              </div>
+            <div className="flex flex-col sm:flex-row items-start gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setUseDateFilter(!useDateFilter);
+                  if (useDateFilter) setSelectedDate(null);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-100/50 to-orange-100/50 dark:from-red-900/30 dark:to-orange-900/30 rounded-xl border border-red-200/50 dark:border-red-700/50 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 transition-all duration-200"
+                data-testid="button-toggle-date-filter-topics"
+              >
+                <span className="whitespace-nowrap">📅 Filtrele</span>
+                {useDateFilter ? (
+                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                )}
+              </Button>
               {useDateFilter && (
                 <input
                   type="date"
                   value={selectedDate || ''}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-red-700 dark:text-red-300"
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-red-700 dark:text-red-300 animate-in slide-in-from-top-2 duration-200"
                   data-testid="input-date-filter-topics"
                 />
               )}
@@ -899,26 +903,30 @@ function AdvancedChartsComponent() {
             </div>
             
             {/* Tarih Seçici */}
-            <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-100/50 to-red-100/50 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border border-orange-200/50 dark:border-orange-700/50">
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id="use-date-filter-errors" 
-                  checked={useDateFilter}
-                  onCheckedChange={(checked) => {
-                    setUseDateFilter(checked as boolean);
-                    if (!checked) setSelectedDate(null);
-                  }}
-                />
-                <label htmlFor="use-date-filter-errors" className="text-sm font-medium text-orange-700 dark:text-orange-300 cursor-pointer whitespace-nowrap">
-                  📅 Tarih Filtrele
-                </label>
-              </div>
+            <div className="flex flex-col sm:flex-row items-start gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setUseDateFilter(!useDateFilter);
+                  if (useDateFilter) setSelectedDate(null);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-100/50 to-red-100/50 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border border-orange-200/50 dark:border-orange-700/50 text-sm font-medium text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200"
+                data-testid="button-toggle-date-filter-errors"
+              >
+                <span className="whitespace-nowrap">📅 Filtrele</span>
+                {useDateFilter ? (
+                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                )}
+              </Button>
               {useDateFilter && (
                 <input
                   type="date"
                   value={selectedDate || ''}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-700 dark:text-orange-300"
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-700 dark:text-orange-300 animate-in slide-in-from-top-2 duration-200"
                   data-testid="input-date-filter-errors"
                 />
               )}
@@ -1323,26 +1331,30 @@ function AdvancedChartsComponent() {
               {/* Arşivlenmiş verileri dahil et checkbox'ı - Kaldırıldı çünkü otomatik dahil */}
               
               {/* Tarih Seçici */}
-              <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50">
-                <div className="flex items-center gap-2">
-                  <Checkbox 
-                    id="use-date-filter" 
-                    checked={useDateFilter}
-                    onCheckedChange={(checked) => {
-                      setUseDateFilter(checked as boolean);
-                      if (!checked) setSelectedDate(null);
-                    }}
-                  />
-                  <label htmlFor="use-date-filter" className="text-sm font-medium text-cyan-700 dark:text-cyan-300 cursor-pointer whitespace-nowrap">
-                    📅 Tarih Filtrele
-                  </label>
-                </div>
+              <div className="flex flex-col sm:flex-row items-start gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setUseDateFilter(!useDateFilter);
+                    if (useDateFilter) setSelectedDate(null);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50 text-sm font-medium text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all duration-200"
+                  data-testid="button-toggle-date-filter"
+                >
+                  <span className="whitespace-nowrap">📅 Filtrele</span>
+                  {useDateFilter ? (
+                    <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                  )}
+                </Button>
                 {useDateFilter && (
                   <input
                     type="date"
                     value={selectedDate || ''}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-cyan-300 dark:border-cyan-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-cyan-700 dark:text-cyan-300"
+                    className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-cyan-300 dark:border-cyan-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-cyan-700 dark:text-cyan-300 animate-in slide-in-from-top-2 duration-200"
                     data-testid="input-date-filter"
                   />
                 )}
@@ -1654,24 +1666,23 @@ function AdvancedChartsComponent() {
                   {tytSubjectAnalysisData.length > 0 && (
                     <div>
                       <h4 className="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-300">🔵 TYT Ders Özeti</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                         {tytSubjectAnalysisData.map((subject, index) => (
-                          <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{subject.subject}</h4>
-                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: subject.color }}></div>
+                          <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="text-center mb-2">
+                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200">{subject.subject}</h4>
                             </div>
-                            <div className="space-y-2 mb-4">
+                            <div className="space-y-1.5">
                               <div className="flex justify-between items-center">
                                 <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
-                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
+                                <span className="text-xs font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
                               </div>
                               <div className="flex justify-between items-center">
                                 <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
-                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
+                                <span className="text-xs font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
                               </div>
-                              <div className="flex justify-between items-center border-t pt-2">
-                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                              <div className="flex justify-between items-center border-t pt-1.5 mt-1.5">
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Net</span>
                                 <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
                               </div>
                             </div>
@@ -1685,24 +1696,23 @@ function AdvancedChartsComponent() {
                   {aytSubjectAnalysisData.length > 0 && (
                     <div>
                       <h4 className="text-lg font-semibold mb-3 text-green-700 dark:text-green-300">🟢 AYT Ders Özeti</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                         {aytSubjectAnalysisData.map((subject, index) => (
-                          <div key={index} className="bg-green-50/60 dark:bg-green-900/20 rounded-xl p-4 border border-green-200/40 dark:border-green-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{subject.subject}</h4>
-                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: subject.color }}></div>
+                          <div key={index} className="bg-green-50/60 dark:bg-green-900/20 rounded-xl p-3 border border-green-200/40 dark:border-green-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="text-center mb-2">
+                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200">{subject.subject}</h4>
                             </div>
-                            <div className="space-y-2 mb-4">
+                            <div className="space-y-1.5">
                               <div className="flex justify-between items-center">
                                 <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
-                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
+                                <span className="text-xs font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
                               </div>
                               <div className="flex justify-between items-center">
                                 <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
-                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
+                                <span className="text-xs font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
                               </div>
-                              <div className="flex justify-between items-center border-t pt-2">
-                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                              <div className="flex justify-between items-center border-t pt-1.5 mt-1.5">
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Net</span>
                                 <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
                               </div>
                             </div>

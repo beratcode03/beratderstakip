@@ -394,35 +394,35 @@ export function QuestionAnalysisCharts() {
                 </ResponsiveContainer>
               </div>
               
-              {/* Geliştirilmiş Özet İstatistikler - 2x2 Izgara Düzeni */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t-2 border-emerald-200/30 dark:border-emerald-700/30">
-                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1">
+              {/* Geliştirilmiş Özet İstatistikler - Responsive Grid Düzeni */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 border-t-2 border-emerald-200/30 dark:border-emerald-700/30">
+                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-3 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
+                  <div className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1">
                     {dailyWeeklyData.reduce((sum, d) => sum + d.correctQuestions, 0)}
                   </div>
-                  <div className="text-sm text-muted-foreground font-medium">✅ Toplam Doğru</div>
-                  <div className="w-8 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-2"></div>
+                  <div className="text-xs text-muted-foreground font-medium">✅ Toplam Doğru</div>
+                  <div className="w-6 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-1.5"></div>
                 </div>
-                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm border border-red-200/30 dark:border-red-700/30 shadow-lg">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent mb-1">
+                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-3 backdrop-blur-sm border border-red-200/30 dark:border-red-700/30 shadow-lg">
+                  <div className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent mb-1">
                     {dailyWeeklyData.reduce((sum, d) => sum + d.wrongQuestions, 0)}
                   </div>
-                  <div className="text-sm text-muted-foreground font-medium">❌ Toplam Yanlış</div>
-                  <div className="w-8 h-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full mx-auto mt-2"></div>
+                  <div className="text-xs text-muted-foreground font-medium">❌ Toplam Yanlış</div>
+                  <div className="w-6 h-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full mx-auto mt-1.5"></div>
                 </div>
-                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-1">
+                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-3 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
+                  <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-1">
                     {dailyWeeklyData.reduce((sum, d) => sum + d.totalQuestions, 0)}
                   </div>
-                  <div className="text-sm text-muted-foreground font-medium">📊 Toplam Soru</div>
-                  <div className="w-8 h-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mx-auto mt-2"></div>
+                  <div className="text-xs text-muted-foreground font-medium">📊 Toplam Soru</div>
+                  <div className="w-6 h-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mx-auto mt-1.5"></div>
                 </div>
-                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">
+                <div className="text-center bg-white/40 dark:bg-gray-900/40 rounded-xl p-3 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30 shadow-lg">
+                  <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">
                     {Math.round(dailyWeeklyData.reduce((sum, d) => sum + d.successRate, 0) / dailyWeeklyData.filter(d => d.totalQuestions > 0).length) || 0}%
                   </div>
-                  <div className="text-sm text-muted-foreground font-medium">📈 Ortalama Başarı</div>
-                  <div className="w-8 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mx-auto mt-2"></div>
+                  <div className="text-xs text-muted-foreground font-medium">📈 Ortalama Başarı</div>
+                  <div className="w-6 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mx-auto mt-1.5"></div>
                 </div>
               </div>
             </>
