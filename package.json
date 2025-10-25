@@ -223,8 +223,7 @@
       "warningsAsErrors": false,
       "language": 1055,
       "multiLanguageInstaller": false,
-      "differentialPackage": false,
-      "include": "build/installer.nsh"
+      "differentialPackage": false
     }
   }
 }

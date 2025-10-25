@@ -5,7 +5,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ReferenceLine } from "recharts";
-import { TrendingUp, Target, Brain, AlertTriangle, BarChart3, Book, Calculator, Atom, FlaskConical, Dna, User, Calendar, TrendingDown, Check, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { TrendingUp, Target, Brain, AlertTriangle, BarChart3, Book, Calculator, Atom, FlaskConical, Dna, User, Calendar, TrendingDown, Check, CheckCircle, ChevronRight, ChevronLeft } from "lucide-react";
 import { ExamResult, QuestionLog } from "@shared/sema";
 import { useMemo, useState, memo, useCallback, useEffect } from "react";
 import { Button } from "@/bilesenler/arayuz/button";
@@ -574,6 +574,7 @@ function AdvancedChartsComponent() {
               'turkce': 'Türkçe',
               'matematik': 'Matematik', 
               'sosyal': 'Sosyal',
+              'geometri': 'Geometri',
               'fen': 'Fen',
               'fizik': 'Fizik',
               'kimya': 'Kimya',
@@ -611,6 +612,7 @@ function AdvancedChartsComponent() {
       'Türkçe': '#ef4444',
       'Matematik': '#3b82f6', 
       'Sosyal': '#f59e0b',
+      'Geometri': '#a855f7',
       'Fen': '#10b981',
       'Fizik': '#8b5cf6',
       'Kimya': '#ec4899',
@@ -673,7 +675,7 @@ function AdvancedChartsComponent() {
             </div>
             
             {/* Tarih Seçici */}
-            <div className="flex flex-col sm:flex-row items-start gap-2">
+            <div className="flex flex-col items-start gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -686,9 +688,9 @@ function AdvancedChartsComponent() {
               >
                 <span className="whitespace-nowrap">📅 Filtrele</span>
                 {useDateFilter ? (
-                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                  <ChevronLeft className="h-4 w-4 transition-transform duration-200" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                  <ChevronRight className="h-4 w-4 transition-transform duration-200" />
                 )}
               </Button>
               {useDateFilter && (
@@ -696,7 +698,7 @@ function AdvancedChartsComponent() {
                   type="date"
                   value={selectedDate || ''}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-red-700 dark:text-red-300 animate-in slide-in-from-top-2 duration-200"
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-red-700 dark:text-red-300 animate-in slide-in-from-left-2 duration-200"
                   data-testid="input-date-filter-topics"
                 />
               )}
@@ -903,7 +905,7 @@ function AdvancedChartsComponent() {
             </div>
             
             {/* Tarih Seçici */}
-            <div className="flex flex-col sm:flex-row items-start gap-2">
+            <div className="flex flex-col items-start gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -916,9 +918,9 @@ function AdvancedChartsComponent() {
               >
                 <span className="whitespace-nowrap">📅 Filtrele</span>
                 {useDateFilter ? (
-                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                  <ChevronLeft className="h-4 w-4 transition-transform duration-200" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                  <ChevronRight className="h-4 w-4 transition-transform duration-200" />
                 )}
               </Button>
               {useDateFilter && (
@@ -926,7 +928,7 @@ function AdvancedChartsComponent() {
                   type="date"
                   value={selectedDate || ''}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-700 dark:text-orange-300 animate-in slide-in-from-top-2 duration-200"
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-700 dark:text-orange-300 animate-in slide-in-from-left-2 duration-200"
                   data-testid="input-date-filter-errors"
                 />
               )}
@@ -1331,7 +1333,7 @@ function AdvancedChartsComponent() {
               {/* Arşivlenmiş verileri dahil et checkbox'ı - Kaldırıldı çünkü otomatik dahil */}
               
               {/* Tarih Seçici */}
-              <div className="flex flex-col sm:flex-row items-start gap-2">
+              <div className="flex flex-col items-start gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -1344,9 +1346,9 @@ function AdvancedChartsComponent() {
                 >
                   <span className="whitespace-nowrap">📅 Filtrele</span>
                   {useDateFilter ? (
-                    <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                    <ChevronLeft className="h-4 w-4 transition-transform duration-200" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    <ChevronRight className="h-4 w-4 transition-transform duration-200" />
                   )}
                 </Button>
                 {useDateFilter && (
@@ -1354,7 +1356,7 @@ function AdvancedChartsComponent() {
                     type="date"
                     value={selectedDate || ''}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-cyan-300 dark:border-cyan-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-cyan-700 dark:text-cyan-300 animate-in slide-in-from-top-2 duration-200"
+                    className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-cyan-300 dark:border-cyan-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-cyan-700 dark:text-cyan-300 animate-in slide-in-from-left-2 duration-200"
                     data-testid="input-date-filter"
                   />
                 )}
