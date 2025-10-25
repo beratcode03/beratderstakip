@@ -275,6 +275,33 @@ export function DashboardSummaryCards() {
     }
     longestStreak = Math.max(longestStreak, currentStreak);
     
+    // En çok çalışılan ayı hesapla
+    const monthActivity: { [key: string]: number } = {};
+    allStudyHours.forEach((sh: any) => {
+      const date = new Date(sh.study_date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const hours = parseInt(sh.hours) || 0;
+      const minutes = parseInt(sh.minutes) || 0;
+      const seconds = parseInt(sh.seconds) || 0;
+      const totalSec = hours * 3600 + minutes * 60 + seconds;
+      monthActivity[monthKey] = (monthActivity[monthKey] || 0) + totalSec;
+    });
+    
+    let mostStudiedMonth: string | null = null;
+    let maxMonthSeconds = 0;
+    Object.entries(monthActivity).forEach(([month, seconds]) => {
+      if (seconds > maxMonthSeconds) {
+        maxMonthSeconds = seconds;
+        mostStudiedMonth = month;
+      }
+    });
+    
+    const mostStudiedMonthHours = Math.floor(maxMonthSeconds / 3600);
+    const mostStudiedMonthName = mostStudiedMonth ? new Date(mostStudiedMonth + '-01').toLocaleDateString('tr-TR', { 
+      month: 'long', 
+      year: 'numeric' 
+    }) : null;
+    
     return {
       totalHours,
       totalMinutes,
@@ -284,7 +311,9 @@ export function DashboardSummaryCards() {
       longestStudyDay,
       longestHours,
       longestMinutes,
-      longestStreak
+      longestStreak,
+      mostStudiedMonth: mostStudiedMonthName,
+      mostStudiedMonthHours
     };
   };
 
@@ -980,7 +1009,6 @@ export function DashboardSummaryCards() {
                             {avg.toFixed(1)}
                           </div>
                           <div className="text-xs text-muted-foreground truncate">{subject}</div>
-                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
                         </div>
                       );
                     })}
@@ -1007,7 +1035,6 @@ export function DashboardSummaryCards() {
                             {avg.toFixed(1)}
                           </div>
                           <div className="text-xs text-muted-foreground truncate">{subject}</div>
-                          {count > 0 && <div className="text-xs text-muted-foreground mt-0.5">{count} deneme</div>}
                         </div>
                       );
                     })}
@@ -1236,6 +1263,26 @@ export function DashboardSummaryCards() {
                   ></div>
                 </div>
               </div>
+
+              {/* En Çok Çalışılan Ay */}
+              {studyHoursStats.mostStudiedMonth && (
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 backdrop-blur-sm border border-amber-200/50 dark:border-amber-700/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="text-lg font-black text-amber-700 dark:text-amber-300 mb-1" data-testid="text-most-studied-month">
+                        {studyHoursStats.mostStudiedMonth}
+                      </div>
+                      <div className="text-sm font-medium text-amber-600 dark:text-amber-400">En Çok Çalışılan Ay</div>
+                      <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">
+                        {studyHoursStats.mostStudiedMonthHours} saat
+                      </div>
+                    </div>
+                    <div className="ml-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
+                      <Sparkles className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
