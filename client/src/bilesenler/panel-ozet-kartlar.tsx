@@ -986,63 +986,7 @@ export function DashboardSummaryCards() {
             </div>
             
             <div className="space-y-6">
-              {/* 1. Ders Bazlı Ortalamalar - EN ÜSTTE */}
-              <div className="space-y-4">
-                {/* TYT Ders Ortalamaları */}
-                <div>
-                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">TYT Ders Bazlı Ortalamalar</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Sosyal Bilimler'].map((subject) => {
-                      const avg = generalSubjectAverages.tyt[subject] || 0;
-                      const count = generalSubjectAverages.tytCounts[subject] || 0;
-                      const subjectColors: {[key: string]: string} = {
-                        'Türkçe': 'from-red-500 to-red-600',
-                        'Matematik': 'from-blue-500 to-blue-600',
-                        'Fizik': 'from-violet-500 to-violet-600',
-                        'Kimya': 'from-pink-500 to-pink-600',
-                        'Biyoloji': 'from-cyan-500 to-cyan-600',
-                        'Sosyal Bilimler': 'from-orange-500 to-orange-600'
-                      };
-                      return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
-                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
-                            {avg.toFixed(1)}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                {/* AYT Ders Ortalamaları */}
-                <div>
-                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">AYT Ders Bazlı Ortalamalar</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
-                      const avg = generalSubjectAverages.ayt[subject] || 0;
-                      const count = generalSubjectAverages.aytCounts[subject] || 0;
-                      const subjectColors: {[key: string]: string} = {
-                        'Matematik': 'from-blue-500 to-blue-600',
-                        'Geometri': 'from-purple-500 to-purple-600',
-                        'Fizik': 'from-violet-500 to-violet-600',
-                        'Kimya': 'from-pink-500 to-pink-600',
-                        'Biyoloji': 'from-cyan-500 to-cyan-600'
-                      };
-                      return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 border border-gray-200/30 dark:border-gray-700/30">
-                          <div className={`text-sm font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent mb-1`}>
-                            {avg.toFixed(1)}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Toplam Çözülen Soru */}
+              {/* Toplam Çözülen Soru */}
               <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-purple-200/30 dark:border-purple-700/30">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -1063,7 +1007,22 @@ export function DashboardSummaryCards() {
                 </div>
               </div>
               
-              {/* 3. Toplam Çözülen Soru Hataları */}
+              {/* Günlük Ortalama */}
+              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-daily-average">
+                      {questionStats.dailyAverage}
+                    </div>
+                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">Günlük Ortalama</div>
+                  </div>
+                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                    <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Toplam Çözülen Soru Hataları */}
               <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-red-200/30 dark:border-red-700/30">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -1078,7 +1037,7 @@ export function DashboardSummaryCards() {
                 </div>
               </div>
 
-              {/* 4. Bugün Düzeltilen Sorular */}
+              {/* Bugün Düzeltilen Sorular */}
               <div className="bg-gradient-to-br from-rose-50/80 to-pink-50/60 dark:from-rose-900/30 dark:to-pink-900/20 rounded-xl p-4 backdrop-blur-sm border-2 border-rose-200/50 dark:border-rose-700/40 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -1095,23 +1054,8 @@ export function DashboardSummaryCards() {
                   </div>
                 </div>
               </div>
-              
-              {/* 5. Günlük Ortalama */}
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-daily-average">
-                      {questionStats.dailyAverage}
-                    </div>
-                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">Günlük Ortalama</div>
-                  </div>
-                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                    <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                </div>
-              </div>
 
-              {/* 6-7. Toplam Doğru ve Yanlış */}
+              {/* Toplam Doğru ve Yanlış */}
               <div className="grid grid-cols-2 gap-3">
                 {/* Doğru Cevaplar Kutusu */}
                 <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-3 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
