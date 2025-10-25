@@ -3,18 +3,205 @@
 // CANKIR
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Edit2, Trash2, Undo2, Calendar, CheckCircle2, Archive, ArchiveRestore } from "lucide-react";
+import { Plus, Edit2, Trash2, Undo2, Calendar, CheckCircle2, Archive, ArchiveRestore, GripVertical } from "lucide-react";
 import { Task } from "@shared/sema";
 import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { Button } from "@/bilesenler/arayuz/button";
 import { useToast } from "@/hooks/use-toast";
 import { EditTaskModal } from "@/bilesenler/gorev-duzenle-modal";
 import { MidnightCountdown } from "@/bilesenler/geceyarisi-geri-sayim";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TasksSectionProps {
   onAddTask: () => void;
+}
+
+function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCategoryBadgeClass, getPriorityText, getCategoryText, formatDueDate, handleToggleTask, handleEditTask, handleArchiveTask, handleUnarchiveTask, handleDeleteTask }: any) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`bg-card rounded-lg border border-border p-4 transition-all duration-200 hover:shadow-md ${task.completed ? "opacity-75" : ""} ${isDragging ? "z-50" : ""}`}
+      data-testid={`task-item-${task.id}`}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex items-start space-x-3 flex-1">
+          {/* Drag Handle */}
+          <div 
+            {...attributes} 
+            {...listeners} 
+            className="mt-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded p-1 transition-colors"
+            style={getTaskBorderStyle(task)}
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <button
+            onClick={() => !task.archived && handleToggleTask(task.id)}
+            disabled={task.archived}
+            className={`mt-1 w-5 h-5 rounded-full border-2 transition-colors duration-200 flex items-center justify-center ${
+              task.completed
+                ? "bg-green-500 border-green-500"
+                : "hover:opacity-80"
+            } ${task.archived ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
+            style={{
+              borderColor: task.completed ? '#10B981' : (task.color || '#8B5CF6'),
+              backgroundColor: task.completed ? '#10B981' : 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              if (!task.completed && !task.archived) {
+                e.currentTarget.style.backgroundColor = task.color || '#8B5CF6';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!task.completed && !task.archived) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
+            }}
+            data-testid={`button-toggle-task-${task.id}`}
+          >
+            {task.completed && (
+              <CheckCircle2 className="h-3 w-3 text-white" />
+            )}
+          </button>
+          <div className="flex-1">
+            <h3
+              className={`font-medium text-foreground ${
+                task.completed ? "line-through" : ""
+              }`}
+            >
+              {task.title}
+            </h3>
+            {task.description && (
+              <p
+                className={`text-sm text-muted-foreground mt-1 ${
+                  task.completed ? "line-through" : ""
+                }`}
+              >
+                {task.description}
+              </p>
+            )}
+            <div className="flex items-center space-x-4 mt-2">
+              {task.dueDate && (
+                <span className="text-xs text-muted-foreground flex items-center">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {formatDueDate(task.dueDate)}
+                </span>
+              )}
+              {task.completed ? (
+                <span className="text-xs text-muted-foreground flex items-center">
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Tamamlandı
+                </span>
+              ) : (
+                <span
+                  className={`text-xs px-2 py-1 rounded-full ${getPriorityBadgeClass(
+                    task.priority
+                  )}`}
+                >
+                  {getPriorityText(task.priority)}
+                </span>
+              )}
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${getCategoryBadgeClass(
+                  task.category
+                )}`}
+              >
+                {getCategoryText(task.category)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {task.completed ? (
+            <button
+              onClick={() => handleToggleTask(task.id)}
+              className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              data-testid={`button-undo-task-${task.id}`}
+            >
+              <Undo2 className="h-4 w-4 text-muted-foreground" />
+            </button>
+          ) : !task.archived && (
+            <button
+              onClick={() => handleEditTask(task)}
+              className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              data-testid={`button-edit-task-${task.id}`}
+            >
+              <Edit2 className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
+          {!task.archived ? (
+            <>
+              <button
+                onClick={() => handleArchiveTask(task.id)}
+                className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                data-testid={`button-archive-task-${task.id}`}
+              >
+                <Archive className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </button>
+              <button
+                onClick={() => handleDeleteTask(task.id)}
+                className="p-2 hover:bg-destructive/10 rounded-lg transition-colors"
+                data-testid={`button-delete-task-${task.id}`}
+              >
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleEditTask(task)}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                data-testid={`button-edit-archived-task-${task.id}`}
+              >
+                <Edit2 className="h-4 w-4 text-muted-foreground" />
+              </button>
+              <button
+                onClick={() => handleUnarchiveTask(task.id)}
+                className="p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                data-testid={`button-unarchive-task-${task.id}`}
+              >
+                <ArchiveRestore className="h-4 w-4 text-green-600 dark:text-green-400" />
+              </button>
+              <span className="text-xs text-muted-foreground px-2">Arşivlendi</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function TasksSection({ onAddTask }: TasksSectionProps) {
@@ -25,6 +212,13 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const { data: tasks = [] } = useQuery<Task[]>({
     queryKey: ["/api/tasks"],
@@ -126,7 +320,14 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const displayTasks = showDateRangePicker && startDate && endDate ? dateRangeTasks : 
                        filter === "archived" ? archivedTasks : tasks;
 
-  const filteredTasks = displayTasks.filter(task => {
+  // Sort tasks by createdAt in descending order (newest first)
+  const sortedTasks = [...displayTasks].sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0).getTime();
+    const dateB = new Date(b.createdAt || 0).getTime();
+    return dateB - dateA;
+  });
+
+  const filteredTasks = sortedTasks.filter(task => {
     if (filter === "archived") return true;
     switch (filter) {
       case "pending":
@@ -144,8 +345,28 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     }
   });
 
+  const [localTasks, setLocalTasks] = useState(filteredTasks);
+
+  // Update local tasks when filtered tasks change
+  useEffect(() => {
+    setLocalTasks(filteredTasks);
+  }, [filteredTasks]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setLocalTasks((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const getTaskBorderStyle = (task: Task) => {
-    const color = task.color || "#8B5CF6"; // Renk yoksa varsayılan olarak mor
+    const color = task.color || "#8B5CF6";
     return {
       borderLeft: `4px solid ${color}`,
     };
@@ -300,7 +521,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-bold text-foreground">Görevlerim</h2>
-          <p className="text-muted-foreground">Bugün tamamlanacak görevler</p>
+          <p className="text-muted-foreground">Bugün tamamlanacak görevler (En yeni üstte)</p>
         </div>
         <div className="flex flex-col items-end gap-3">
           <Button 
@@ -444,157 +665,42 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       )}
 
       {/* Görev Listesi */}
-      <div className={`space-y-3 ${filteredTasks.length > 5 ? 'max-h-[600px] overflow-y-auto custom-scrollbar' : ''}`}>
-        {filteredTasks.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">Görev bulunamadı.</p>
-          </div>
-        ) : (
-          filteredTasks.map((task) => (
-            <div
-              key={task.id}
-              className={`bg-card rounded-lg border border-border p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${task.completed ? "opacity-75" : ""}`}
-              style={getTaskBorderStyle(task)}
-              data-testid={`task-item-${task.id}`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3 flex-1">
-                  <button
-                    onClick={() => !task.archived && handleToggleTask(task.id)}
-                    disabled={task.archived}
-                    className={`mt-1 w-5 h-5 rounded-full border-2 transition-colors duration-200 flex items-center justify-center ${
-                      task.completed
-                        ? "bg-green-500 border-green-500"
-                        : "hover:opacity-80"
-                    } ${task.archived ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
-                    style={{
-                      borderColor: task.completed ? '#10B981' : (task.color || '#8B5CF6'),
-                      backgroundColor: task.completed ? '#10B981' : 'transparent'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!task.completed && !task.archived) {
-                        e.currentTarget.style.backgroundColor = task.color || '#8B5CF6';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!task.completed && !task.archived) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }
-                    }}
-                    data-testid={`button-toggle-task-${task.id}`}
-                  >
-                    {task.completed && (
-                      <CheckCircle2 className="h-3 w-3 text-white" />
-                    )}
-                  </button>
-                  <div className="flex-1">
-                    <h3
-                      className={`font-medium text-foreground ${
-                        task.completed ? "line-through" : ""
-                      }`}
-                    >
-                      {task.title}
-                    </h3>
-                    {task.description && (
-                      <p
-                        className={`text-sm text-muted-foreground mt-1 ${
-                          task.completed ? "line-through" : ""
-                        }`}
-                      >
-                        {task.description}
-                      </p>
-                    )}
-                    <div className="flex items-center space-x-4 mt-2">
-                      {task.dueDate && (
-                        <span className="text-xs text-muted-foreground flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {formatDueDate(task.dueDate)}
-                        </span>
-                      )}
-                      {task.completed ? (
-                        <span className="text-xs text-muted-foreground flex items-center">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Tamamlandı
-                        </span>
-                      ) : (
-                        <span
-                          className={`text-xs px-2 py-1 rounded-full ${getPriorityBadgeClass(
-                            task.priority
-                          )}`}
-                        >
-                          {getPriorityText(task.priority)}
-                        </span>
-                      )}
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${getCategoryBadgeClass(
-                          task.category
-                        )}`}
-                      >
-                        {getCategoryText(task.category)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {task.completed ? (
-                    <button
-                      onClick={() => handleToggleTask(task.id)}
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                      data-testid={`button-undo-task-${task.id}`}
-                    >
-                      <Undo2 className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  ) : !task.archived && (
-                    <button
-                      onClick={() => handleEditTask(task)}
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                      data-testid={`button-edit-task-${task.id}`}
-                    >
-                      <Edit2 className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  )}
-                  {!task.archived ? (
-                    <>
-                      <button
-                        onClick={() => handleArchiveTask(task.id)}
-                        className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                        data-testid={`button-archive-task-${task.id}`}
-                      >
-                        <Archive className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTask(task.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors"
-                        data-testid={`button-delete-task-${task.id}`}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEditTask(task)}
-                        className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                        data-testid={`button-edit-archived-task-${task.id}`}
-                      >
-                        <Edit2 className="h-4 w-4 text-muted-foreground" />
-                      </button>
-                      <button
-                        onClick={() => handleUnarchiveTask(task.id)}
-                        className="p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                        data-testid={`button-unarchive-task-${task.id}`}
-                      >
-                        <ArchiveRestore className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      </button>
-                      <span className="text-xs text-muted-foreground px-2">Arşivlendi</span>
-                    </div>
-                  )}
-                </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={localTasks.map(t => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className={`space-y-3 ${localTasks.length > 5 ? 'max-h-[600px] overflow-y-auto custom-scrollbar' : ''}`}>
+            {localTasks.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Görev bulunamadı.</p>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ) : (
+              localTasks.map((task) => (
+                <SortableTask
+                  key={task.id}
+                  task={task}
+                  getTaskBorderStyle={getTaskBorderStyle}
+                  getPriorityBadgeClass={getPriorityBadgeClass}
+                  getCategoryBadgeClass={getCategoryBadgeClass}
+                  getPriorityText={getPriorityText}
+                  getCategoryText={getCategoryText}
+                  formatDueDate={formatDueDate}
+                  handleToggleTask={handleToggleTask}
+                  handleEditTask={handleEditTask}
+                  handleArchiveTask={handleArchiveTask}
+                  handleUnarchiveTask={handleUnarchiveTask}
+                  handleDeleteTask={handleDeleteTask}
+                />
+              ))
+            )}
+          </div>
+        </SortableContext>
+      </DndContext>
       
       {/* Görev Modalını Düzenle */}
       <EditTaskModal 
@@ -605,6 +711,5 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     </div>
   );
 }
-
 
 

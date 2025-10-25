@@ -395,6 +395,35 @@ export function DashboardSummaryCards() {
       year: 'numeric' 
     }) : null;
     
+    // En çok çalışılan günü hesapla
+    const dailyActivity: { [key: string]: number } = {};
+    allStudyHours.forEach((sh: any) => {
+      const dateKey = sh.study_date;
+      const hours = parseInt(sh.hours) || 0;
+      const minutes = parseInt(sh.minutes) || 0;
+      const seconds = parseInt(sh.seconds) || 0;
+      const totalSec = hours * 3600 + minutes * 60 + seconds;
+      dailyActivity[dateKey] = (dailyActivity[dateKey] || 0) + totalSec;
+    });
+    
+    let mostStudiedDay: string | null = null;
+    let maxDaySeconds = 0;
+    Object.entries(dailyActivity).forEach(([day, seconds]) => {
+      if (seconds > maxDaySeconds) {
+        maxDaySeconds = seconds;
+        mostStudiedDay = day;
+      }
+    });
+    
+    const mostStudiedDayHours = Math.floor(maxDaySeconds / 3600);
+    const mostStudiedDayMinutes = Math.floor((maxDaySeconds % 3600) / 60);
+    const mostStudiedDayName = mostStudiedDay ? new Date(mostStudiedDay + 'T12:00:00').toLocaleDateString('tr-TR', { 
+      day: 'numeric',
+      month: 'long', 
+      year: 'numeric',
+      weekday: 'long'
+    }) : null;
+    
     return {
       totalHours,
       totalMinutes,
@@ -406,7 +435,10 @@ export function DashboardSummaryCards() {
       longestMinutes,
       longestStreak,
       mostStudiedMonth: mostStudiedMonthName,
-      mostStudiedMonthHours
+      mostStudiedMonthHours,
+      mostStudiedDay: mostStudiedDayName,
+      mostStudiedDayHours,
+      mostStudiedDayMinutes
     };
   };
 
@@ -1402,6 +1434,38 @@ export function DashboardSummaryCards() {
                   </div>
                   <div className="ml-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
                     <Sparkles className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* En Çok Çalışılan Gün */}
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 backdrop-blur-sm border border-orange-200/50 dark:border-orange-700/30">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex-1">
+                    {studyHoursStats.mostStudiedDay ? (
+                      <>
+                        <div className="text-sm font-black text-orange-700 dark:text-orange-300 mb-1" data-testid="text-most-studied-day">
+                          {studyHoursStats.mostStudiedDay}
+                        </div>
+                        <div className="text-sm font-medium text-orange-600 dark:text-orange-400">En Çok Çalışılan Gün</div>
+                        <div className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-2">
+                          {studyHoursStats.mostStudiedDayHours}s {studyHoursStats.mostStudiedDayMinutes}dk
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-lg font-black text-orange-700 dark:text-orange-300 mb-1">
+                          -
+                        </div>
+                        <div className="text-sm font-medium text-orange-600 dark:text-orange-400">En Çok Çalışılan Gün</div>
+                        <div className="text-xs text-orange-600/60 dark:text-orange-400/60 mt-2">
+                          Henüz çalışma verisi yok
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="ml-4 p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                    <Calendar className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                   </div>
                 </div>
               </div>

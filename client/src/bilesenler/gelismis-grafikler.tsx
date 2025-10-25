@@ -462,7 +462,7 @@ function AdvancedChartsComponent() {
 
   // Net Analiz Verilerini İşleyin - Ortalama netleri göstermek için hareketli ortalama ekle
   const netAnalysisData = useMemo(() => {
-    const fullExams = examResults
+    const fullExams = allExamResults
       .filter(exam => exam.exam_scope === 'full')
       .sort((a, b) => new Date(a.exam_date).getTime() - new Date(b.exam_date).getTime());
     
@@ -497,11 +497,11 @@ function AdvancedChartsComponent() {
         sortDate: exam.exam_date
       };
     });
-  }, [examResults, tytTargetNet, aytTargetNet]);
+  }, [allExamResults, tytTargetNet, aytTargetNet]);
 
   // Branş Denemeleri Verisi - Sadece branch scope olanları al
   const branchExamData = useMemo(() => {
-    return examResults
+    return allExamResults
       .filter(exam => exam.exam_scope === 'branch')
       .map(exam => {
         const subjectData = exam.subjects_data ? JSON.parse(exam.subjects_data) : {};
@@ -523,7 +523,7 @@ function AdvancedChartsComponent() {
         };
       })
       .sort((a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime());
-  }, [examResults]);
+  }, [allExamResults]);
 
   // Branş Denemeleri'ni ders ve sınav türüne göre grupla
   const branchExamsBySubject = useMemo(() => {
@@ -545,7 +545,7 @@ function AdvancedChartsComponent() {
     const tytSubjectMap = new Map<string, { net: number; correct: number; wrong: number; date: string }>();
     const aytSubjectMap = new Map<string, { net: number; correct: number; wrong: number; date: string }>();
     
-    examResults
+    allExamResults
       .filter(exam => exam.exam_scope === 'branch')
       .forEach(exam => {
         const subjectData = exam.subjects_data ? JSON.parse(exam.subjects_data) : {};
@@ -590,7 +590,7 @@ function AdvancedChartsComponent() {
       tytBranchRadarData: processSubjectData(tytSubjectMap),
       aytBranchRadarData: processSubjectData(aytSubjectMap)
     };
-  }, [examResults]);
+  }, [allExamResults]);
 
   // Konu Analiz Verilerini İşleyin - TYT ve AYT için ayrı
   const { tytSubjectAnalysisData, aytSubjectAnalysisData } = useMemo(() => {
@@ -598,7 +598,7 @@ function AdvancedChartsComponent() {
     const aytSubjectMap = new Map<string, { correct: number; wrong: number; total: number }>();
 
     // Sınav sonuçlarını konu verileri için işleyin, sınav türüne göre ayırın
-    examResults.forEach(exam => {
+    allExamResults.forEach(exam => {
       if (exam.subjects_data) {
         try {
           const subjectsData = JSON.parse(exam.subjects_data);
@@ -669,7 +669,7 @@ function AdvancedChartsComponent() {
       tytSubjectAnalysisData: processSubjectData(tytSubjectMap),
       aytSubjectAnalysisData: processSubjectData(aytSubjectMap)
     };
-  }, [examResults]);
+  }, [allExamResults]);
 
   if (isLoading) {
     return (

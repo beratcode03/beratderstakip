@@ -1020,20 +1020,38 @@ export default function Homepage() {
                                 ))}
                                 
                                 {/* Soru günlüklerini göster */}
-                                {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => (
-                                  <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
-                                    <div className="flex items-center text-sm">
-                                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                                      <span className="font-medium">Soru:</span>
-                                      <span className="ml-2 text-muted-foreground">
-                                        {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
-                                      </span>
+                                {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => {
+                                  const correct = Number(log.correct_count) || 0;
+                                  const wrong = Number(log.wrong_count) || 0;
+                                  const blank = Number(log.blank_count) || 0;
+                                  const net = correct - (wrong * 0.25);
+                                  
+                                  return (
+                                    <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
+                                      <div className="flex items-center text-sm">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                        <span className="font-medium">Soru:</span>
+                                        <span className="ml-2 text-muted-foreground">
+                                          {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-1 text-xs">
+                                        <div className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">
+                                          ✓ {correct}
+                                        </div>
+                                        <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-2 py-1 rounded-full">
+                                          ✗ {wrong}
+                                        </div>
+                                        <div className="bg-gray-100 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full">
+                                          ○ {blank}
+                                        </div>
+                                        <div className="bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-bold">
+                                          Net: {net.toFixed(2)}
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-                                      {log.correct_count || 0} doğru
-                                    </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                                 
                                 {/* Sınav sonuçlarını göster */}
                                 {(activityFilter === 'all' || activityFilter === 'exams') && activities.examResults.map((exam: ExamResult) => (
@@ -1238,20 +1256,38 @@ export default function Homepage() {
                                 ))}
                                 
                                 {/* Soru günlüklerini göster */}
-                                {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => (
-                                  <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
-                                    <div className="flex items-center text-sm">
-                                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                                      <span className="font-medium">Soru:</span>
-                                      <span className="ml-2 text-muted-foreground">
-                                        {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
-                                      </span>
+                                {(activityFilter === 'all' || activityFilter === 'questions') && activities.questionLogs.map((log: QuestionLog) => {
+                                  const correct = Number(log.correct_count) || 0;
+                                  const wrong = Number(log.wrong_count) || 0;
+                                  const blank = Number(log.blank_count) || 0;
+                                  const net = correct - (wrong * 0.25);
+                                  
+                                  return (
+                                    <div key={log.id} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/10 rounded-lg">
+                                      <div className="flex items-center text-sm">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                        <span className="font-medium">Soru:</span>
+                                        <span className="ml-2 text-muted-foreground">
+                                          {[log.exam_type, log.subject].filter(Boolean).join(' ') || 'Soru Çözümü'}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-1 text-xs">
+                                        <div className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">
+                                          ✓ {correct}
+                                        </div>
+                                        <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-2 py-1 rounded-full">
+                                          ✗ {wrong}
+                                        </div>
+                                        <div className="bg-gray-100 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full">
+                                          ○ {blank}
+                                        </div>
+                                        <div className="bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-bold">
+                                          Net: {net.toFixed(2)}
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="text-xs text-blue-600 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded-full">
-                                      {log.correct_count || 0} doğru
-                                    </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                                 
                                 {/* Sınav sonuçlarını göster */}
                                 {(activityFilter === 'all' || activityFilter === 'exams') && activities.examResults.map((exam: ExamResult) => (
