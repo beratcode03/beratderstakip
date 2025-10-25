@@ -217,13 +217,14 @@
       "allowElevation": true,
       "displayLanguageSelector": false,
       "menuCategory": "Berat Cankır",
-      "shortcutName": "Berat Cankır",
-      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "shortcutName": "Berat Cankır YKS Analiz Takip Sistemi",
+      "artifactName": "${productName}-Kurulum-${version}.${ext}",
       "license": "LICENSE.txt",
       "warningsAsErrors": false,
       "language": 1055,
       "multiLanguageInstaller": false,
-      "differentialPackage": false
+      "differentialPackage": false,
+      "include": "build/installer.nsh"
     }
   }
 }
