@@ -67,10 +67,10 @@ export const sorguIstemcisi = new QueryClient({
 // Belirli veri türleri için optimizasyonlar
 export const getQueryOptions = (key: string) => {
   const optimizations: Record<string, any> = {
-    // Hava durumu verileri - 5 dakika önbellek
+    // Hava durumu verileri - 2 dakika önbellek (daha güncel veriler)
     '/api/weather': {
-      staleTime: 5 * 60 * 1000, // 5 dakika
-      cacheTime: 10 * 60 * 1000, // 10 dakika
+      staleTime: 2 * 60 * 1000, // 2 dakika
+      cacheTime: 5 * 60 * 1000, // 5 dakika
     },
     // Takvim verileri - 1 dakika önbellek
     '/api/calendar': {

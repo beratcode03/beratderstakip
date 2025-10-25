@@ -8,7 +8,15 @@ import * as React from "react"
 import { cn } from "@/kutuphane/yardimcilar"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onChange, ...props }, ref) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (type === "number" && e.target.value) {
+        const cleanValue = e.target.value.replace(/^0+(?=\d)/, '');
+        e.target.value = cleanValue;
+      }
+      onChange?.(e);
+    };
+
     return (
       <input
         type={type}
@@ -17,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className
         )}
         ref={ref}
+        onChange={handleChange}
         {...props}
       />
     )

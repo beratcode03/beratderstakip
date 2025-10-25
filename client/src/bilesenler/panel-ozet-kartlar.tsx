@@ -289,12 +289,13 @@ export function DashboardSummaryCards() {
   };
 
   // TYT ve AYT net başarı oranlarına göre en güçlü, geliştirilmesi gereken ve en zayıf konuları hesapla - ARŞİVLENMİŞLER DAHİL
+  // SADECE MANUEL GİRİLEN SORU KAYITLARI (questionLogs) - Deneme sonuçları dahil değil
   const calculateSubjectPerformance = () => {
     // TYT ve AYT için ayrı istatistikler
     const tytStats: { [key: string]: { correct: number; attempted: number } } = {};
     const aytStats: { [key: string]: { correct: number; attempted: number } } = {};
     
-    // Soru loglarından veri topla
+    // SADECE soru loglarından veri topla (deneme sonuçları hariç)
     allQuestionLogs.forEach(log => {
       const subject = log.subject;
       const examType = log.exam_type;
@@ -317,73 +318,8 @@ export function DashboardSummaryCards() {
       }
     });
     
-    // Genel denemelerdeki konu net verilerini ekle
-    allExamResults.filter(exam => exam.exam_scope === 'full').forEach(exam => {
-      const examType = exam.exam_type;
-      if (!examType) return;
-      
-      const subjectNets = examSubjectNets.filter(net => net.exam_id === exam.id);
-      subjectNets.forEach(net => {
-        const subject = net.subject;
-        const correct = Number(net.correct) || 0;
-        const wrong = Number(net.wrong) || 0;
-        const attempted = correct + wrong;
-        
-        if (examType === 'TYT') {
-          if (!tytStats[subject]) {
-            tytStats[subject] = { correct: 0, attempted: 0 };
-          }
-          tytStats[subject].correct += correct;
-          tytStats[subject].attempted += attempted;
-        } else if (examType === 'AYT') {
-          if (!aytStats[subject]) {
-            aytStats[subject] = { correct: 0, attempted: 0 };
-          }
-          aytStats[subject].correct += correct;
-          aytStats[subject].attempted += attempted;
-        }
-      });
-    });
-    
-    // Branş denemelerinden veri ekle
-    examResults.filter(exam => exam.exam_scope === 'branch').forEach(exam => {
-      const examType = exam.exam_type;
-      if (!examType) return;
-      
-      const subjectData = exam.subjects_data ? JSON.parse(exam.subjects_data) : {};
-      const subjectKey = exam.selected_subject || '';
-      const data = subjectData[subjectKey] || {};
-      const correct = parseInt(data.correct) || 0;
-      const wrong = parseInt(data.wrong) || 0;
-      const attempted = correct + wrong;
-      
-      const subjectNameMap: {[key: string]: string} = {
-        'turkce': 'Türkçe',
-        'matematik': 'Matematik',
-        'geometri': 'Geometri',
-        'fizik': 'Fizik',
-        'kimya': 'Kimya',
-        'biyoloji': 'Biyoloji',
-        'sosyal': 'Sosyal Bilimler',
-        'fen': 'Fen Bilimleri'
-      };
-      
-      const subject = subjectNameMap[subjectKey.toLowerCase()] || subjectKey;
-      
-      if (examType === 'TYT') {
-        if (!tytStats[subject]) {
-          tytStats[subject] = { correct: 0, attempted: 0 };
-        }
-        tytStats[subject].correct += correct;
-        tytStats[subject].attempted += attempted;
-      } else if (examType === 'AYT') {
-        if (!aytStats[subject]) {
-          aytStats[subject] = { correct: 0, attempted: 0 };
-        }
-        aytStats[subject].correct += correct;
-        aytStats[subject].attempted += attempted;
-      }
-    });
+    // NOT: Deneme sonuçları (examResults/examSubjectNets) Soru İstatistikleri'ne dahil edilmez
+    // Bunlar sadece "Genel Deneme Ortalamaları" ve "Branş Deneme Ortalamaları" bölümlerinde gösterilir
     
     // TYT dersleri için analiz
     const tytSubjects = Object.entries(tytStats)

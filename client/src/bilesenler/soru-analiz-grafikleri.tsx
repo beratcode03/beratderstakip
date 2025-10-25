@@ -68,26 +68,43 @@ export function QuestionAnalysisCharts() {
         };
       });
     } else {
-      // Haftalık toplama - son 8 hafta (Pazartesi'den başlayan ISO haftaları)
+      // Haftalık toplama
       const weeks = [];
       const today = new Date();
       
-      for (let i = 7; i >= 0; i--) {
+      // Tarih aralığını belirle
+      let customStart: Date | null = null;
+      let customEnd: Date | null = null;
+      if (useCustomDates) {
+        customStart = new Date(startDate);
+        customEnd = new Date(endDate);
+      }
+      
+      const weeksToShow = useCustomDates ? 52 : 8; // Custom date için daha geniş aralık
+      
+      for (let i = weeksToShow - 1; i >= 0; i--) {
         // Hedef haftanın Pazartesi'sini hesaplayın (ISO hafta başlangıcı) UTC'de
         const weekStart = new Date(today);
-        const daysFromMonday = (today.getUTCDay() + 6) % 7; // Pazar=0'ı Pazartesi=0 sistemine dönüştür
+        const daysFromMonday = (today.getUTCDay() + 6) % 7;
         weekStart.setUTCDate(today.getUTCDate() - (i * 7) - daysFromMonday);
-        weekStart.setUTCHours(0, 0, 0, 0); // UTC midnight
+        weekStart.setUTCHours(0, 0, 0, 0);
         
         const weekEnd = new Date(weekStart);
         weekEnd.setUTCDate(weekStart.getUTCDate() + 6);
-        weekEnd.setUTCHours(23, 59, 59, 999); // UTC'de Pazar'ın sonu
+        weekEnd.setUTCHours(23, 59, 59, 999);
+        
+        // Custom date kontrolü - hafta tamamen aralık dışındaysa atla
+        if (useCustomDates && customStart && customEnd) {
+          if (weekEnd < customStart || weekStart > customEnd) {
+            continue; // Bu haftayı atla
+          }
+        }
         
         // UTC tabanlı dize karşılaştırması kullanarak bu haftanın günlüklerini filtreleyin 
         const weekLogs = questionLogs.filter(log => {
           const logDateStr = log.study_date;
-          const weekStartStr = weekStart.toISOString().slice(0, 10); // YYYY-AA-GG
-          const weekEndStr = weekEnd.toISOString().slice(0, 10); // YYYY-AA-GG
+          const weekStartStr = weekStart.toISOString().slice(0, 10);
+          const weekEndStr = weekEnd.toISOString().slice(0, 10);
           return logDateStr >= weekStartStr && logDateStr <= weekEndStr;
         });
         
@@ -210,7 +227,7 @@ export function QuestionAnalysisCharts() {
           </div>
 
           {/* Özel Tarih Aralığı Girişleri */}
-          {useCustomDates && viewMode === 'daily' && (
+          {useCustomDates && (
             <div className="mb-6 p-4 bg-white/30 dark:bg-gray-900/30 rounded-xl border border-emerald-200/50 dark:border-emerald-700/50 backdrop-blur-sm">
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">

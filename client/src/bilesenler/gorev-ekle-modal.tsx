@@ -11,6 +11,9 @@ import { Input } from "@/bilesenler/arayuz/input";
 import { Textarea } from "@/bilesenler/arayuz/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/bilesenler/arayuz/select";
 import { Label } from "@/bilesenler/arayuz/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/bilesenler/arayuz/popover";
+import { Calendar } from "@/bilesenler/arayuz/calendar";
+import { CalendarDays } from "lucide-react";
 import { InsertTask } from "@shared/sema";
 import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { useToast } from "@/hooks/use-toast";
@@ -158,14 +161,37 @@ export function AddTaskModal({ open, onOpenChange }: AddTaskModalProps) {
           {/* Görev Tarihi */}
           <div>
             <Label htmlFor="task-due-date">Görevin Bitirilme Tarihi</Label>
-            <Input
-              id="task-due-date"
-              type="date"
-              value={formData.dueDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-              className="w-full"
-              data-testid="input-task-due-date"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                  data-testid="button-task-due-date"
+                >
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  {formData.dueDate ? new Date(formData.dueDate).toLocaleDateString('tr-TR', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                  }) : "Tarih seçin"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={formData.dueDate ? new Date(formData.dueDate + 'T00:00:00') : undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setFormData(prev => ({ ...prev, dueDate: `${year}-${month}-${day}` }));
+                    }
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Görev Önceliği & Kategorisi */}
