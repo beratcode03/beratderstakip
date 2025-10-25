@@ -1,374 +1,384 @@
-# BERAT CANKIR ANALİZ TAKİP SİSTEMİ - TALİMATLAR VE DOKÜMANTASYON
+# Berat Cankır YKS Analiz Takip Sistemi - Kurulum Talimatları
 
-## 📋 GENEL BAKIŞ
-Bu belge, Berat Cankır Özel Analiz Takip Sistemi için yapılan değişiklikleri, düzeltmeleri ve kullanım talimatlarını içermektedir.
+## İçindekiler
+- [Uygulamaya Genel Bakış](#uygulamaya-genel-bakış)
+- [Gereksinimler](#gereksinimler)
+- [Web Versiyonu Kurulumu](#web-versiyonu-kurulumu)
+- [Electron (Masaüstü) Versiyonu Build ve Kurulum](#electron-masaüstü-versiyonu-build-ve-kurulum)
+- [Verilerin Konumu ve Cache Temizleme](#verilerin-konumu-ve-cache-temizleme)
+- [Uygulama Özellikleri](#uygulama-özellikleri)
+- [Sorun Giderme](#sorun-giderme)
 
 ---
 
-## 🖥️ ELECTRON MASAÜSTÜ UYGULAMASI ÖZELLİKLERİ
+## Uygulamaya Genel Bakış
 
-### Tray İkonu (Sistem Tepsisi)
-Electron masaüstü uygulamasında sistem tepsisine (system tray) ikonu eklemek için:
+**Berat Cankır YKS Analiz Takip Sistemi**, YKS'ye hazırlanan öğrenciler için kapsamlı bir takip ve analiz sistemidir. Uygulama hem web tarayıcısında hem de Windows masaüstü uygulaması olarak çalışabilir.
 
-```javascript
-// electron/main.cjs dosyasında
-const { app, BrowserWindow, Tray, Menu } = require('electron');
-const path = require('path');
+### Temel Özellikler
+- 📊 **Soru Analizi**: Çözdüğünüz soruları dersler ve konular bazında takip edin
+- 📈 **Deneme Sınavı Takibi**: TYT ve AYT deneme sonuçlarınızı kaydedin ve analiz edin
+- ✅ **Görev Yönetimi**: Günlük ve haftalık çalışma görevlerinizi planlayın
+- 📅 **Çalışma Saati Takibi**: Her ders için ne kadar süre çalıştığınızı kaydedin
+- 🎯 **Hedef Belirleme**: Kendinize hedefler koyun ve ilerlemenizi takip edin
+- 📉 **Detaylı Grafikler**: Gelişiminizi görsel olarak takip edin
+- 🌙 **Karanlık/Aydınlık Tema**: Gözlerinizi yormayan tema desteği
+- ⏰ **Geri Sayım**: YKS sınavına kalan süreyi görün
+- 🎨 **Ruh Hali Takibi**: Günlük motivasyonunuzu kaydedin
 
-let tray = null;
+---
 
-function createTray() {
-  const iconPath = path.join(__dirname, '../public/icon.png');
-  tray = new Tray(iconPath);
-  
-  const contextMenu = Menu.buildFromTemplate([
-    { label: 'Uygulamayı Aç', click: () => { mainWindow.show(); } },
-    { label: 'Çıkış', click: () => { app.quit(); } }
-  ]);
-  
-  tray.setToolTip('YKS Takip Sistemi - Berat Cankır');
-  tray.setContextMenu(contextMenu);
-  
-  tray.on('click', () => { mainWindow.show(); });
-}
+## Gereksinimler
 
-app.whenReady().then(() => {
-  createWindow();
-  createTray();
-});
+### Otomatik Kurulum İçin
+Uygulama, gerekli yazılımların varlığını kontrol eder. Eğer sisteminizde yoksa kurulum sırasında bilgilendirilirsiniz.
+
+### Manuel Kurulum İçin Gerekenler
+- **Node.js** (v18 veya üzeri) - [İndir](https://nodejs.org/)
+- **npm** (Node.js ile birlikte gelir)
+- **Git** (opsiyonel) - [İndir](https://git-scm.com/)
+
+### Sistem Gereksinimleri
+- **İşletim Sistemi**: Windows 10/11, macOS, Linux
+- **RAM**: Minimum 4GB (8GB önerilir)
+- **Disk Alanı**: 500MB boş alan
+
+---
+
+## Web Versiyonu Kurulumu
+
+### Adım 1: Projeyi İndirin
+```bash
+git clone https://github.com/beratcode03/beratders.git
+cd beratders
 ```
 
-### İhlal Logu (Violation Log)
-Kullanıcı aktivitelerini ve sistem olaylarını kaydetmek için:
+veya ZIP dosyası olarak indirip çıkartın.
 
-```javascript
-// server/ihlalLog.ts dosyası oluştur
-import fs from 'fs';
-import path from 'path';
+### Adım 2: Node.js'in Kurulu Olup Olmadığını Kontrol Edin
+Terminal veya Komut İstemcisi'nde şu komutları çalıştırın:
 
-const logDir = path.join(__dirname, '../logs');
-const logFilePath = path.join(logDir, 'ihlal-log.txt');
-
-// Log dizinini oluştur
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
-
-export function logViolation(event: string, details: string) {
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${event}: ${details}\n`;
-  fs.appendFileSync(logFilePath, logEntry, 'utf8');
-}
-
-// Kullanım örnekleri:
-logViolation('VERİ_SİLME', 'Tüm deneme sonuçları silindi');
-logViolation('TOPLU_İŞLEM', 'Arşivleme yapıldı');
-logViolation('HEDEF_DEĞİŞİKLİĞİ', 'TYT hedef neti 90 olarak güncellendi');
+```bash
+node --version
+npm --version
 ```
 
-**NOT:** Bu özellikler yalnızca Electron masaüstü uygulamasında çalışır. Replit web ortamında çalışmaz.
+Eğer "komut bulunamadı" hatası alırsanız, Node.js'i kurun: https://nodejs.org/
 
----
-
-## ✅ TAMAMLANAN DÜZELTMELER
-
-### 1. TYT/AYT Ders Kategorizasyonu Düzeltmesi
-**Sorun**: Fizik, Kimya, Biyoloji ve Geometri dersleri deneme eklenirken yanlış kategorize ediliyordu.
-
-**Çözüm**: 
-- `client/src/sayfalar/panel.tsx` dosyasındaki deneme kaydetme mantığı düzeltildi
-- TYT denemesi eklendiğinde: Türkçe, Sosyal, Matematik, Geometri, Fen, Fizik, Kimya, Biyoloji → TYT olarak kaydediliyor
-- AYT denemesi eklendiğinde: Matematik, Geometri, Fizik, Kimya, Biyoloji → AYT olarak kaydediliyor
-- Artık sadece TYT denemesi eklendiğinde `tyt_net` hesaplanıyor ve `ayt_net` 0 olarak ayarlanıyor
-- Sadece AYT denemesi eklendiğinde `ayt_net` hesaplanıyor ve `tyt_net` 0 olarak ayarlanıyor
-
-**Dosyalar**: 
-- `client/src/sayfalar/panel.tsx` (satır 4190-4220)
-
----
-
-### 2. Sayı Input Önde Gelen Sıfır Problemi
-**Sorun**: Sayı alanlarına "15" yazarken "0" varsa "015" olarak görünüyordu.
-
-**Çözüm**: 
-- `cleanNumberInput()` yardımcı fonksiyonu eklendi
-- Tüm sayı inputlarının onChange event'lerinde bu fonksiyon kullanılmaya başlandı
-- Önde gelen sıfırlar otomatik olarak temizleniyor
-
-**Dosyalar**: 
-- `client/src/sayfalar/panel.tsx` (satır 50-56 ve tüm onChange handler'lar)
-
----
-
-### 3. Deneme Gösterim Düzeltmesi
-**Sorun**: Sadece TYT veya sadece AYT denemesi eklendiğinde her ikisi de görünüyordu.
-
-**Çözüm**: 
-- Deneme gösterimi `exam_type` alanına göre akıllı hale getirildi
-- TYT denemesi ise sadece "TYT: 80.00" gösteriliyor
-- AYT denemesi ise sadece "AYT: 30.00" gösteriliyor
-- Her iki tip de varsa "TYT: 80.00 • AYT: 30.00" şeklinde gösteriliyor
-
-**Dosyalar**: 
-- `client/src/sayfalar/panel.tsx` (satır 1992-2005)
-
----
-
-### 4. AYT Öneki Kaldırma
-**Sorun**: AYT derslerinde (Matematik, Fizik, Kimya, Biyoloji) gereksiz "AYT" öneki vardı.
-
-**Çözüm**: 
-- Görev kategorisi seçimlerinde "AYT" öneki kaldırıldı (sadece AYT Geometri'de kaldı)
-- `getCategoryText()` fonksiyonu güncellendi
-- Artık gösteriliyor: "Matematik", "Fizik", "Kimya", "Biyoloji" (AYT öneki yok)
-- "AYT Geometri" öneki korundu (TYT Geometri ile ayrım için)
-
-**Dosyalar**: 
-- `client/src/bilesenler/gorevler-bolumu.tsx` (satır 232-239)
-
----
-
-### 5. "Bitiş Tarihi" Label Değişikliği
-**Sorun**: Görev eklerken "Bitiş Tarihi" yerine daha açıklayıcı bir etiket gerekiyordu.
-
-**Çözüm**: 
-- "Bitiş Tarihi" → "Tekrarın Bitiş Tarihi" olarak değiştirildi (görev ekleme modalında)
-- Placeholder text "Görevin Bitirilme Tarihi" olarak güncellendi (görev listesi filtrelemesinde)
-
-**Dosyalar**: 
-- `client/src/bilesenler/gorev-ekle-modal.tsx` (satır 248)
-- `client/src/bilesenler/gorevler-bolumu.tsx` (satır 422)
-
----
-
-## ⚙️ UYGULAMA ÇALIŞMA MANTIĞI
-
-### Veritabanı Yapısı
-Uygulama PostgreSQL veritabanı kullanmaktadır:
-- `tasks` - Görevler
-- `moods` - Ruh hali kayıtları
-- `goals` - Hedefler
-- `questionLogs` - Soru çalışma kayıtları
-- `examResults` - Deneme sınav sonuçları
-- `examSubjectNets` - Deneme ders netleri
-- `flashcards` - Flash kartlar
-- `studyHours` - Çalışma saatleri
-
-### API Routes
-Backend API'leri `server/rotalar.ts` dosyasında tanımlıdır:
-- `/api/tasks` - Görev işlemleri
-- `/api/moods` - Ruh hali işlemleri
-- `/api/goals` - Hedef işlemleri
-- `/api/question-logs` - Soru log işlemleri
-- `/api/exam-results` - Deneme işlemleri
-- `/api/exam-subject-nets` - Deneme ders netleri işlemleri
-- `/api/study-hours` - Çalışma saati işlemleri
-
----
-
-## 🔧 ENVIRONMENT VARIABLES (.env dosyası)
-
-Uygulamanın çalışması için gerekli environment variables:
-
-```env
-# OpenWeather API (Hava Durumu)
-OPENWEATHER_API_KEY=your_api_key_here
-
-# Email Configuration (E-posta Gönderimi)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
-EMAIL_FROM=your_email@gmail.com
-
-# Database (Veritabanı)
-DATABASE_URL=your_postgresql_connection_string
+### Adım 3: Bağımlılıkları Yükleyin
+```bash
+npm install
 ```
 
-**NOT**: API anahtarları ve şifreler Replit Secrets yerine `.env` dosyasında saklanmalıdır.
+Bu komut tüm gerekli paketleri otomatik olarak indirecektir. İşlem 2-5 dakika sürebilir.
+
+### Adım 4: Geliştirme Sunucusunu Başlatın
+```bash
+npm run dev
+```
+
+Tarayıcınızda şu adresi açın: `http://localhost:5000`
+
+### Adım 5: Production Build Oluşturma (Opsiyonel)
+```bash
+npm run build
+npm start
+```
 
 ---
 
-## 📊 İSTATİSTİK VE RAPORLAMA
+## Electron (Masaüstü) Versiyonu Build ve Kurulum
 
-### Genel Deneme İstatistikleri
-Kullanıcının son 5 genel denemesinin ortalaması hesaplanır:
-- TYT Net Ortalaması
-- AYT Net Ortalaması
-- Ders bazlı net ortalamaları (Türkçe, Matematik, Sosyal, Fen, Fizik, Kimya, Biyoloji, Geometri)
+### Adım 1: Bağımlılıkları Yükleyin
+Önce web versiyonu kurulum adımlarını tamamlayın (yukarıdaki Adım 1-3).
 
-### Branş Deneme Ortalamaları
-Her ders için ayrı ayrı branş deneme ortalamaları gösterilir.
+### Adım 2: Electron Build Oluşturun
+Terminal'de proje klasöründeyken şu komutu çalıştırın:
 
-### Soru İstatistikleri
-Günlük/haftalık soru çözüm istatistikleri ve başarı oranları takip edilir.
+```bash
+npm run electron:build
+```
 
----
+Bu komut:
+1. Frontend'i derler (Vite build)
+2. Backend'i derler (esbuild)
+3. Electron uygulamasını paketler
+4. Windows kurulum dosyası (.exe) oluşturur
 
-## 🐛 BİLİNEN SORUNLAR VE ÇÖZÜM ÖNERİLERİ
+İşlem 3-10 dakika sürebilir.
 
-### 1. "undefined soru" Hatası
-**Durum**: Aktivite gösteriminde bazı durumlarda "undefined soru" yazısı çıkabiliyor.
-**Çözüm Önerisi**: Tüm soru sayısı gösterimlerinde `|| 0` kontrolü eklenmeli.
+### Adım 3: Kurulum Dosyasını Bulun
+Build tamamlandıktan sonra kurulum dosyası şu konumda olacaktır:
+```
+dist-electron/Berat Cankır-Kurulum-0.0.3.exe
+```
 
-### 2. Hava Durumu Doğruluğu
-**Durum**: OpenWeather API ile çalışıyor ancak doğruluk arttırılabilir.
-**Çözüm Önerisi**: 
-- API çağrısı sıklığını kontrol et
-- Konum belirleme hassasiyetini arttır
-- Hata yönetimini iyileştir
+### Adım 4: Uygulamayı Kurun
+1. `.exe` dosyasına çift tıklayın
+2. Kurulum sihirbazı açılacaktır
+3. **LİSANS SÖZLEŞMESİNİ (LICENSE.txt)** okuyun ve kabul edin
+4. Kurulum dizinini seçin (varsayılan: `C:\Users\[KullanıcıAdı]\AppData\Local\Programs\BeratCankir`)
+5. "Masaüstünde kısayol oluştur" seçeneğini işaretleyin
+6. "Kur" butonuna tıklayın
+7. Kurulum tamamlandığında "Bitir" butonuna tıklayın
 
-### 3. Tarih Filtresi Eksikliği
-**Durum**: Deneme Analiz Sistemi'nde tarih bazlı filtreleme yok.
-**Önerilen Ekleme**: 
-- Tarih seçici dropdown ekle
-- Seçilen tarihteki denemeleri göster
-- Tarih aralığı filtreleme özelliği
+### Adım 5: Uygulamayı Çalıştırın
+- Masaüstündeki **Berat Cankır** kısayoluna çift tıklayın
+- veya Başlat menüsünden **Berat Cankır** uygulamasını açın
 
-### 4. Veritabanı Kalıcılık Kontrolü
-**Durum**: Electron uygulaması kurulumunda veritabanı yolları kontrol edilmeli.
-**Öneri**: 
-- Veritabanı dosya yollarını kullanıcı verisi klasörüne taşı
-- Cache temizlendiğinde veri kaybını önle
-- Yedekleme mekanizması ekle
-
----
-
-## 🚀 ELECTRON UYGULAMASI
-
-### Kurulum
-Electron uygulaması `.exe` olarak derlenir ve kurulur.
-
-### Gereksinimler
-- Node.js (sürüm 16 veya üzeri)
-- PostgreSQL (veritabanı için)
-
-### Önerilen İyileştirmeler
-1. **Node.js Otomatik Kurulumu**: Uygulama kurulurken Node.js varlığını kontrol et, yoksa otomatik indir
-2. **Dependency Yönetimi**: Gerekli npm paketlerini otomatik kur
-3. **Veritabanı Kurulumu**: İlk açılışta veritabanını otomatik oluştur
+### Geliştirme Modunda Electron Çalıştırma
+```bash
+npm run electron:dev
+```
 
 ---
 
-## 📝 İHLAL LOG SİSTEMİ
+## Verilerin Konumu ve Cache Temizleme
 
-### Amaç
-Kullanıcı aktivitelerini ve olaylarını loglama.
+### Web Versiyonu Veri Konumları
 
-### Dosyalar
-- `electron/activity-logger.cjs` - Aktivite kayıt sistemi
-- `electron/ihlal-logger.cjs` - İhlal kayıt sistemi
-- `electron/central-ihlal-server.cjs` - Merkezi log sunucusu
+#### Tarayıcı Local Storage
+Veriler tarayıcınızın Local Storage'ında saklanır:
+- **Chrome/Edge**: 
+  ```
+  C:\Users\[KullanıcıAdı]\AppData\Local\Google\Chrome\User Data\Default\Local Storage
+  ```
+- **Firefox**: 
+  ```
+  C:\Users\[KullanıcıAdı]\AppData\Roaming\Mozilla\Firefox\Profiles\[Profil]\storage
+  ```
 
-### Çalışma Prensibi
-1. Kullanıcı aktiviteleri dinlenir
-2. Önemli olaylar loglanır
-3. Merkezi sunucuya gönderilir (opsiyonel)
+#### Tarayıcı Cache
+- **Chrome/Edge**: `C:\Users\[KullanıcıAdı]\AppData\Local\Google\Chrome\User Data\Default\Cache`
+- **Firefox**: `C:\Users\[KullanıcıAdı]\AppData\Local\Mozilla\Firefox\Profiles\[Profil]\cache2`
 
-### Kullanım
-Log dosyaları otomatik olarak kaydedilir ve analiz için kullanılabilir.
+### Electron Versiyonu Veri Konumları
 
----
+#### Uygulama Verileri
+```
+C:\Users\[KullanıcıAdı]\AppData\Roaming\BeratCankir\
+├── data\
+│   └── kayitlar.json          # Tüm verileriniz burada
+├── Cache\                     # Vite ve uygulama cache'leri
+├── Code Cache\                # JavaScript cache
+├── GPUCache\                  # GPU cache
+└── Session Storage\           # Oturum verileri
+```
 
-## 🎨 TEMA VE GÖRÜNÜM
+### Geliştirme Ortamı Cache'leri
 
-### Dark Mode
-Uygulama light ve dark mode desteklemektedir.
-- Tema geçişi otomatik çalışır
-- Tüm componentler dark mode uyumludur
+Proje klasöründe:
+```
+beratders/
+├── .vite/                     # Vite geliştirme cache
+├── node_modules/              # NPM paketleri
+├── dist/                      # Web build çıktısı
+├── dist-electron/             # Electron build çıktısı
+├── data/
+│   └── kayitlar.json          # Geliştirme verileri
+└── .cache/                    # Genel cache
+```
 
-### Renkler
-Ana renk paleti mor tonlarında (purple):
-- Primary: #8B5CF6
-- Accent renkler: Mavi, Yeşil, Turuncu, Pembe
+### Tüm Verileri Sıfırlama
 
----
+#### Web Versiyonu - Tarayıcıda
+1. **Chrome/Edge**:
+   - Ayarlar → Gizlilik ve güvenlik → Tarama verilerini temizle
+   - "Tüm zamanlar" seçin
+   - "Önbelleğe alınmış görüntüler ve dosyalar" ✓
+   - "Çerezler ve site verileri" ✓
+   - "Temizle" butonuna tıklayın
 
-## 🔐 GÜVENLİK
+2. **Firefox**:
+   - Ayarlar → Gizlilik ve Güvenlik → Çerezler ve Site Verileri
+   - "Verileri Temizle" → "Önbellek" ve "Çerezler" seçin
+   - "Temizle" butonuna tıklayın
 
-### API Keys
-Tüm API anahtarları `.env` dosyasında saklanmalıdır.
-**ASLA** kodda hard-code edilmemelidir.
+#### Electron Versiyonu - Masaüstü Uygulama
+1. Uygulamayı kapatın
+2. Dosya Gezgini'nde şu konuma gidin:
+   ```
+   C:\Users\[KullanıcıAdı]\AppData\Roaming\
+   ```
+3. `BeratCankir` klasörünü silin
+4. Uygulamayı yeniden başlatın (veriler sıfırdan başlar)
 
-### Veritabanı
-PostgreSQL kullanılır ve connection string güvenli tutulmalıdır.
+**UYARI**: Bu işlem TÜM verilerinizi siler!
 
----
+#### Geliştirme Ortamı - Kod Klasörü
+Terminal'de proje klasöründeyken:
 
-## 📖 KULLANIM KILAVUZU
+```bash
+# Windows Command Prompt
+rmdir /s /q .vite
+rmdir /s /q dist
+rmdir /s /q dist-electron
+rmdir /s /q .cache
+del /f data\kayitlar.json
 
-### Deneme Ekleme
-1. Panel sayfasında "Yeni Deneme Sonucu Ekle" butonuna tıklayın
-2. Deneme tipini seçin (TYT veya AYT)
-3. Deneme kapsamını seçin (Genel veya Branş)
-4. Ders netlerini girin
-5. Kaydet butonuna tıklayın
+# Git Bash veya PowerShell
+rm -rf .vite dist dist-electron .cache data/kayitlar.json
 
-### Görev Ekleme
-1. Anasayfa veya Panel'de "Yeni Görev Ekle" butonuna tıklayın
-2. Görev başlığı ve açıklamasını girin
-3. Ders kategorisini seçin
-4. Öncelik ve tarih belirleyin
-5. Kaydet butonuna tıklayın
-
-### Soru Çalışması Ekleme
-1. Panel'de "Yeni Soru Çalışması Ekle" butonuna tıklayın
-2. Ders ve konuyu seçin
-3. Doğru, yanlış, boş sayılarını girin
-4. Yanlış konuları belirtin (opsiyonel)
-5. Kaydet butonuna tıklayın
-
----
-
-## 🔄 GÜNCELLEME GEÇMİŞİ
-
-### Versiyon 1.1 (25 Ekim 2025)
-- ✅ TYT/AYT kategorizasyon düzeltmeleri
-- ✅ Sayı input önde gelen sıfır problemi çözümü
-- ✅ Deneme gösterim mantığı iyileştirmesi
-- ✅ AYT önek kaldırma
-- ✅ Label değişiklikleri
-
-### Planlanan Güncellemeler (Versiyon 1.2)
-- 📅 Tarih filtreleme özellikleri
-- 🌤️ Hava durumu doğruluğu iyileştirme
-- 📊 İstatistik bölümleri yeniden düzenleme
-- 🔧 Undefined soru hatasının düzeltilmesi
-- 📧 Gelişmiş e-posta raporlama
-
----
-
-## 💡 İPUÇLARI VE PÜFNOKTALAR
-
-### Performans
-- Heatmap büyük veri setlerinde yavaş olabilir → Tarih aralığını sınırla
-- Arşivlenen veriler otomatik yüklenir → Gerekirse manuel temizle
-
-### Veri Yönetimi
-- Düzenli olarak veri yedekle
-- Arşivleme özelliğini kullan (silme yerine)
-- Gereksiz kayıtları temizle
-
-### Deneme Analizi
-- En az 5 deneme gir (ortalama için)
-- Yanlış konuları mutlaka belirt (öncelik analizi için)
-- Branş denemeleri ile eksik konuları tespit et
+# node_modules'ü de temizlemek isterseniz:
+rmdir /s /q node_modules
+npm install
+```
 
 ---
 
-## 🆘 DESTEK VE İLETİŞİM
+## Uygulama Özellikleri
 
-Sorun bildirimi veya önerilerde bulunmak için:
-- GitHub Issues kullanın
-- Veya doğrudan iletişime geçin
+### 1. Anasayfa
+- Hoş geldin mesajı ve kişiselleştirme
+- Geri sayım sayacı (YKS'ye kalan gün)
+- Hızlı özet kartlar (bugünün görevleri, haftalık ilerleme)
+- Motivasyon sözleri
+- Hava durumu widget'ı
+
+### 2. Yapılacaklar
+- Görev ekleme, düzenleme, silme
+- Kategorilere göre görev gruplandırma (Türkçe, Matematik, Fizik, vs.)
+- Öncelik seviyeleri (Düşük, Orta, Yüksek)
+- Renk kodlama sistemi
+- Tamamlanan görevleri arşivleme
+- Haftalık ve aylık tekrarlayan görevler
+- Tarih bazlı filtreleme
+
+### 3. Raporlarım
+- **Soru İstatistikleri**: Hangi dersten kaç soru çözdünüz
+- **Konu Analizi**: En çok yanlış yaptığınız konular (öncelikli çalışma için)
+- **Zaman Analizi**: Ders başına çalışma süreleri ve verimliliğiniz
+- **Deneme Sonuçları**: 
+  - TYT/AYT deneme net grafikleri
+  - Genel deneme ortalamaları
+  - Branş deneme ortalamaları
+- **İlerleme Grafikleri**: Zamana göre gelişim trendi
+- **Haftalık Aktivite**: Isı haritası ile çalışma yoğunluğu
+
+### 4. Net Hesaplayıcı
+- TYT ve AYT için ayrı ayrı net hesaplama
+- Doğru/Yanlış girişi ile otomatik net hesaplama
+- Konu bazında detaylı analiz
+- Puan tahmini (yaklaşık)
+
+### 5. Sayaç
+- YKS'ye kalan gün, saat, dakika, saniye
+- Gece yarısı özel geri sayım
+- Motivasyon mesajları
+- Hedef belirleme ve takip
+
+### 6. YKS Konuları
+- Tüm dersler için detaylı konu listesi
+- TYT ve AYT konuları ayrı ayrı
+- Konu bazında işaretleme sistemi
+- İlerleme takibi ve yüzdelik gösterim
+
+### 7. Veri Yönetimi
+- JSON formatında lokal veri saklama
+- Otomatik yedekleme (her Pazar 23:59)
+- Manuel arşivleme özellikleri
+- Veri sıfırlama seçenekleri
 
 ---
 
-## 📄 LİSANS
+## Sorun Giderme
 
-Bu proje özel kullanım içindir.
-© 2025 Berat Cankır
+### "npm: command not found" hatası
+**Neden**: Node.js kurulu değil.  
+**Çözüm**: Node.js'i indirin ve kurun: https://nodejs.org/
+
+### "Port 5000 kullanımda" hatası
+**Neden**: Başka bir uygulama 5000 portunu kullanıyor.  
+**Çözüm**: 
+```bash
+# Windows'ta 5000 portunu kullanan programı bulun:
+netstat -ano | findstr :5000
+
+# Veya farklı port kullanın (package.json'da değiştirin)
+```
+
+### Bağımlılık yükleme hatası
+**Çözüm**: 
+```bash
+# node_modules ve package-lock.json'u silin
+rm -rf node_modules package-lock.json
+# Yeniden yükleyin
+npm install
+```
+
+### Electron build hatası
+**Çözüm**: 
+```bash
+# Adım adım build:
+npm run build
+npm run build-server-electron
+npm run electron-build
+```
+
+### Veriler görünmüyor
+**Neden**: Cache sorunu veya veri dosyası bozuk.  
+**Çözüm**: 
+1. Tarayıcı cache'ini temizleyin (Ctrl+Shift+Del)
+2. Uygulamayı yeniden başlatın
+3. Sorun devam ederse `data/kayitlar.json` dosyasını silin
+
+### Uygulama yavaş çalışıyor
+**Çözüm**:
+1. Cache'leri temizleyin
+2. Arşivlenmiş eski verileri silin
+3. Tarayıcı/Electron'u yeniden başlatın
 
 ---
 
-**Son Güncelleme**: 25 Ekim 2025
-**Versiyon**: 1.1.0
-**Durum**: Aktif Geliştirme
+## Sık Sorulan Sorular
+
+### Verilerim kaybolur mu?
+Hayır. Electron versiyonunda veriler yerel dosya sisteminizde (`kayitlar.json`) güvenle saklanır. Web versiyonunda ise tarayıcınızın Local Storage'ında tutulur. Ancak tarayıcı verilerini temizlerseniz silinebilir.
+
+### İnternet bağlantısı gerekli mi?
+Hayır. Uygulama tamamen offline çalışır. Sadece hava durumu widget'ı için internet gerekir (opsiyonel).
+
+### Birden fazla bilgisayarda kullanabilir miyim?
+Evet, ancak veriler otomatik senkronize olmaz. `kayitlar.json` dosyasını manuel olarak kopyalayabilirsiniz:
+- Electron: `C:\Users\[KullanıcıAdı]\AppData\Roaming\BeratCankir\data\kayitlar.json`
+- Web: Tarayıcı export/import özelliğini kullanın
+
+### Electron ve web versiyonu arasındaki fark nedir?
+- **Electron**: Masaüstü uygulaması, daha hızlı, sistem tepsisinde çalışabilir, Windows görev çubuğunda sabit
+- **Web**: Tarayıcıda çalışır, platform bağımsız, kurulum gerektirmez
+
+### Lisans sözleşmesi neden önemli?
+Kurulum sırasında gösterilen LICENSE.txt dosyası, uygulamanın kullanım koşullarını içerir. Kabul etmeden uygulamayı kuramazsınız.
+
+---
+
+## Lisans
+
+Bu uygulama MIT lisansı altında dağıtılmaktadır. Detaylar için `LICENSE.txt` dosyasına bakın.
+
+Kurulum sırasında lisans sözleşmesini okuyup kabul etmeniz gerekmektedir.
+
+---
+
+## Destek ve İletişim
+
+Sorun bildirmek veya öneride bulunmak için:
+- GitHub Issues: https://github.com/beratcode03/beratders/issues
+- GitHub Repository: https://github.com/beratcode03/beratders
+
+---
+
+## Güncelleme Geçmişi
+
+### Versiyon 0.0.3 (25 Ekim 2025)
+- ✅ TYT/AYT deneme kategorizasyonu düzeltildi
+- ✅ Sayı input önde gelen sıfır problemi çözüldü
+- ✅ Deneme gösterim mantığı iyileştirildi
+- ✅ UI/UX iyileştirmeleri
+- ✅ Performans optimizasyonları
+
+---
+
+**İyi Çalışmalar! 📚🎯**
+
+*Son Güncelleme: 25 Ekim 2025*
