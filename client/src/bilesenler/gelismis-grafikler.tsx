@@ -45,6 +45,8 @@ interface SubjectAnalysisData {
 function AdvancedChartsComponent() {
   const [analysisMode, setAnalysisMode] = useState<'general' | 'branch'>('general');
   const [includeArchived, setIncludeArchived] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [useDateFilter, setUseDateFilter] = useState<boolean>(false);
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
   const [celebratingTopics, setCelebratingTopics] = useState<Set<string>>(new Set());
   const [completedExamErrors, setCompletedExamErrors] = useState<Map<string, string>>(new Map());
@@ -228,7 +230,6 @@ function AdvancedChartsComponent() {
   
   const { data: archivedExamResults = [] } = useQuery<ExamResult[]>({
     queryKey: ["/api/exam-results/archived"],
-    enabled: includeArchived,
   });
   
   const { data: questionLogs = [], isLoading: isLoadingQuestions } = useQuery<QuestionLog[]>({
@@ -237,7 +238,6 @@ function AdvancedChartsComponent() {
   
   const { data: archivedQuestionLogs = [] } = useQuery<QuestionLog[]>({
     queryKey: ["/api/question-logs/archived"],
-    enabled: includeArchived,
   });
 
   const { data: examSubjectNets = [], isLoading: isLoadingExamNets } = useQuery<any[]>({
@@ -246,16 +246,28 @@ function AdvancedChartsComponent() {
 
   const isLoading = isLoadingExams || isLoadingQuestions || isLoadingExamNets;
 
-  // Merge active and archived data based on includeArchived flag
-  const allExamResults = useMemo(() => 
-    includeArchived ? [...examResults, ...archivedExamResults] : examResults,
-    [includeArchived, examResults, archivedExamResults]
-  );
+  // Her zaman arşivlenmiş verileri dahil et
+  const allExamResults = useMemo(() => {
+    let combined = [...examResults, ...archivedExamResults];
+    
+    // Tarih filtresi aktifse
+    if (useDateFilter && selectedDate) {
+      combined = combined.filter(exam => exam.exam_date === selectedDate);
+    }
+    
+    return combined;
+  }, [examResults, archivedExamResults, useDateFilter, selectedDate]);
   
-  const allQuestionLogs = useMemo(() => 
-    includeArchived ? [...questionLogs, ...archivedQuestionLogs] : questionLogs,
-    [includeArchived, questionLogs, archivedQuestionLogs]
-  );
+  const allQuestionLogs = useMemo(() => {
+    let combined = [...questionLogs, ...archivedQuestionLogs];
+    
+    // Tarih filtresi aktifse
+    if (useDateFilter && selectedDate) {
+      combined = combined.filter(log => log.study_date === selectedDate);
+    }
+    
+    return combined;
+  }, [questionLogs, archivedQuestionLogs, useDateFilter, selectedDate]);
 
   // Konu bazında eksik konuları toplar - DENEME VE EXAM SUBJECT NETS VERİLERİ
   const missingTopics = useMemo(() => {
@@ -1252,16 +1264,32 @@ function AdvancedChartsComponent() {
                 </Button>
               </div>
               
-              {/* Arşivlenmiş verileri dahil et checkbox'ı */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-purple-100/50 dark:bg-purple-900/30 rounded-xl border border-purple-200/50 dark:border-purple-700/50">
-                <Checkbox 
-                  id="include-archived" 
-                  checked={includeArchived}
-                  onCheckedChange={(checked) => setIncludeArchived(checked as boolean)}
-                />
-                <label htmlFor="include-archived" className="text-sm font-medium text-purple-700 dark:text-purple-300 cursor-pointer whitespace-nowrap">
-                  📦 Arşivlenmiş verileri dahil et
-                </label>
+              {/* Arşivlenmiş verileri dahil et checkbox'ı - Kaldırıldı çünkü otomatik dahil */}
+              
+              {/* Tarih Seçici */}
+              <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50">
+                <div className="flex items-center gap-2">
+                  <Checkbox 
+                    id="use-date-filter" 
+                    checked={useDateFilter}
+                    onCheckedChange={(checked) => {
+                      setUseDateFilter(checked as boolean);
+                      if (!checked) setSelectedDate(null);
+                    }}
+                  />
+                  <label htmlFor="use-date-filter" className="text-sm font-medium text-cyan-700 dark:text-cyan-300 cursor-pointer whitespace-nowrap">
+                    📅 Tarih Filtrele
+                  </label>
+                </div>
+                {useDateFilter && (
+                  <input
+                    type="date"
+                    value={selectedDate || ''}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-cyan-300 dark:border-cyan-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-cyan-700 dark:text-cyan-300"
+                    data-testid="input-date-filter"
+                  />
+                )}
               </div>
             </div>
           </div>
