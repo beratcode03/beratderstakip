@@ -13,10 +13,10 @@ export default function Home() {
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
+    <div className="min-h-screen bg-background transition-colors duration-300 overflow-x-hidden">
       <Header />
       
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 overflow-x-hidden">
         {/* Görevler Bölümü - Artık kenar çubuğu yok */}
         <TasksSection onAddTask={() => setAddTaskModalOpen(true)} />
       </main>

@@ -246,7 +246,11 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const { toast } = useToast();
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -554,7 +558,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Görev Ekle başlığı */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col gap-3">
@@ -712,7 +716,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
           items={localTasks.map(t => t.id)}
           strategy={verticalListSortingStrategy}
         >
-          <div className={`space-y-3 ${localTasks.length > 5 ? 'max-h-[600px] overflow-y-auto custom-scrollbar' : ''}`}>
+          <div className={`space-y-3 overflow-hidden ${localTasks.length > 5 ? 'max-h-[600px] overflow-y-auto custom-scrollbar' : ''}`}>
             {localTasks.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">Görev bulunamadı.</p>
