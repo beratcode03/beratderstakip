@@ -1265,24 +1265,36 @@ export function DashboardSummaryCards() {
               </div>
 
               {/* En Çok Çalışılan Ay */}
-              {studyHoursStats.mostStudiedMonth && (
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 backdrop-blur-sm border border-amber-200/50 dark:border-amber-700/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="text-lg font-black text-amber-700 dark:text-amber-300 mb-1" data-testid="text-most-studied-month">
-                        {studyHoursStats.mostStudiedMonth}
-                      </div>
-                      <div className="text-sm font-medium text-amber-600 dark:text-amber-400">En Çok Çalışılan Ay</div>
-                      <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">
-                        {studyHoursStats.mostStudiedMonthHours} saat
-                      </div>
-                    </div>
-                    <div className="ml-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
-                      <Sparkles className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                    </div>
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 backdrop-blur-sm border border-amber-200/50 dark:border-amber-700/30">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex-1">
+                    {studyHoursStats.mostStudiedMonth ? (
+                      <>
+                        <div className="text-lg font-black text-amber-700 dark:text-amber-300 mb-1" data-testid="text-most-studied-month">
+                          {studyHoursStats.mostStudiedMonth}
+                        </div>
+                        <div className="text-sm font-medium text-amber-600 dark:text-amber-400">En Çok Çalışılan Ay</div>
+                        <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">
+                          {studyHoursStats.mostStudiedMonthHours} saat
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-lg font-black text-amber-700 dark:text-amber-300 mb-1">
+                          -
+                        </div>
+                        <div className="text-sm font-medium text-amber-600 dark:text-amber-400">En Çok Çalışılan Ay</div>
+                        <div className="text-xs text-amber-600/60 dark:text-amber-400/60 mt-2">
+                          Henüz çalışma verisi yok
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="ml-4 p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
+                    <Sparkles className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
