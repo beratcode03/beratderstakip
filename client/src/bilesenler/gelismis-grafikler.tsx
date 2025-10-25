@@ -1311,8 +1311,8 @@ function AdvancedChartsComponent() {
 
       {/* Analiz Bölümü */}
       <Card className="bg-gradient-to-br from-indigo-50/50 via-card to-purple-50/50 dark:from-indigo-950/30 dark:via-card dark:to-purple-950/30 backdrop-blur-sm border-2 border-indigo-200/30 dark:border-indigo-800/30 shadow-2xl">
-        <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-t-lg border-b border-indigo-200/30">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+        <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-t-lg border-b border-indigo-200/30 pb-3">
+          <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
                 <BarChart3 className="h-6 w-6 text-indigo-500" />
@@ -1324,63 +1324,35 @@ function AdvancedChartsComponent() {
             </div>
 
             {/* Analiz Modu Değiştirme */}
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl p-1 border border-indigo-200/50 dark:border-indigo-700/50">
-                <Button
-                  variant={analysisMode === 'general' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setAnalysisMode('general')}
-                  className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                    analysisMode === 'general' 
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
-                      : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
-                  }`}
-                  data-testid="button-analysis-general"
-                >
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  📊 Genel Deneme Analiz
-                </Button>
-                <Button
-                  variant={analysisMode === 'branch' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setAnalysisMode('branch')}
-                  className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                    analysisMode === 'branch' 
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
-                      : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
-                  }`}
-                  data-testid="button-analysis-branch"
-                >
-                  <Book className="h-4 w-4 mr-2" />
-                  📚 Branş Deneme Analiz
-                </Button>
-              </div>
-              
-              {/* Tarih Seçici */}
-              <div className="flex flex-col items-start gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setUseDateFilter(!useDateFilter);
-                    if (useDateFilter) setSelectedDate(null);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50 text-sm font-medium text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all duration-200"
-                  data-testid="button-toggle-date-filter"
-                >
-                  <span className="whitespace-nowrap">📅 Filtrele</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${useDateFilter ? 'rotate-180' : ''}`} />
-                </Button>
-                {useDateFilter && (
-                  <input
-                    type="date"
-                    value={selectedDate || ''}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    data-testid="input-date-filter"
-                  />
-                )}
-              </div>
+            <div className="flex bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl p-1 border border-indigo-200/50 dark:border-indigo-700/50">
+              <Button
+                variant={analysisMode === 'general' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setAnalysisMode('general')}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                  analysisMode === 'general' 
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
+                    : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
+                }`}
+                data-testid="button-analysis-general"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                📊 Genel Deneme Analiz
+              </Button>
+              <Button
+                variant={analysisMode === 'branch' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setAnalysisMode('branch')}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                  analysisMode === 'branch' 
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg' 
+                    : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200/50 dark:hover:bg-indigo-800/50'
+                }`}
+                data-testid="button-analysis-branch"
+              >
+                <Book className="h-4 w-4 mr-2" />
+                📚 Branş Deneme Analiz
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -1388,14 +1360,41 @@ function AdvancedChartsComponent() {
           {analysisMode === 'general' ? (
             // Genel Deneme Analizi (TYT/AYT Net + Ders Analizi)
             netAnalysisData.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <TrendingUp className="h-10 w-10 text-blue-500" />
+              <div className="text-center py-8 text-muted-foreground">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <TrendingUp className="h-8 w-8 text-blue-500" />
                 </div>
-                <h4 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">Henüz bir deneme verisi girilmedi.</h4>
+                <h4 className="text-base font-semibold text-blue-700 dark:text-blue-300">Henüz bir deneme verisi girilmedi.</h4>
               </div>
             ) : (
               <div className="space-y-6">
+                {/* Filtre Butonu - Sadece Veri Varsa */}
+                <div className="flex justify-end">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setUseDateFilter(!useDateFilter);
+                        if (useDateFilter) setSelectedDate(null);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50 text-sm font-medium text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all duration-200"
+                      data-testid="button-toggle-date-filter"
+                    >
+                      <span className="whitespace-nowrap">📅 Filtrele</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${useDateFilter ? 'rotate-180' : ''}`} />
+                    </Button>
+                    {useDateFilter && (
+                      <input
+                        type="date"
+                        value={selectedDate || ''}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                        data-testid="input-date-filter"
+                      />
+                    )}
+                  </div>
+                </div>
                 {/* Hedefler ve Mevcut Network Ekranı */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="bg-blue-50/80 dark:bg-blue-950/30 rounded-xl p-4 text-center border border-blue-200/50 dark:border-blue-800/40 transition-all">
@@ -1750,15 +1749,41 @@ function AdvancedChartsComponent() {
           )) : (
             // Branş Denemeleri Analizi
             branchExamData.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <Book className="h-10 w-10 text-orange-500" />
+              <div className="text-center py-8 text-muted-foreground">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Book className="h-8 w-8 text-orange-500" />
                 </div>
-                <h4 className="text-lg font-semibold text-orange-700 dark:text-orange-300 mb-2">Henüz branş denemesi girilmedi</h4>
-                <p className="text-sm opacity-75 mb-4">Branş denemesi ekleyerek konu bazlı net gelişimi buradan takip edin.</p>
+                <h4 className="text-base font-semibold text-orange-700 dark:text-orange-300">Henüz branş denemesi girilmedi</h4>
               </div>
             ) : (
               <div className="space-y-6">
+                {/* Filtre Butonu - Sadece Veri Varsa */}
+                <div className="flex justify-end">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setUseDateFilter(!useDateFilter);
+                        if (useDateFilter) setSelectedDate(null);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-100/50 to-blue-100/50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl border border-cyan-200/50 dark:border-cyan-700/50 text-sm font-medium text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all duration-200"
+                      data-testid="button-toggle-date-filter-branch"
+                    >
+                      <span className="whitespace-nowrap">📅 Filtrele</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${useDateFilter ? 'rotate-180' : ''}`} />
+                    </Button>
+                    {useDateFilter && (
+                      <input
+                        type="date"
+                        value={selectedDate || ''}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                        data-testid="input-date-filter-branch"
+                      />
+                    )}
+                  </div>
+                </div>
                 {/* İkiz Radar Grafikleri - TYT ve AYT Branş Denemeleri yan yana */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* TYT Branş Denemeleri Grafiği */}
