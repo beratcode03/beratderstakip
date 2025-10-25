@@ -48,15 +48,12 @@ const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, ge
     isDragging,
   } = useSortable({ id: task.id });
 
-  const style = useMemo(() => {
-    const translateY = transform ? Math.round(transform.y) : 0;
-    return {
-      transform: CSS.Translate.toString({ x: 0, y: translateY, scaleX: 1, scaleY: 1 }),
-      transition: isDragging ? 'none' : transition,
-      opacity: isDragging ? 0.5 : 1,
-      zIndex: isDragging ? 9999 : 'auto',
-    };
-  }, [transform, transition, isDragging]);
+  const style = useMemo(() => ({
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 9999 : 'auto',
+  }), [transform, transition, isDragging]);
 
   const borderStyle = useMemo(() => getTaskBorderStyle(task), [task, getTaskBorderStyle]);
 
