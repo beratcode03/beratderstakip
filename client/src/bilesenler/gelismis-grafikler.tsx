@@ -698,7 +698,7 @@ function AdvancedChartsComponent() {
                   type="date"
                   value={selectedDateTopics || ''}
                   onChange={(e) => setSelectedDateTopics(e.target.value)}
-                  className="px-3 py-2 text-sm bg-white dark:bg-gray-900 border-2 border-red-300 dark:border-red-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400 shadow-sm transition-all duration-200 animate-in slide-in-from-top-2"
+                  className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
                   data-testid="input-date-filter-topics"
                 />
               )}
@@ -924,7 +924,7 @@ function AdvancedChartsComponent() {
                   type="date"
                   value={selectedDateErrors || ''}
                   onChange={(e) => setSelectedDateErrors(e.target.value)}
-                  className="px-3 py-2 text-sm bg-white dark:bg-gray-900 border-2 border-orange-300 dark:border-orange-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-orange-500 dark:focus:border-orange-400 shadow-sm transition-all duration-200 animate-in slide-in-from-top-2"
+                  className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
                   data-testid="input-date-filter-errors"
                 />
               )}
@@ -1348,7 +1348,7 @@ function AdvancedChartsComponent() {
                     type="date"
                     value={selectedDate || ''}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="px-3 py-2 text-sm bg-white dark:bg-gray-900 border-2 border-cyan-300 dark:border-cyan-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-400 focus:border-cyan-500 dark:focus:border-cyan-400 shadow-sm transition-all duration-200 animate-in slide-in-from-top-2"
+                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
                     data-testid="input-date-filter"
                   />
                 )}
