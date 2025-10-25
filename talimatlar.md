@@ -5,6 +5,71 @@ Bu belge, Berat Cankır Özel Analiz Takip Sistemi için yapılan değişiklikle
 
 ---
 
+## 🖥️ ELECTRON MASAÜSTÜ UYGULAMASI ÖZELLİKLERİ
+
+### Tray İkonu (Sistem Tepsisi)
+Electron masaüstü uygulamasında sistem tepsisine (system tray) ikonu eklemek için:
+
+```javascript
+// electron/main.cjs dosyasında
+const { app, BrowserWindow, Tray, Menu } = require('electron');
+const path = require('path');
+
+let tray = null;
+
+function createTray() {
+  const iconPath = path.join(__dirname, '../public/icon.png');
+  tray = new Tray(iconPath);
+  
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Uygulamayı Aç', click: () => { mainWindow.show(); } },
+    { label: 'Çıkış', click: () => { app.quit(); } }
+  ]);
+  
+  tray.setToolTip('YKS Takip Sistemi - Berat Cankır');
+  tray.setContextMenu(contextMenu);
+  
+  tray.on('click', () => { mainWindow.show(); });
+}
+
+app.whenReady().then(() => {
+  createWindow();
+  createTray();
+});
+```
+
+### İhlal Logu (Violation Log)
+Kullanıcı aktivitelerini ve sistem olaylarını kaydetmek için:
+
+```javascript
+// server/ihlalLog.ts dosyası oluştur
+import fs from 'fs';
+import path from 'path';
+
+const logDir = path.join(__dirname, '../logs');
+const logFilePath = path.join(logDir, 'ihlal-log.txt');
+
+// Log dizinini oluştur
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
+export function logViolation(event: string, details: string) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${event}: ${details}\n`;
+  fs.appendFileSync(logFilePath, logEntry, 'utf8');
+}
+
+// Kullanım örnekleri:
+logViolation('VERİ_SİLME', 'Tüm deneme sonuçları silindi');
+logViolation('TOPLU_İŞLEM', 'Arşivleme yapıldı');
+logViolation('HEDEF_DEĞİŞİKLİĞİ', 'TYT hedef neti 90 olarak güncellendi');
+```
+
+**NOT:** Bu özellikler yalnızca Electron masaüstü uygulamasında çalışır. Replit web ortamında çalışmaz.
+
+---
+
 ## ✅ TAMAMLANAN DÜZELTMELER
 
 ### 1. TYT/AYT Ders Kategorizasyonu Düzeltmesi

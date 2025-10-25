@@ -2008,7 +2008,11 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {selectedHeatmapDay.count === 0 && (
+              {/* Aktivite yok mesajı - sadece gerçekten hiçbir aktivite yoksa göster */}
+              {selectedHeatmapDay.dayActivities.questions.length === 0 && 
+               selectedHeatmapDay.dayActivities.tasks.length === 0 && 
+               selectedHeatmapDay.dayActivities.exams.length === 0 && 
+               (!selectedHeatmapDay.dayActivities.studyHours || selectedHeatmapDay.dayActivities.studyHours.length === 0) && (
                 <div className="text-center py-8 text-muted-foreground">
                   <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-40" />
                   <p>Bu günde herhangi bir aktivite kaydedilmemiş.</p>
