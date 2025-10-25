@@ -52,6 +52,26 @@ class ActivityLogger {
     this.activities = [];
   }
 
+  // Ders kodunu Türkçe ders adına çevir
+  getSubjectName(subjectCode) {
+    const subjectMap = {
+      'turkce': 'Türkçe',
+      'sosyal': 'Sosyal Bilimler',
+      'matematik': 'Matematik',
+      'fizik': 'Fizik',
+      'kimya': 'Kimya',
+      'biyoloji': 'Biyoloji',
+      'tyt-geometri': 'TYT Geometri',
+      'ayt-matematik': 'AYT Matematik',
+      'ayt-fizik': 'AYT Fizik',
+      'ayt-kimya': 'AYT Kimya',
+      'ayt-biyoloji': 'AYT Biyoloji',
+      'ayt-geometri': 'AYT Geometri',
+      'genel': 'Genel'
+    };
+    return subjectMap[subjectCode] || subjectCode || 'Konu belirtilmemiş';
+  }
+
   // HTTP isteğini parse edip anlamlı log oluştur
   parseHttpRequest(method, path, body) {
     try {
@@ -66,14 +86,19 @@ class ActivityLogger {
           return this.log('Deneme Sınav Eklendi', examName);
         }
         if (path === '/api/question-logs') {
-          const subject = body.subject || 'Konu belirtilmemiş';
-          const questionCount = body.question_count || 1;
-          return this.log('Soru Kaydı Eklendi', `${questionCount} soru - ${subject}`);
+          const subjectName = this.getSubjectName(body.subject);
+          const correctCount = body.correct_count || 0;
+          const wrongCount = body.wrong_count || 0;
+          const blankCount = body.blank_count || 0;
+          const totalQuestions = correctCount + wrongCount + blankCount;
+          return this.log('Soru Kaydı Eklendi', `${totalQuestions} soru - ${subjectName}`);
         }
         if (path === '/api/study-hours') {
           const hours = body.hours || 0;
-          const subject = body.subject || '';
-          return this.log('Çalışma Saati Eklendi', `${hours} saat${subject ? ' - ' + subject : ''}`);
+          const minutes = body.minutes || 0;
+          const subjectName = body.subject ? this.getSubjectName(body.subject) : '';
+          const timeStr = hours > 0 ? `${hours} saat ${minutes} dakika` : `${minutes} dakika`;
+          return this.log('Çalışma Saati Eklendi', `${timeStr}${subjectName ? ' - ' + subjectName : ''}`);
         }
         if (path === '/api/moods') {
           const mood = body.mood || 'belirlenmemiş';
