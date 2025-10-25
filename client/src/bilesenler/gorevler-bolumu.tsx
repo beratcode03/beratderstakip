@@ -3,7 +3,7 @@
 // CANKIR
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Plus, Edit2, Trash2, Undo2, Calendar, CheckCircle2, Archive, ArchiveRestore, GripVertical } from "lucide-react";
 import { Task } from "@shared/sema";
@@ -34,7 +34,7 @@ interface TasksSectionProps {
   onAddTask: () => void;
 }
 
-function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCategoryBadgeClass, getPriorityText, getCategoryText, formatDueDate, handleToggleTask, handleEditTask, handleArchiveTask, handleUnarchiveTask, handleDeleteTask }: any) {
+const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, getCategoryBadgeClass, getPriorityText, getCategoryText, formatDueDate, handleToggleTask, handleEditTask, handleArchiveTask, handleUnarchiveTask, handleDeleteTask }: any) => {
   const {
     attributes,
     listeners,
@@ -44,11 +44,50 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
     isDragging,
   } = useSortable({ id: task.id });
 
-  const style = {
+  const style = useMemo(() => ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  };
+  }), [transform, transition, isDragging]);
+
+  const borderStyle = useMemo(() => getTaskBorderStyle(task), [task, getTaskBorderStyle]);
+
+  const checkboxStyle = useMemo(() => ({
+    borderColor: task.completed ? '#10B981' : (task.color || '#8B5CF6'),
+    backgroundColor: task.completed ? '#10B981' : 'transparent'
+  }), [task.completed, task.color]);
+
+  const handleCheckboxMouseEnter = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!task.completed && !task.archived) {
+      e.currentTarget.style.backgroundColor = task.color || '#8B5CF6';
+    }
+  }, [task.completed, task.archived, task.color]);
+
+  const handleCheckboxMouseLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!task.completed && !task.archived) {
+      e.currentTarget.style.backgroundColor = 'transparent';
+    }
+  }, [task.completed, task.archived]);
+
+  const onToggle = useCallback(() => {
+    if (!task.archived) handleToggleTask(task.id);
+  }, [task.archived, task.id, handleToggleTask]);
+
+  const onEdit = useCallback(() => {
+    handleEditTask(task);
+  }, [task, handleEditTask]);
+
+  const onArchive = useCallback(() => {
+    handleArchiveTask(task.id);
+  }, [task.id, handleArchiveTask]);
+
+  const onUnarchive = useCallback(() => {
+    handleUnarchiveTask(task.id);
+  }, [task.id, handleUnarchiveTask]);
+
+  const onDelete = useCallback(() => {
+    handleDeleteTask(task.id);
+  }, [task.id, handleDeleteTask]);
 
   return (
     <div
@@ -64,32 +103,21 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
             {...attributes} 
             {...listeners} 
             className="mt-1 cursor-grab active:cursor-grabbing hover:bg-muted rounded p-1 transition-colors"
-            style={getTaskBorderStyle(task)}
+            style={borderStyle}
           >
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </div>
           <button
-            onClick={() => !task.archived && handleToggleTask(task.id)}
+            onClick={onToggle}
             disabled={task.archived}
             className={`mt-1 w-5 h-5 rounded-full border-2 transition-colors duration-200 flex items-center justify-center ${
               task.completed
                 ? "bg-green-500 border-green-500"
                 : "hover:opacity-80"
             } ${task.archived ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
-            style={{
-              borderColor: task.completed ? '#10B981' : (task.color || '#8B5CF6'),
-              backgroundColor: task.completed ? '#10B981' : 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              if (!task.completed && !task.archived) {
-                e.currentTarget.style.backgroundColor = task.color || '#8B5CF6';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!task.completed && !task.archived) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }
-            }}
+            style={checkboxStyle}
+            onMouseEnter={handleCheckboxMouseEnter}
+            onMouseLeave={handleCheckboxMouseLeave}
             data-testid={`button-toggle-task-${task.id}`}
           >
             {task.completed && (
@@ -147,7 +175,7 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
         <div className="flex items-center space-x-2">
           {task.completed ? (
             <button
-              onClick={() => handleToggleTask(task.id)}
+              onClick={onToggle}
               className="p-2 hover:bg-secondary rounded-lg transition-colors"
               data-testid={`button-undo-task-${task.id}`}
             >
@@ -155,7 +183,7 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
             </button>
           ) : !task.archived && (
             <button
-              onClick={() => handleEditTask(task)}
+              onClick={onEdit}
               className="p-2 hover:bg-secondary rounded-lg transition-colors"
               data-testid={`button-edit-task-${task.id}`}
             >
@@ -165,14 +193,14 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
           {!task.archived ? (
             <>
               <button
-                onClick={() => handleArchiveTask(task.id)}
+                onClick={onArchive}
                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                 data-testid={`button-archive-task-${task.id}`}
               >
                 <Archive className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               </button>
               <button
-                onClick={() => handleDeleteTask(task.id)}
+                onClick={onDelete}
                 className="p-2 hover:bg-destructive/10 rounded-lg transition-colors"
                 data-testid={`button-delete-task-${task.id}`}
               >
@@ -182,14 +210,14 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
           ) : (
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handleEditTask(task)}
+                onClick={onEdit}
                 className="p-2 hover:bg-secondary rounded-lg transition-colors"
                 data-testid={`button-edit-archived-task-${task.id}`}
               >
                 <Edit2 className="h-4 w-4 text-muted-foreground" />
               </button>
               <button
-                onClick={() => handleUnarchiveTask(task.id)}
+                onClick={onUnarchive}
                 className="p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                 data-testid={`button-unarchive-task-${task.id}`}
               >
@@ -202,7 +230,7 @@ function SortableTask({ task, getTaskBorderStyle, getPriorityBadgeClass, getCate
       </div>
     </div>
   );
-}
+});
 
 export function TasksSection({ onAddTask }: TasksSectionProps) {
   const [filter, setFilter] = useState<"all" | "pending" | "completed" | "high" | "weekly" | "monthly" | "archived">("all");
@@ -214,7 +242,11 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const { toast } = useToast();
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -352,7 +384,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     setLocalTasks(filteredTasks);
   }, [filteredTasks]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -363,16 +395,16 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         return arrayMove(items, oldIndex, newIndex);
       });
     }
-  };
+  }, []);
 
-  const getTaskBorderStyle = (task: Task) => {
+  const getTaskBorderStyle = useCallback((task: Task) => {
     const color = task.color || "#8B5CF6";
     return {
       borderLeft: `4px solid ${color}`,
     };
-  };
+  }, []);
 
-  const getPriorityBadgeClass = (priority: string) => {
+  const getPriorityBadgeClass = useCallback((priority: string) => {
     switch (priority) {
       case "high":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
@@ -383,9 +415,9 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       default:
         return "";
     }
-  };
+  }, []);
 
-  const getCategoryBadgeClass = (category: string) => {
+  const getCategoryBadgeClass = useCallback((category: string) => {
     switch (category) {
       case "genel":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
@@ -412,9 +444,9 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       default:
         return "";
     }
-  };
+  }, []);
 
-  const getPriorityText = (priority: string) => {
+  const getPriorityText = useCallback((priority: string) => {
     switch (priority) {
       case "high":
         return "Yüksek Öncelik";
@@ -425,9 +457,9 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       default:
         return "";
     }
-  };
+  }, []);
 
-  const getCategoryText = (category: string) => {
+  const getCategoryText = useCallback((category: string) => {
     switch (category) {
       case "genel":
         return "Genel";
@@ -458,9 +490,9 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       default:
         return "";
     }
-  };
+  }, []);
 
-  const formatDueDate = (dueDate: string) => {
+  const formatDueDate = useCallback((dueDate: string) => {
     if (!dueDate) return "";
     const date = new Date(dueDate);
     const today = new Date();
@@ -474,28 +506,28 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     } else {
       return date.toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
     }
-  };
+  }, []);
 
-  const handleToggleTask = (taskId: string) => {
+  const handleToggleTask = useCallback((taskId: string) => {
     toggleTaskMutation.mutate(taskId);
-  };
+  }, [toggleTaskMutation]);
 
-  const handleArchiveTask = (taskId: string) => {
+  const handleArchiveTask = useCallback((taskId: string) => {
     archiveTaskMutation.mutate(taskId);
-  };
+  }, [archiveTaskMutation]);
 
-  const handleUnarchiveTask = (taskId: string) => {
+  const handleUnarchiveTask = useCallback((taskId: string) => {
     unarchiveTaskMutation.mutate(taskId);
-  };
+  }, [unarchiveTaskMutation]);
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = useCallback((taskId: string) => {
     deleteTaskMutation.mutate(taskId);
-  };
+  }, [deleteTaskMutation]);
 
-  const handleEditTask = (task: Task) => {
+  const handleEditTask = useCallback((task: Task) => {
     setEditingTask(task);
     setIsEditModalOpen(true);
-  };
+  }, []);
 
   const handleDateRangeSearch = () => {
     if (!startDate || !endDate) {
