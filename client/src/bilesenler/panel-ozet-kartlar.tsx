@@ -207,17 +207,80 @@ export function DashboardSummaryCards() {
     let tytNetCount = 0;
     let aytNetCount = 0;
     
+    // DERS BAZLI NET ORTALAMALARI - SORU KAYITLARINDAN (TYT/AYT AYRI)
+    const tytSubjectNets: { [key: string]: { total: number; count: number } } = {};
+    const aytSubjectNets: { [key: string]: { total: number; count: number } } = {};
+    
     allQuestionLogs.forEach(log => {
       const correct = Number(log.correct_count) || 0;
       const wrong = Number(log.wrong_count) || 0;
       const netScore = correct - (wrong / 4);
       
-      if (tytSubjects.includes(log.subject)) {
+      const subjectKey = log.subject.toLowerCase();
+      const examType = log.exam_type; // TYT veya AYT
+      
+      // exam_type'a göre TYT veya AYT'ye ekle
+      if (examType === 'TYT') {
+        let mappedSubject = '';
+        if (subjectKey === 'turkce' || subjectKey === 'türkçe') mappedSubject = 'Türkçe';
+        else if (subjectKey === 'sosyal' || subjectKey === 'sosyal bilimler') mappedSubject = 'Sosyal Bilimler';
+        else if (subjectKey === 'matematik') mappedSubject = 'Matematik';
+        else if (subjectKey === 'tyt-geometri' || subjectKey === 'geometri') mappedSubject = 'Geometri';
+        else if (subjectKey === 'fizik') mappedSubject = 'Fizik';
+        else if (subjectKey === 'kimya') mappedSubject = 'Kimya';
+        else if (subjectKey === 'biyoloji') mappedSubject = 'Biyoloji';
+        else mappedSubject = log.subject;
+        
+        if (!tytSubjectNets[mappedSubject]) {
+          tytSubjectNets[mappedSubject] = { total: 0, count: 0 };
+        }
+        tytSubjectNets[mappedSubject].total += netScore;
+        tytSubjectNets[mappedSubject].count++;
+        
         tytTotalNet += netScore;
         tytNetCount++;
-      } else if (aytSubjects.includes(log.subject)) {
+      }
+      // AYT dersleri
+      else if (examType === 'AYT') {
+        let mappedSubject = '';
+        if (subjectKey === 'matematik' || subjectKey === 'ayt-matematik') mappedSubject = 'Matematik';
+        else if (subjectKey === 'geometri' || subjectKey === 'ayt-geometri') mappedSubject = 'Geometri';
+        else if (subjectKey === 'fizik' || subjectKey === 'ayt-fizik') mappedSubject = 'Fizik';
+        else if (subjectKey === 'kimya' || subjectKey === 'ayt-kimya') mappedSubject = 'Kimya';
+        else if (subjectKey === 'biyoloji' || subjectKey === 'ayt-biyoloji') mappedSubject = 'Biyoloji';
+        else mappedSubject = log.subject;
+        
+        if (!aytSubjectNets[mappedSubject]) {
+          aytSubjectNets[mappedSubject] = { total: 0, count: 0 };
+        }
+        aytSubjectNets[mappedSubject].total += netScore;
+        aytSubjectNets[mappedSubject].count++;
+        
         aytTotalNet += netScore;
         aytNetCount++;
+      }
+    });
+    
+    // Ders bazlı net ortalamaları hesapla
+    const tytSubjectAverages: { [key: string]: number } = {};
+    const aytSubjectAverages: { [key: string]: number } = {};
+    
+    const tytSubjectNames = ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji'];
+    const aytSubjectNames = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
+    
+    tytSubjectNames.forEach(subject => {
+      if (tytSubjectNets[subject] && tytSubjectNets[subject].count > 0) {
+        tytSubjectAverages[subject] = tytSubjectNets[subject].total / tytSubjectNets[subject].count;
+      } else {
+        tytSubjectAverages[subject] = 0;
+      }
+    });
+    
+    aytSubjectNames.forEach(subject => {
+      if (aytSubjectNets[subject] && aytSubjectNets[subject].count > 0) {
+        aytSubjectAverages[subject] = aytSubjectNets[subject].total / aytSubjectNets[subject].count;
+      } else {
+        aytSubjectAverages[subject] = 0;
       }
     });
     
@@ -235,7 +298,9 @@ export function DashboardSummaryCards() {
       mostActiveDay,
       maxActivity,
       tytAvgNet,
-      aytAvgNet
+      aytAvgNet,
+      tytSubjectAverages,
+      aytSubjectAverages
     };
   };
 
@@ -540,7 +605,7 @@ export function DashboardSummaryCards() {
     const sortedExams = [...generalExams].sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime());
     const last5Exams = sortedExams.slice(0, 5);
     
-    const tytSubjects = ['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Sosyal Bilimler'];
+    const tytSubjects = ['Türkçe', 'Matematik', 'Fen Bilimleri', 'Sosyal Bilimler'];
     const aytSubjects = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
     
     const tytAverages: { [key: string]: number } = {};
@@ -555,12 +620,18 @@ export function DashboardSummaryCards() {
       
       const subjectNets = examSubjectNets.filter(net => net.exam_id === exam.id);
       subjectNets.forEach(net => {
-        const subject = net.subject;
-        const correct = Number(net.correct) || 0;
-        const wrong = Number(net.wrong) || 0;
+        let subject = net.subject;
+        // Backend correct_count, wrong_count, blank_count olarak kaydediyor
+        const correct = Number(net.correct_count) || 0;
+        const wrong = Number(net.wrong_count) || 0;
         const netScore = correct - (wrong * 0.25);
         
         if (examType === 'TYT') {
+          // TYT için Fizik, Kimya, Biyoloji -> Fen Bilimleri
+          if (subject === 'Fizik' || subject === 'Kimya' || subject === 'Biyoloji') {
+            subject = 'Fen Bilimleri';
+          }
+          
           if (!tytAverages[subject]) {
             tytAverages[subject] = 0;
             tytCounts[subject] = 0;
@@ -668,14 +739,12 @@ export function DashboardSummaryCards() {
                 <div>
                   <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">TYT Ders Bazlı Net Ortalamalar</div>
                   <div className="grid grid-cols-2 gap-2">
-                    {['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Sosyal Bilimler'].map((subject) => {
+                    {['Türkçe', 'Matematik', 'Fen Bilimleri', 'Sosyal Bilimler'].map((subject) => {
                       const avg = generalSubjectAverages.tyt[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
                         'Türkçe': 'from-red-500 to-red-600',
                         'Matematik': 'from-blue-500 to-blue-600',
-                        'Fizik': 'from-violet-500 to-violet-600',
-                        'Kimya': 'from-pink-500 to-pink-600',
-                        'Biyoloji': 'from-cyan-500 to-cyan-600',
+                        'Fen Bilimleri': 'from-green-500 to-green-600',
                         'Sosyal Bilimler': 'from-orange-500 to-orange-600'
                       };
                       return (
@@ -825,7 +894,7 @@ export function DashboardSummaryCards() {
             <div className="space-y-6">
               {/* TYT Branş Ortalamaları */}
               <div>
-                <div className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3">TYT</div>
+                <div className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3">TYT Ders Bazlı Net Ortalamalar</div>
                 <div className="grid grid-cols-3 gap-2">
                   {['Türkçe', 'Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                     const avg = branchAverages.tyt[subject] || 0;
@@ -853,7 +922,7 @@ export function DashboardSummaryCards() {
 
               {/* AYT Branş Ortalamaları */}
               <div>
-                <div className="text-sm font-semibold text-green-600 dark:text-green-400 mb-3">AYT</div>
+                <div className="text-sm font-semibold text-green-600 dark:text-green-400 mb-3">AYT Ders Bazlı Net Ortalamalar</div>
                 <div className="grid grid-cols-3 gap-2">
                   {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                     const avg = branchAverages.ayt[subject] || 0;
@@ -878,59 +947,73 @@ export function DashboardSummaryCards() {
                 </div>
               </div>
 
-              {/* EN YÜKSEK NET KARTLARI */}
+              {/* EN YÜKSEK NET KARTLARI - HER ZAMAN GÖSTER */}
               <div className="grid grid-cols-2 gap-3 pt-4">
                 {/* TYT En Yüksek Net */}
-                {branchAverages.tytHighest.subject && (
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-3 border border-blue-200/50 dark:border-blue-700/30">
-                    <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">
-                      TYT En Yüksek Net
-                    </div>
-                    <div className="text-lg font-black text-blue-700 dark:text-blue-300 mb-1">
-                      {branchAverages.tytHighest.subject}
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                        {branchAverages.tytHighest.net.toFixed(1)}
-                      </span>
-                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                        %{branchAverages.tytHighest.percentage.toFixed(0)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-cyan-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min(branchAverages.tytHighest.percentage, 100)}%` }}
-                      ></div>
-                    </div>
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-3 border border-blue-200/50 dark:border-blue-700/30">
+                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">
+                    🏆 TYT En Yüksek Net Yapılan Ders
                   </div>
-                )}
+                  {branchAverages.tytHighest.subject ? (
+                    <>
+                      <div className="text-lg font-black text-blue-700 dark:text-blue-300 mb-1">
+                        {branchAverages.tytHighest.subject}
+                      </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {branchAverages.tytHighest.net.toFixed(1)}
+                        </span>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                          %{branchAverages.tytHighest.percentage.toFixed(0)}
+                        </span>
+                      </div>
+                      <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-blue-500 to-cyan-600 h-2 rounded-full transition-all duration-1000"
+                          style={{ width: `${Math.min(branchAverages.tytHighest.percentage, 100)}%` }}
+                        ></div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-4">
+                      <div className="text-3xl font-black text-gray-400 dark:text-gray-600 mb-1">-</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Henüz veri yok</div>
+                    </div>
+                  )}
+                </div>
                 
                 {/* AYT En Yüksek Net */}
-                {branchAverages.aytHighest.subject && (
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-3 border border-green-200/50 dark:border-green-700/30">
-                    <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">
-                      AYT En Yüksek Net
-                    </div>
-                    <div className="text-lg font-black text-green-700 dark:text-green-300 mb-1">
-                      {branchAverages.aytHighest.subject}
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                        {branchAverages.aytHighest.net.toFixed(1)}
-                      </span>
-                      <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                        %{branchAverages.aytHighest.percentage.toFixed(0)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min(branchAverages.aytHighest.percentage, 100)}%` }}
-                      ></div>
-                    </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-3 border border-green-200/50 dark:border-green-700/30">
+                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">
+                    🏆 AYT En Yüksek Net Yapılan Ders
                   </div>
-                )}
+                  {branchAverages.aytHighest.subject ? (
+                    <>
+                      <div className="text-lg font-black text-green-700 dark:text-green-300 mb-1">
+                        {branchAverages.aytHighest.subject}
+                      </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                          {branchAverages.aytHighest.net.toFixed(1)}
+                        </span>
+                        <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                          %{branchAverages.aytHighest.percentage.toFixed(0)}
+                        </span>
+                      </div>
+                      <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-1000"
+                          style={{ width: `${Math.min(branchAverages.aytHighest.percentage, 100)}%` }}
+                        ></div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-4">
+                      <div className="text-3xl font-black text-gray-400 dark:text-gray-600 mb-1">-</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Henüz veri yok</div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Düzeltilen Hatalar İstatistikleri - Her zaman göster */}
@@ -1014,21 +1097,21 @@ export function DashboardSummaryCards() {
             </div>
             
             <div className="space-y-6">
-              {/* TYT ve AYT Ders Bazlı Net Ortalamaları - EN ÜSTTE */}
+              {/* TYT ve AYT Ders Bazlı Net Ortalamaları - EN ÜSTTE - SORU KAYITLARINDAN */}
               <div className="space-y-3">
                 {/* TYT Ders Bazlı Net Ortalamaları */}
                 <div>
-                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">TYT Ders Bazlı Net Ortalamalar</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Türkçe', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji', 'Sosyal Bilimler'].map((subject) => {
-                      const avg = generalSubjectAverages.tyt[subject] || 0;
+                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">📘 TYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
+                      const avg = questionStats.tytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
                         'Türkçe': 'from-red-500 to-red-600',
+                        'Sosyal Bilimler': 'from-orange-500 to-orange-600',
                         'Matematik': 'from-blue-500 to-blue-600',
                         'Fizik': 'from-purple-500 to-purple-600',
-                        'Kimya': 'from-green-500 to-green-600',
-                        'Biyoloji': 'from-teal-500 to-teal-600',
-                        'Sosyal Bilimler': 'from-orange-500 to-orange-600'
+                        'Kimya': 'from-pink-500 to-pink-600',
+                        'Biyoloji': 'from-teal-500 to-teal-600'
                       };
                       return (
                         <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
@@ -1044,10 +1127,10 @@ export function DashboardSummaryCards() {
 
                 {/* AYT Ders Bazlı Net Ortalamaları */}
                 <div>
-                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">AYT Ders Bazlı Net Ortalamalar</div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">📗 AYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
+                  <div className="grid grid-cols-3 gap-2">
                     {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
-                      const avg = generalSubjectAverages.ayt[subject] || 0;
+                      const avg = questionStats.aytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
                         'Matematik': 'from-blue-500 to-blue-600',
                         'Geometri': 'from-indigo-500 to-indigo-600',

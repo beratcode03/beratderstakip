@@ -776,6 +776,8 @@ export default function Dashboard() {
       exam_name: newExamResult.exam_name,
       exam_date: newExamResult.exam_date,
       exam_type: newExamResult.exam_type, // Kritik: TYT/AYT ayrımı için exam_type'ı dahil et
+      exam_scope: newExamResult.examScope, // Kritik: Genel/Branş ayrımı için exam_scope'u dahil et
+      selected_subject: newExamResult.examScope === 'branch' ? newExamResult.selectedSubject : null,
       tyt_net: Math.max(0, tytNet).toFixed(2), // Negatif olmamasını sağla ve 2 ondalık basamak
       ayt_net: Math.max(0, aytNet).toFixed(2), // Negatif olmamasını sağla ve 2 ondalık basamak
       subjects_data: JSON.stringify(updatedSubjects),

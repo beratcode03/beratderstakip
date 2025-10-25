@@ -8,6 +8,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const activityLogger = require('./activity-logger.cjs');
+const ihlalLogger = require('./ihlal-logger.cjs');
 
 let mainWindow = null;
 let logsWindow = null;
@@ -1137,6 +1138,16 @@ app.whenReady().then(async () => {
     );
     app.quit();
     return;
+  }
+  
+  // İhlal log sistemi başlat
+  try {
+    console.log('📊 İHLAL: Sistem başlatılıyor...');
+    await ihlalLogger.collectAndSaveIhlalData(true, null, null);
+    // Her 24 saatte bir eski logları temizle
+    ihlalLogger.cleanOldLogs();
+  } catch (err) {
+    console.error('⚠️  İHLAL: Log sistemi başlatma hatası:', err.message);
   }
   
   try {
