@@ -47,6 +47,10 @@ function AdvancedChartsComponent() {
   const [includeArchived, setIncludeArchived] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [useDateFilter, setUseDateFilter] = useState<boolean>(false);
+  const [selectedDateTopics, setSelectedDateTopics] = useState<string | null>(null);
+  const [useDateFilterTopics, setUseDateFilterTopics] = useState<boolean>(false);
+  const [selectedDateErrors, setSelectedDateErrors] = useState<string | null>(null);
+  const [useDateFilterErrors, setUseDateFilterErrors] = useState<boolean>(false);
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
   const [celebratingTopics, setCelebratingTopics] = useState<Set<string>>(new Set());
   const [completedExamErrors, setCompletedExamErrors] = useState<Map<string, string>>(new Map());
@@ -680,8 +684,8 @@ function AdvancedChartsComponent() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setUseDateFilter(!useDateFilter);
-                  if (useDateFilter) setSelectedDate(null);
+                  setUseDateFilterTopics(!useDateFilterTopics);
+                  if (useDateFilterTopics) setSelectedDateTopics(null);
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-100/50 to-orange-100/50 dark:from-red-900/30 dark:to-orange-900/30 rounded-xl border border-red-200/50 dark:border-red-700/50 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 transition-all duration-200"
                 data-testid="button-toggle-date-filter-topics"
@@ -689,11 +693,11 @@ function AdvancedChartsComponent() {
                 <span className="whitespace-nowrap">📅 Filtrele</span>
                 <ChevronDown className="h-4 w-4 transition-transform duration-200" />
               </Button>
-              {useDateFilter && (
+              {useDateFilterTopics && (
                 <input
                   type="date"
-                  value={selectedDate || ''}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  value={selectedDateTopics || ''}
+                  onChange={(e) => setSelectedDateTopics(e.target.value)}
                   className="px-3 py-2 text-sm bg-white dark:bg-gray-900 border-2 border-red-300 dark:border-red-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400 shadow-sm transition-all duration-200 animate-in slide-in-from-top-2"
                   data-testid="input-date-filter-topics"
                 />
@@ -723,9 +727,9 @@ function AdvancedChartsComponent() {
               <p className="text-base opacity-75">Soru çözümü ve deneme sınavı ekledikçe eksik konular burada görünecek</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {missingTopics.slice(0, 15).filter(topic => !removedTopics.has(`${topic.subject}-${topic.topic}`)).map((topic, index) => (
-                <div key={index} className={`bg-white/70 dark:bg-gray-900/70 rounded-2xl p-6 border border-red-200/50 dark:border-red-700/50 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden group/card transition-all duration-500 ${
+                <div key={index} className={`bg-white/70 dark:bg-gray-900/70 rounded-xl p-4 border border-red-200/50 dark:border-red-700/50 hover:shadow-lg backdrop-blur-sm relative overflow-hidden group/card transition-all duration-200 ${
                   celebratingTopics.has(`${topic.subject}-${topic.topic}`) ? 'animate-pulse bg-green-100/80 dark:bg-green-900/40 border-green-300 dark:border-green-600 scale-105' : 'hover:scale-105'
                 } ${
                   completedTopics.has(`${topic.subject}-${topic.topic}`) && !celebratingTopics.has(`${topic.subject}-${topic.topic}`) ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'
@@ -906,8 +910,8 @@ function AdvancedChartsComponent() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setUseDateFilter(!useDateFilter);
-                  if (useDateFilter) setSelectedDate(null);
+                  setUseDateFilterErrors(!useDateFilterErrors);
+                  if (useDateFilterErrors) setSelectedDateErrors(null);
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-100/50 to-red-100/50 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border border-orange-200/50 dark:border-orange-700/50 text-sm font-medium text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200"
                 data-testid="button-toggle-date-filter-errors"
@@ -915,11 +919,11 @@ function AdvancedChartsComponent() {
                 <span className="whitespace-nowrap">📅 Filtrele</span>
                 <ChevronDown className="h-4 w-4 transition-transform duration-200" />
               </Button>
-              {useDateFilter && (
+              {useDateFilterErrors && (
                 <input
                   type="date"
-                  value={selectedDate || ''}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  value={selectedDateErrors || ''}
+                  onChange={(e) => setSelectedDateErrors(e.target.value)}
                   className="px-3 py-2 text-sm bg-white dark:bg-gray-900 border-2 border-orange-300 dark:border-orange-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-orange-500 dark:focus:border-orange-400 shadow-sm transition-all duration-200 animate-in slide-in-from-top-2"
                   data-testid="input-date-filter-errors"
                 />
@@ -1093,11 +1097,11 @@ function AdvancedChartsComponent() {
             }
             
             return (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {wrongTopicAnalysisData.slice(0, 15).filter((item: any) => !removedErrorTopics.has(`${item.exam_type}-${item.subject}-${item.topic}`)).map((item: any, index) => {
                   const errorTopicKey = `${item.exam_type}-${item.subject}-${item.topic}`;
                   return (
-                  <div key={index} className={`bg-white/70 dark:bg-gray-900/70 rounded-2xl p-6 border border-orange-200/50 dark:border-orange-700/50 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden group/card transition-all duration-500 ${
+                  <div key={index} className={`bg-white/70 dark:bg-gray-900/70 rounded-xl p-4 border border-orange-200/50 dark:border-orange-700/50 hover:shadow-lg backdrop-blur-sm relative overflow-hidden group/card transition-all duration-200 ${
                     celebratingErrorTopics.has(errorTopicKey) ? 'animate-pulse bg-green-100/80 dark:bg-green-900/40 border-green-300 dark:border-green-600 scale-105' : 'hover:scale-105'
                   } ${
                     ((item.sources && item.sources.includes('exam') ? completedExamErrors : completedQuestionErrors).has(errorTopicKey) && !celebratingErrorTopics.has(errorTopicKey)) ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'
