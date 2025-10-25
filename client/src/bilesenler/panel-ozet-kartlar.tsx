@@ -198,6 +198,32 @@ export function DashboardSummaryCards() {
       console.error('Error calculating solved errors:', error);
     }
     
+    // TYT ve AYT ortalama netleri hesapla - SORU ÇÖZME VERİLERİNDEN
+    const tytSubjects = ['turkce', 'sosyal', 'matematik', 'fizik', 'kimya', 'biyoloji', 'tyt-geometri'];
+    const aytSubjects = ['ayt-matematik', 'ayt-fizik', 'ayt-kimya', 'ayt-biyoloji', 'ayt-geometri'];
+    
+    let tytTotalNet = 0;
+    let aytTotalNet = 0;
+    let tytNetCount = 0;
+    let aytNetCount = 0;
+    
+    allQuestionLogs.forEach(log => {
+      const correct = Number(log.correct_count) || 0;
+      const wrong = Number(log.wrong_count) || 0;
+      const netScore = correct - (wrong / 4);
+      
+      if (tytSubjects.includes(log.subject)) {
+        tytTotalNet += netScore;
+        tytNetCount++;
+      } else if (aytSubjects.includes(log.subject)) {
+        aytTotalNet += netScore;
+        aytNetCount++;
+      }
+    });
+    
+    const tytAvgNet = tytNetCount > 0 ? (tytTotalNet / tytNetCount).toFixed(1) : '0.0';
+    const aytAvgNet = aytNetCount > 0 ? (aytTotalNet / aytNetCount).toFixed(1) : '0.0';
+    
     return { 
       totalQuestions, 
       dailyAverage, 
@@ -207,7 +233,9 @@ export function DashboardSummaryCards() {
       todaySolvedQuestionErrors,
       activeDays: uniqueDates.length,
       mostActiveDay,
-      maxActivity
+      maxActivity,
+      tytAvgNet,
+      aytAvgNet
     };
   };
 
@@ -1051,6 +1079,29 @@ export function DashboardSummaryCards() {
                   </div>
                   <div className="p-2.5 bg-rose-100 dark:bg-rose-900/40 rounded-lg">
                     <Sparkles className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* TYT ve AYT Ortalama Netleri */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* TYT Ortalama Net */}
+                <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-3 backdrop-blur-sm border border-indigo-200/30 dark:border-indigo-700/30">
+                  <div className="text-center">
+                    <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-1" data-testid="text-tyt-avg-net">
+                      {questionStats.tytAvgNet}
+                    </div>
+                    <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300">TYT Ortalama Net</div>
+                  </div>
+                </div>
+
+                {/* AYT Ortalama Net */}
+                <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-3 backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30">
+                  <div className="text-center">
+                    <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-1" data-testid="text-ayt-avg-net">
+                      {questionStats.aytAvgNet}
+                    </div>
+                    <div className="text-xs font-medium text-emerald-700 dark:text-emerald-300">AYT Ortalama Net</div>
                   </div>
                 </div>
               </div>

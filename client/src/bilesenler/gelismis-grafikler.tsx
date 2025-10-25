@@ -657,17 +657,45 @@ function AdvancedChartsComponent() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-gradient-to-br from-red-400/5 to-orange-400/5 rounded-full blur-2xl"></div>
         
         <CardHeader className="bg-gradient-to-r from-red-500/15 to-orange-500/15 rounded-t-lg border-b border-red-200/40 pb-8 relative">
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-red-500 via-red-600 to-orange-500 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110">
-              <AlertTriangle className="h-8 w-8 text-white drop-shadow-lg" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-gradient-to-br from-red-500 via-red-600 to-orange-500 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110">
+                <AlertTriangle className="h-8 w-8 text-white drop-shadow-lg" />
+              </div>
+              <div>
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+                  🎯 Eksik Olduğum Konular
+                </CardTitle>
+                <p className="text-sm text-red-600/70 dark:text-red-400/70 font-medium mt-2">
+                  Soru çözümü ve deneme sınavlarından toplanan eksik konu analizi
+                </p>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                🎯 Eksik Olduğum Konular
-              </CardTitle>
-              <p className="text-sm text-red-600/70 dark:text-red-400/70 font-medium mt-2">
-                Soru çözümü ve deneme sınavlarından toplanan eksik konu analizi
-              </p>
+            
+            {/* Tarih Seçici */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-100/50 to-orange-100/50 dark:from-red-900/30 dark:to-orange-900/30 rounded-xl border border-red-200/50 dark:border-red-700/50">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="use-date-filter-topics" 
+                  checked={useDateFilter}
+                  onCheckedChange={(checked) => {
+                    setUseDateFilter(checked as boolean);
+                    if (!checked) setSelectedDate(null);
+                  }}
+                />
+                <label htmlFor="use-date-filter-topics" className="text-sm font-medium text-red-700 dark:text-red-300 cursor-pointer whitespace-nowrap">
+                  📅 Tarih Filtrele
+                </label>
+              </div>
+              {useDateFilter && (
+                <input
+                  type="date"
+                  value={selectedDate || ''}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-red-700 dark:text-red-300"
+                  data-testid="input-date-filter-topics"
+                />
+              )}
             </div>
           </div>
         </CardHeader>
@@ -855,17 +883,45 @@ function AdvancedChartsComponent() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-gradient-to-br from-orange-400/5 to-red-400/5 rounded-full blur-2xl"></div>
         
         <CardHeader className="bg-gradient-to-r from-orange-500/15 to-red-500/15 rounded-t-lg border-b border-orange-200/40 pb-8 relative">
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110">
-              <Brain className="h-8 w-8 text-white drop-shadow-lg" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110">
+                <Brain className="h-8 w-8 text-white drop-shadow-lg" />
+              </div>
+              <div>
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                  🔍 Hata Sıklığı Analizi
+                </CardTitle>
+                <p className="text-sm text-orange-600/70 dark:text-orange-400/70 font-medium mt-2">
+                  Yanlış konu analizi ve kategori bazında hata sıklığı takibi
+                </p>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                🔍 Hata Sıklığı Analizi
-              </CardTitle>
-              <p className="text-sm text-orange-600/70 dark:text-orange-400/70 font-medium mt-2">
-                Yanlış konu analizi ve kategori bazında hata sıklığı takibi
-              </p>
+            
+            {/* Tarih Seçici */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-100/50 to-red-100/50 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border border-orange-200/50 dark:border-orange-700/50">
+              <div className="flex items-center gap-2">
+                <Checkbox 
+                  id="use-date-filter-errors" 
+                  checked={useDateFilter}
+                  onCheckedChange={(checked) => {
+                    setUseDateFilter(checked as boolean);
+                    if (!checked) setSelectedDate(null);
+                  }}
+                />
+                <label htmlFor="use-date-filter-errors" className="text-sm font-medium text-orange-700 dark:text-orange-300 cursor-pointer whitespace-nowrap">
+                  📅 Tarih Filtrele
+                </label>
+              </div>
+              {useDateFilter && (
+                <input
+                  type="date"
+                  value={selectedDate || ''}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-700 dark:text-orange-300"
+                  data-testid="input-date-filter-errors"
+                />
+              )}
             </div>
           </div>
         </CardHeader>
