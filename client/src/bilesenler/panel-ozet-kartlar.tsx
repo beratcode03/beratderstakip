@@ -1134,7 +1134,7 @@ export function DashboardSummaryCards() {
                 {/* TYT Ders Bazlı Net Ortalamaları */}
                 <div>
                   <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3">📘 TYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     {['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                       const avg = questionStats.tytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
@@ -1147,11 +1147,11 @@ export function DashboardSummaryCards() {
                         'Biyoloji': 'from-teal-500 to-teal-600'
                       };
                       return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-                          <div className="text-sm font-medium text-muted-foreground mb-1">{subject}</div>
-                          <div className={`text-2xl font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
+                          <div className={`text-lg font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
                             {avg.toFixed(1)}
                           </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
                         </div>
                       );
                     })}
@@ -1161,7 +1161,7 @@ export function DashboardSummaryCards() {
                 {/* AYT Ders Bazlı Net Ortalamaları */}
                 <div>
                   <div className="text-sm font-bold text-green-600 dark:text-green-400 mb-3">📗 AYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                       const avg = questionStats.aytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
@@ -1172,11 +1172,11 @@ export function DashboardSummaryCards() {
                         'Biyoloji': 'from-teal-500 to-teal-600'
                       };
                       return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
-                          <div className="text-sm font-medium text-muted-foreground mb-1">{subject}</div>
-                          <div className={`text-2xl font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
+                          <div className={`text-lg font-bold bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
                             {avg.toFixed(1)}
                           </div>
+                          <div className="text-xs text-muted-foreground truncate">{subject}</div>
                         </div>
                       );
                     })}

@@ -15,12 +15,16 @@ import { MidnightCountdown } from "@/bilesenler/geceyarisi-geri-sayim";
 import {
   DndContext,
   closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   DragEndEvent,
+  MeasuringStrategy,
+  PointerActivationConstraint,
 } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
   SortableContext,
@@ -44,11 +48,15 @@ const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, ge
     isDragging,
   } = useSortable({ id: task.id });
 
-  const style = useMemo(() => ({
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }), [transform, transition, isDragging]);
+  const style = useMemo(() => {
+    const translateY = transform ? Math.round(transform.y) : 0;
+    return {
+      transform: CSS.Translate.toString({ x: 0, y: translateY, scaleX: 1, scaleY: 1 }),
+      transition: isDragging ? 'none' : transition,
+      opacity: isDragging ? 0.5 : 1,
+      zIndex: isDragging ? 9999 : 'auto',
+    };
+  }, [transform, transition, isDragging]);
 
   const borderStyle = useMemo(() => getTaskBorderStyle(task), [task, getTaskBorderStyle]);
 
@@ -93,7 +101,7 @@ const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, ge
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-card rounded-lg border border-border p-4 transition-all duration-200 hover:shadow-md ${task.completed ? "opacity-75" : ""} ${isDragging ? "z-50" : ""}`}
+      className={`bg-card rounded-lg border border-border p-4 ${!isDragging ? 'transition-all duration-200' : ''} hover:shadow-md ${task.completed ? "opacity-75" : ""} ${isDragging ? "shadow-2xl" : ""}`}
       data-testid={`task-item-${task.id}`}
     >
       <div className="flex items-start justify-between">
@@ -245,6 +253,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -395,6 +404,8 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       setLocalTasks((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
+        
+        if (oldIndex === -1 || newIndex === -1) return items;
 
         return arrayMove(items, oldIndex, newIndex);
       });
@@ -703,8 +714,14 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       {/* Görev Listesi */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={closestCorners}
         onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis]}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
       >
         <SortableContext
           items={localTasks.map(t => t.id)}

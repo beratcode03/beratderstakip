@@ -835,7 +835,7 @@ export default function Dashboard() {
       // Görevleri şu öncelikle göster:
       // 1. Arşivlenmişse -> archivedAt tarihinde
       // 2. Silinmişse -> deletedAt tarihinde (varsa)
-      // 3. Tamamlanmışsa -> completedAt tarihinde
+      // 3. Tamamlanmışsa -> completedAt tarihinde (SADECE TAMAMLANMIŞSA!)
       // 4. Değilse -> dueDate veya createdAt'te
       let taskDate: string | null = null;
       
@@ -843,7 +843,7 @@ export default function Dashboard() {
         taskDate = new Date(task.archivedAt).toISOString().split('T')[0];
       } else if (task.deleted && task.deletedAt) {
         taskDate = new Date(task.deletedAt).toISOString().split('T')[0];
-      } else if (task.completedAt) {
+      } else if (task.completed && task.completedAt) {
         taskDate = new Date(task.completedAt).toISOString().split('T')[0];
       } else if (task.dueDate) {
         taskDate = task.dueDate.split('T')[0];
@@ -1004,7 +1004,7 @@ export default function Dashboard() {
       // Görevleri şu öncelikle filtrele:
       // 1. Arşivlenmişse -> archivedAt tarihinde
       // 2. Silinmişse -> deletedAt tarihinde
-      // 3. Tamamlanmışsa -> completedAt tarihinde
+      // 3. Tamamlanmışsa -> completedAt tarihinde (SADECE TAMAMLANMIŞSA!)
       // 4. Değilse -> dueDate veya createdAt'te
       let taskDate: string | null = null;
       
@@ -1012,7 +1012,7 @@ export default function Dashboard() {
         taskDate = new Date(task.archivedAt).toISOString().split('T')[0];
       } else if (task.deleted && task.deletedAt) {
         taskDate = new Date(task.deletedAt).toISOString().split('T')[0];
-      } else if (task.completedAt) {
+      } else if (task.completed && task.completedAt) {
         taskDate = new Date(task.completedAt).toISOString().split('T')[0];
       } else if (task.dueDate) {
         taskDate = task.dueDate.split('T')[0];

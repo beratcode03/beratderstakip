@@ -1312,7 +1312,7 @@ function AdvancedChartsComponent() {
       {/* Analiz Bölümü */}
       <Card className="bg-gradient-to-br from-indigo-50/50 via-card to-purple-50/50 dark:from-indigo-950/30 dark:via-card dark:to-purple-950/30 backdrop-blur-sm border-2 border-indigo-200/30 dark:border-indigo-800/30 shadow-2xl">
         <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-t-lg border-b border-indigo-200/30">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
             <div>
               <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
                 <BarChart3 className="h-6 w-6 text-indigo-500" />
@@ -1324,7 +1324,7 @@ function AdvancedChartsComponent() {
             </div>
 
             {/* Analiz Modu Değiştirme */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl p-1 border border-indigo-200/50 dark:border-indigo-700/50">
                 <Button
                   variant={analysisMode === 'general' ? 'default' : 'ghost'}
@@ -1356,10 +1356,8 @@ function AdvancedChartsComponent() {
                 </Button>
               </div>
               
-              {/* Arşivlenmiş verileri dahil et checkbox'ı - Kaldırıldı çünkü otomatik dahil */}
-              
-              {/* Tarih Seçici - Sabit yükseklik ile */}
-              <div className="flex flex-col items-start gap-2 min-h-[80px]">
+              {/* Tarih Seçici */}
+              <div className="flex flex-col items-start gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -1373,17 +1371,15 @@ function AdvancedChartsComponent() {
                   <span className="whitespace-nowrap">📅 Filtrele</span>
                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${useDateFilter ? 'rotate-180' : ''}`} />
                 </Button>
-                <div className="h-[40px]">
-                  {useDateFilter && (
-                    <input
-                      type="date"
-                      value={selectedDate || ''}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                      data-testid="input-date-filter"
-                    />
-                  )}
-                </div>
+                {useDateFilter && (
+                  <input
+                    type="date"
+                    value={selectedDate || ''}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                    data-testid="input-date-filter"
+                  />
+                )}
               </div>
             </div>
           </div>
