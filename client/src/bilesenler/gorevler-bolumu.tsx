@@ -50,7 +50,7 @@ const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, ge
 
   const style = useMemo(() => ({
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? 'none' : transition,
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 9999 : 'auto',
   }), [transform, transition, isDragging]);
@@ -97,8 +97,8 @@ const SortableTask = memo(({ task, getTaskBorderStyle, getPriorityBadgeClass, ge
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className={`bg-card rounded-lg border border-border p-4 ${!isDragging ? 'transition-all duration-200' : ''} hover:shadow-md ${task.completed ? "opacity-75" : ""} ${isDragging ? "shadow-2xl" : ""}`}
+      style={{...style, touchAction: 'none'}}
+      className={`bg-card rounded-lg border border-border p-4 hover:shadow-md ${task.completed ? "opacity-75" : ""} ${isDragging ? "shadow-2xl" : ""}`}
       data-testid={`task-item-${task.id}`}
     >
       <div className="flex items-start justify-between">
@@ -247,12 +247,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
   const { toast } = useToast();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-        tolerance: 5,
-      },
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -711,14 +706,9 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
       {/* Görev Listesi */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis]}
-        measuring={{
-          droppable: {
-            strategy: MeasuringStrategy.Always,
-          },
-        }}
       >
         <SortableContext
           items={localTasks.map(t => t.id)}

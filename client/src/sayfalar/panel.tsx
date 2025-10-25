@@ -1970,7 +1970,7 @@ export default function Dashboard() {
                   <div className="text-sm text-muted-foreground">Soru Çözümü</div>
                 </div>
                 <div className="text-center p-4 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl">
-                  <div className="text-2xl font-bold text-blue-600">{selectedHeatmapDay.dayActivities.tasks.length}</div>
+                  <div className="text-2xl font-bold text-blue-600">{selectedHeatmapDay.dayActivities.tasks.filter((task: any) => task.completed).length}</div>
                   <div className="text-sm text-muted-foreground">Tamamlanan Görev</div>
                 </div>
                 <div className="text-center p-4 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl">
@@ -2021,14 +2021,39 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {selectedHeatmapDay.dayActivities.tasks.length > 0 && (
+              {/* Planlanan Görevler */}
+              {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => !task.completed).length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <CalendarDays className="h-5 w-5 text-orange-500" />
+                    Planlanan Görevler
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => !task.completed).map((task: any, index: number) => (
+                      <div key={index} className="p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <div className="font-medium">
+                          {task.title}
+                          {task.archived && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-200">(arşivlendi)</span>}
+                          {task.deleted && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">(silindi)</span>}
+                        </div>
+                        {task.description && (
+                          <div className="text-sm text-muted-foreground mt-1">{task.description}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tamamlanan Görevler */}
+              {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => task.completed).length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <Target className="h-5 w-5 text-blue-500" />
                     Tamamlanan Görevler
                   </h3>
                   <div className="space-y-2">
-                    {selectedHeatmapDay.dayActivities.tasks.map((task: any, index: number) => (
+                    {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => task.completed).map((task: any, index: number) => (
                       <div key={index} className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="font-medium">
                           {task.title}
