@@ -24,7 +24,6 @@ import {
   MeasuringStrategy,
   PointerActivationConstraint,
 } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
   SortableContext,
@@ -708,7 +707,6 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext
           items={localTasks.map(t => t.id)}
