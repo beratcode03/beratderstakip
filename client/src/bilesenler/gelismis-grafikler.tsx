@@ -1358,8 +1358,8 @@ function AdvancedChartsComponent() {
               
               {/* Arşivlenmiş verileri dahil et checkbox'ı - Kaldırıldı çünkü otomatik dahil */}
               
-              {/* Tarih Seçici */}
-              <div className="flex flex-col items-start gap-2">
+              {/* Tarih Seçici - Sabit yükseklik ile */}
+              <div className="flex flex-col items-start gap-2 min-h-[80px]">
                 <Button
                   variant="outline"
                   size="sm"
@@ -1371,17 +1371,19 @@ function AdvancedChartsComponent() {
                   data-testid="button-toggle-date-filter"
                 >
                   <span className="whitespace-nowrap">📅 Filtrele</span>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${useDateFilter ? 'rotate-180' : ''}`} />
                 </Button>
-                {useDateFilter && (
-                  <input
-                    type="date"
-                    value={selectedDate || ''}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    data-testid="input-date-filter"
-                  />
-                )}
+                <div className="h-[40px]">
+                  {useDateFilter && (
+                    <input
+                      type="date"
+                      value={selectedDate || ''}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                      data-testid="input-date-filter"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1423,8 +1425,8 @@ function AdvancedChartsComponent() {
                     </div>
                     <div className="text-sm text-blue-600 dark:text-blue-400">
                       TYT DENEME: {(() => {
-                        // En son TYT sınavını bul (tytNet > 0 veya exam_type TYT ise)
-                        const tytExams = examResults.filter(exam => 
+                        // En son TYT sınavını bul (tytNet > 0 veya exam_type TYT ise) - Tarih filtresini dikkate al
+                        const tytExams = allExamResults.filter(exam => 
                           exam.exam_type === 'TYT' || (parseFloat(exam.tyt_net) > 0 && parseFloat(exam.ayt_net) === 0)
                         ).sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime());
                         return tytExams.length > 0 ? parseFloat(tytExams[0].tyt_net) : 0;
@@ -1454,8 +1456,8 @@ function AdvancedChartsComponent() {
                     </div>
                     <div className="text-sm text-green-600 dark:text-green-400">
                       AYT DENEME: {(() => {
-                        // En son AYT sınavını bul (aytNet > 0 veya exam_type AYT ise)
-                        const aytExams = examResults.filter(exam => 
+                        // En son AYT sınavını bul (aytNet > 0 veya exam_type AYT ise) - Tarih filtresini dikkate al
+                        const aytExams = allExamResults.filter(exam => 
                           exam.exam_type === 'AYT' || (parseFloat(exam.ayt_net) > 0 && parseFloat(exam.tyt_net) === 0)
                         ).sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime());
                         return aytExams.length > 0 ? parseFloat(aytExams[0].ayt_net) : 0;
@@ -1684,18 +1686,31 @@ function AdvancedChartsComponent() {
                   </div>
                 </div>
 
-                {/* TYT ve AYT Ders Özeti */}
-                <div className="space-y-4">
-                  {/* TYT ÖZet Kartları */}
+                {/* TYT ve AYT Ders Özeti - Branş Denemeleri Özeti Stili */}
+                <div className="space-y-6">
+                  {/* TYT Ders Özeti Kartları */}
                   {tytSubjectAnalysisData.length > 0 && (
                     <div>
-                      <h4 className="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-300">🔵 TYT Ders Özeti</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+                      <h4 className="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-300">📚 TYT Ders Özeti</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {tytSubjectAnalysisData.map((subject, index) => (
                           <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="text-center">
-                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">{subject.subject}</h4>
-                              <div className="text-xl font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</div>
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{subject.subject}</h4>
+                            </div>
+                            <div className="space-y-2 mb-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
+                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
+                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
+                              </div>
+                              <div className="flex justify-between items-center border-t pt-2">
+                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                                <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -1703,16 +1718,29 @@ function AdvancedChartsComponent() {
                     </div>
                   )}
 
-                  {/* AYT Özet Kartları */}
+                  {/* AYT Ders Özeti Kartları */}
                   {aytSubjectAnalysisData.length > 0 && (
                     <div>
-                      <h4 className="text-lg font-semibold mb-3 text-green-700 dark:text-green-300">🟢 AYT Ders Özeti</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+                      <h4 className="text-lg font-semibold mb-3 text-green-700 dark:text-green-300">📚 AYT Ders Özeti</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {aytSubjectAnalysisData.map((subject, index) => (
                           <div key={index} className="bg-green-50/60 dark:bg-green-900/20 rounded-xl p-4 border border-green-200/40 dark:border-green-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="text-center">
-                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">{subject.subject}</h4>
-                              <div className="text-xl font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</div>
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{subject.subject}</h4>
+                            </div>
+                            <div className="space-y-2 mb-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
+                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
+                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
+                              </div>
+                              <div className="flex justify-between items-center border-t pt-2">
+                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                                <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
+                              </div>
                             </div>
                           </div>
                         ))}
