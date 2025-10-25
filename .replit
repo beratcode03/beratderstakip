@@ -15,10 +15,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
+args = "Start application"
 
 [[workflows.workflow]]
-name = "Server"
+name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
@@ -33,7 +33,11 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 33291
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "start"]
+run = ["npm", "run", "start"]
 build = ["npm", "run", "build"]
