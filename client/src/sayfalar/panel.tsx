@@ -155,6 +155,7 @@ export default function Dashboard() {
   const [showArchivedDataModal, setShowArchivedDataModal] = useState(false);
   const [archivedTab, setArchivedTab] = useState<'questions' | 'exams' | 'tasks' | 'studyHours'>('questions');
   const [nextArchiveCountdown, setNextArchiveCountdown] = useState<string>("");
+  const [showDeleteAllDataDialog, setShowDeleteAllDataDialog] = useState(false);
 
   // Arşivlenen verileri getir (modal için)
   const { data: archivedQuestionsModal = [] } = useQuery<QuestionLog[]>({
@@ -200,6 +201,61 @@ export default function Dashboard() {
     },
     onError: () => {
       toast({ title: "❌ Hata", description: "Denemeler silinemedi.", variant: "destructive" });
+    },
+  });
+
+  // TÜM VERİLERİ VE CACHE'LERİ TEMİZLE
+  const deleteAllDataMutation = useMutation({
+    mutationFn: async () => {
+      // Tüm verileri sil
+      await apiRequest("DELETE", "/api/tasks/all");
+      await apiRequest("DELETE", "/api/question-logs/all");
+      await apiRequest("DELETE", "/api/exam-results/all");
+      await apiRequest("DELETE", "/api/study-hours/all");
+      
+      // localStorage'daki cache'leri temizle
+      const keysToRemove = [
+        'completedQuestionErrors',
+        'completedGeneralExamErrors', 
+        'completedBranchExamErrors',
+        'removedTopics',
+        'celebratingTopics',
+        'tytTargetNet',
+        'aytTargetNet',
+        'tytBranchTargetNet',
+        'aytBranchTargetNet'
+      ];
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      return { success: true };
+    },
+    onSuccess: () => {
+      // Tüm query cache'lerini temizle
+      sorguIstemcisi.clear();
+      
+      // Tüm queryKey'leri invalidate et
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/tasks"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/question-logs"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/study-hours"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-subject-nets"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/stats"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/priority"] });
+      
+      toast({ 
+        title: "🗑️ Tüm veriler temizlendi", 
+        description: "Tüm verileriniz ve cache'ler başarıyla silindi. Uygulama yenileniyor...",
+        duration: 3000
+      });
+      
+      // 2 saniye sonra sayfayı yenile
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Veriler temizlenemedi.", variant: "destructive" });
     },
   });
 
@@ -1073,6 +1129,21 @@ export default function Dashboard() {
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
+  }, []);
+
+  // Electron IPC listener - Tray'den "Tüm Verileri Temizle" modal açma
+  useEffect(() => {
+    const handleOpenDeleteAllModal = () => {
+      setShowDeleteAllDataDialog(true);
+    };
+
+    if (window.electron?.ipcRenderer) {
+      window.electron.ipcRenderer.on('open-delete-all-data-modal', handleOpenDeleteAllModal);
+      
+      return () => {
+        window.electron.ipcRenderer.removeListener('open-delete-all-data-modal', handleOpenDeleteAllModal);
+      };
+    }
   }, []);
 
   // Son etkinlikler (son 10 öğe birleştirilmiş) - OPTIMIZED
@@ -5024,6 +5095,88 @@ export default function Dashboard() {
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               Evet, Tümünü Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* TÜM VERİLERİ TEMİZLE MODAL */}
+      <AlertDialog open={showDeleteAllDataDialog} onOpenChange={setShowDeleteAllDataDialog}>
+        <AlertDialogContent className="bg-white dark:bg-gray-900 border-red-300 dark:border-red-700 max-w-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-700 dark:text-red-300 text-2xl flex items-center gap-3">
+              <Trash2 className="h-8 w-8 animate-pulse" />
+              🗑️ TÜM VERİLERİ TEMİZLE
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-700 dark:text-gray-300 text-base">
+              Bu işlem <span className="font-bold text-red-600 dark:text-red-400">TÜM UYGULAMAI VERİLERİNİZİ VE CACHE'LERİ</span> kalıcı olarak silecektir!
+            </AlertDialogDescription>
+            <div className="mt-6 space-y-4">
+              <div className="p-5 bg-red-50 dark:bg-red-950/40 rounded-xl border-2 border-red-300 dark:border-red-700">
+                <p className="text-base font-bold text-red-700 dark:text-red-300 mb-3 flex items-center gap-2">
+                  ⚠️ UYARI: Bu İşlem Geri Alınamaz!
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+                  Aşağıdaki <span className="font-semibold">TÜM veriler kalıcı olarak</span> silinecektir:
+                </p>
+                <ul className="space-y-2 text-sm text-red-600 dark:text-red-400">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">🗑️</span>
+                    <span><strong>Görevler:</strong> Tamamlanan ve bekleyen tüm görevleriniz</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">🗑️</span>
+                    <span><strong>Soru Kayıtları:</strong> Çözdüğünüz tüm sorular ve istatistikler</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">🗑️</span>
+                    <span><strong>Deneme Sonuçları:</strong> TYT/AYT tüm deneme sınav kayıtları</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">🗑️</span>
+                    <span><strong>Çalışma Saatleri:</strong> Tüm çalışma saati kayıtları</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">🗑️</span>
+                    <span><strong>Cache & Ayarlar:</strong> Düzeltilen konular, hedef netler, tüm localStorage verileri</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="p-4 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-300 dark:border-orange-700">
+                <p className="text-sm font-semibold text-orange-700 dark:text-orange-300 mb-2">
+                  ℹ️ İşlem Sonrası:
+                </p>
+                <ul className="text-xs text-orange-600 dark:text-orange-400 space-y-1 list-disc list-inside">
+                  <li>Uygulama otomatik olarak yenilenecek</li>
+                  <li>Tüm veriler sıfırlanacak (sıfırdan başlayacaksınız)</li>
+                  <li>Bu işlem 2-3 saniye sürebilir</li>
+                </ul>
+              </div>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6">
+            <AlertDialogCancel 
+              className="border-gray-400 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+              disabled={deleteAllDataMutation.isPending}
+            >
+              ❌ İptal Et
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                deleteAllDataMutation.mutate();
+              }}
+              disabled={deleteAllDataMutation.isPending}
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold px-6"
+            >
+              {deleteAllDataMutation.isPending ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Temizleniyor...
+                </span>
+              ) : (
+                '🗑️ Evet, Tüm Verileri Temizle'
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

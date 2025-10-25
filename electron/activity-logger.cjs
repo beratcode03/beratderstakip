@@ -87,10 +87,16 @@ class ActivityLogger {
         }
         if (path === '/api/question-logs') {
           const subjectName = this.getSubjectName(body.subject);
-          const correctCount = body.correct_count || 0;
-          const wrongCount = body.wrong_count || 0;
-          const blankCount = body.blank_count || 0;
+          const correctCount = parseInt(body.correct_count) || 0;
+          const wrongCount = parseInt(body.wrong_count) || 0;
+          const blankCount = parseInt(body.blank_count) || 0;
           const totalQuestions = correctCount + wrongCount + blankCount;
+          
+          // Eğer toplam soru 0 ise log atla
+          if (totalQuestions === 0) {
+            return null;
+          }
+          
           return this.log('Soru Kaydı Eklendi', `${totalQuestions} soru - ${subjectName}`);
         }
         if (path === '/api/study-hours') {

@@ -915,6 +915,18 @@ function createTray() {
     },
     { type: 'separator' },
     {
+      label: 'Tüm Verileri Temizle',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.webContents.send('open-delete-all-data-modal');
+          if (mainWindow.isMinimized()) mainWindow.restore();
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    { type: 'separator' },
+    {
       label: 'Aktiviteleri Göster',
       click: () => {
         createActivitiesWindow();
