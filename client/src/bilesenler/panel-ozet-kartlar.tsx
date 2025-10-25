@@ -265,7 +265,7 @@ export function DashboardSummaryCards() {
     const tytSubjectAverages: { [key: string]: number } = {};
     const aytSubjectAverages: { [key: string]: number } = {};
     
-    const tytSubjectNames = ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji'];
+    const tytSubjectNames = ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
     const aytSubjectNames = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
     
     tytSubjectNames.forEach(subject => {
@@ -1101,22 +1101,23 @@ export function DashboardSummaryCards() {
               <div className="space-y-3">
                 {/* TYT Ders Bazlı Net Ortalamaları */}
                 <div>
-                  <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">📘 TYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
+                  <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3">📘 TYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
+                  <div className="grid grid-cols-3 gap-3">
+                    {['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                       const avg = questionStats.tytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
                         'Türkçe': 'from-red-500 to-red-600',
                         'Sosyal Bilimler': 'from-orange-500 to-orange-600',
                         'Matematik': 'from-blue-500 to-blue-600',
+                        'Geometri': 'from-indigo-500 to-indigo-600',
                         'Fizik': 'from-purple-500 to-purple-600',
                         'Kimya': 'from-pink-500 to-pink-600',
                         'Biyoloji': 'from-teal-500 to-teal-600'
                       };
                       return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-                          <div className="text-xs text-muted-foreground mb-0.5">{subject}</div>
-                          <div className={`text-lg font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
+                          <div className="text-sm font-medium text-muted-foreground mb-1">{subject}</div>
+                          <div className={`text-2xl font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
                             {avg.toFixed(1)}
                           </div>
                         </div>
@@ -1127,8 +1128,8 @@ export function DashboardSummaryCards() {
 
                 {/* AYT Ders Bazlı Net Ortalamaları */}
                 <div>
-                  <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">📗 AYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="text-sm font-bold text-green-600 dark:text-green-400 mb-3">📗 AYT Ders Bazlı Net Ortalamalar (Soru Kayıtlarından)</div>
+                  <div className="grid grid-cols-3 gap-3">
                     {['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject) => {
                       const avg = questionStats.aytSubjectAverages[subject] || 0;
                       const subjectColors: {[key: string]: string} = {
@@ -1139,9 +1140,9 @@ export function DashboardSummaryCards() {
                         'Biyoloji': 'from-teal-500 to-teal-600'
                       };
                       return (
-                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-2 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
-                          <div className="text-xs text-muted-foreground mb-0.5">{subject}</div>
-                          <div className={`text-lg font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
+                        <div key={subject} className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
+                          <div className="text-sm font-medium text-muted-foreground mb-1">{subject}</div>
+                          <div className={`text-2xl font-black bg-gradient-to-r ${subjectColors[subject]} bg-clip-text text-transparent`}>
                             {avg.toFixed(1)}
                           </div>
                         </div>
