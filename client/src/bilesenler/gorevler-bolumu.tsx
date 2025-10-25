@@ -24,6 +24,7 @@ import {
   MeasuringStrategy,
   PointerActivationConstraint,
 } from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import {
   arrayMove,
   SortableContext,
@@ -711,6 +712,7 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
+        modifiers={[restrictToWindowEdges]}
       >
         <SortableContext
           items={localTasks.map(t => t.id)}
