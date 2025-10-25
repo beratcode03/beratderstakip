@@ -441,13 +441,38 @@ export function DashboardSummaryCards() {
       console.error('Error loading completed branch exam errors:', error);
     }
     
+    // En yüksek net yapılan dersleri bul
+    let tytHighestSubject = null;
+    let tytHighestNet = 0;
+    for (const subject of tytSubjects) {
+      if (tytResults[subject] > tytHighestNet && tytCounts[subject] > 0) {
+        tytHighestNet = tytResults[subject];
+        tytHighestSubject = subject;
+      }
+    }
+    
+    let aytHighestSubject = null;
+    let aytHighestNet = 0;
+    for (const subject of aytSubjects) {
+      if (aytResults[subject] > aytHighestNet && aytCounts[subject] > 0) {
+        aytHighestNet = aytResults[subject];
+        aytHighestSubject = subject;
+      }
+    }
+    
+    // Yüzdeleri hesapla (40 soru üzerinden TYT, 40 soru üzerinden AYT)
+    const tytPercentage = tytHighestNet > 0 ? ((tytHighestNet / 40) * 100) : 0;
+    const aytPercentage = aytHighestNet > 0 ? ((aytHighestNet / 40) * 100) : 0;
+    
     return { 
       tyt: tytResults, 
       ayt: aytResults, 
       tytCounts, 
       aytCounts,
       totalBranchErrors,
-      todayBranchErrors
+      todayBranchErrors,
+      tytHighest: { subject: tytHighestSubject, net: tytHighestNet, percentage: tytPercentage },
+      aytHighest: { subject: aytHighestSubject, net: aytHighestNet, percentage: aytPercentage }
     };
   };
 
@@ -580,65 +605,7 @@ export function DashboardSummaryCards() {
             </div>
             
             <div className="space-y-6">
-              {/* TYT/AYT Net Ortalamaları - EN ÜSTTE */}
-              {/* TYT Net Ortalama */}
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-tyt-average">
-                      {netAverages.tytAvg}
-                    </div>
-                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">TYT Net Ortalama</div>
-                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min((parseFloat(netAverages.tytAvg) / 120) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400">TYT</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* AYT Net Ortalama */}
-              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-green-600 dark:text-green-400 mb-1" data-testid="text-ayt-average">
-                      {netAverages.aytAvg}
-                    </div>
-                    <div className="text-sm font-medium text-green-700 dark:text-green-300">AYT Net Ortalama</div>
-                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min((parseFloat(netAverages.aytAvg) / 80) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="ml-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                    <span className="text-xs font-bold text-green-600 dark:text-green-400">AYT</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Toplam Çözülen Deneme Sayısı */}
-              <div className="bg-gradient-to-br from-indigo-50/80 to-blue-50/60 dark:from-indigo-900/30 dark:to-blue-900/20 rounded-xl p-4 backdrop-blur-sm border-2 border-indigo-200/50 dark:border-indigo-700/40 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mb-1" data-testid="text-total-exam-count">
-                      {netAverages.examCount}
-                    </div>
-                    <div className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Toplam Çözülen Deneme Sayısı</div>
-                  </div>
-                  <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                    <Award className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Ders Bazlı Net Ortalamaları */}
+              {/* YENİ HİYERARŞİ: Ders Bazlı Net Ortalamaları EN ÜSTTE */}
               <div className="space-y-4">
                 {/* TYT Ders Ortalamaları */}
                 <div>
@@ -688,6 +655,48 @@ export function DashboardSummaryCards() {
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+              </div>
+
+              {/* TYT Net Ortalama */}
+              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1" data-testid="text-tyt-average">
+                      {netAverages.tytAvg}
+                    </div>
+                    <div className="text-sm font-medium text-blue-700 dark:text-blue-300">TYT Net Ortalama</div>
+                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min((parseFloat(netAverages.tytAvg) / 120) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="ml-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400">TYT</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* AYT Net Ortalama */}
+              <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-green-200/30 dark:border-green-700/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-3xl font-black text-green-600 dark:text-green-400 mb-1" data-testid="text-ayt-average">
+                      {netAverages.aytAvg}
+                    </div>
+                    <div className="text-sm font-medium text-green-700 dark:text-green-300">AYT Net Ortalama</div>
+                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min((parseFloat(netAverages.aytAvg) / 80) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="ml-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                    <span className="text-xs font-bold text-green-600 dark:text-green-400">AYT</span>
                   </div>
                 </div>
               </div>
@@ -810,6 +819,61 @@ export function DashboardSummaryCards() {
                     );
                   })}
                 </div>
+              </div>
+
+              {/* EN YÜKSEK NET KARTLARI */}
+              <div className="grid grid-cols-2 gap-3 pt-4">
+                {/* TYT En Yüksek Net */}
+                {branchAverages.tytHighest.subject && (
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-3 border border-blue-200/50 dark:border-blue-700/30">
+                    <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">
+                      TYT En Yüksek Net
+                    </div>
+                    <div className="text-lg font-black text-blue-700 dark:text-blue-300 mb-1">
+                      {branchAverages.tytHighest.subject}
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        {branchAverages.tytHighest.net.toFixed(1)}
+                      </span>
+                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        %{branchAverages.tytHighest.percentage.toFixed(0)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-cyan-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min(branchAverages.tytHighest.percentage, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* AYT En Yüksek Net */}
+                {branchAverages.aytHighest.subject && (
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-3 border border-green-200/50 dark:border-green-700/30">
+                    <div className="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">
+                      AYT En Yüksek Net
+                    </div>
+                    <div className="text-lg font-black text-green-700 dark:text-green-300 mb-1">
+                      {branchAverages.aytHighest.subject}
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {branchAverages.aytHighest.net.toFixed(1)}
+                      </span>
+                      <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                        %{branchAverages.aytHighest.percentage.toFixed(0)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-green-100 dark:bg-green-900/30 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min(branchAverages.aytHighest.percentage, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Düzeltilen Hatalar İstatistikleri - Her zaman göster */}
