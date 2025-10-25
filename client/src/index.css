@@ -38,6 +38,18 @@
   }
 }
 
+/* Tamamlanmamış görevler için kenarlık yanıp sönmesi */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 0 rgba(139, 92, 246, 0);
+  }
+  50% {
+    border-color: rgba(139, 92, 246, 0.8);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  }
+}
+
 /* Reduced motion desteği - erişilebilirlik */
 @media (prefers-reduced-motion: reduce) {
   *,

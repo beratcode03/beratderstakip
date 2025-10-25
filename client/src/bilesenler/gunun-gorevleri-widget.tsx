@@ -191,10 +191,13 @@ export function TodaysTasksWidget() {
                     ? 'bg-gradient-to-r from-green-100/80 to-emerald-100/80 dark:from-green-900/40 dark:to-emerald-900/40 border-green-300 dark:border-green-600 scale-105 shadow-lg' 
                     : task.completed 
                     ? 'bg-muted/30 border-muted' 
-                    : 'bg-background border-border/50 hover:border-border'
+                    : 'bg-background border-border/50 hover:border-border animate-pulse-slow'
                 }`}
                 style={{
                   borderLeft: `4px solid ${task.color || '#8B5CF6'}`,
+                  animation: !task.completed && celebratingTask !== task.id 
+                    ? 'pulse-border 2s ease-in-out infinite' 
+                    : undefined,
                 }}
                 data-testid={`list-task-${task.id}`}
               >
