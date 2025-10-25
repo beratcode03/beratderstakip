@@ -1,0 +1,18 @@
+Genel veya Branş denemesi ekledikten sonra Soru İstatistikleri kısmında verileri gözükmesin örneğin Genel deneme ekledim fenden 15 5 yaptım gidip Soru İstatistikleri kısmında Fen bilimleri 1 deneme olarak gözüküyor gözükmesin. Soru İstatistikleri kısmında TYT ve ayt bazlı kısımda türkçe sosyal mat tyt geo fen aytde mat ayt geo fizik kimya biyoloji olacak şekilde düzenle 
+Soru İstatistikleri kısmındadaki tyt ve ayt bazlı net ortalamaları kısımlarını en üste koy altta düzeltilen hatalar toplam çözülen soru vs vs kutuları olsun
+Genel deneme ekleyince yalnızca Genel Deneme Ortalamaları kısmında verisi gözükmesi gerekirken soru İstatistikleri kısmında da gözüküyor derhal düzelt.
+Branş Deneme Ortalamaları kısmını da bi gözden geçir gerçekten yalnızca orda mı veri gösteriliyor
+Branş Deneme Ortalamaları kısmında her bir çözülen soru Günlük Ortalama kısmında gösterilsin soru verileri gibi bi tek genel denemedeki sorular gösterilmesin.
+📊 Deneme Analiz Sistemi kısmında Genel ve Branş Deneme Analiz kısımlarında tarih ve o tarihteki denemeleri açılır listeden verileni bakma,seçebilme özelliği ekle seçtiğimiz tarihte yaptıgımız denemelerin verilerini görebilelim
+uygulama indirildiğinde otomatik olarak node varsa sürümünü kontrol etsin yoksa son sürümü indirecek şekilde ayarla uygulama için gerekli şeyleri kendi indirsin .exe li electron uygulaması kurulurken.
+uygulamadaki hataları çöz ara didik didik et her dosyayı her kodu tek tek
+uygulamadaki eklenen tüm dosyaların hangi tarihte eklendiğini değiştir 16.09.2025 saati de 03:03:03 yap(tüm görevleri yaptıktan sonra işin bitince son görev olarak yap bunu)
+her dosyanın başındaki ve sonundaki 3 adet olan BERAT CANKIR yorum satırlarını sil ve tekrar ekle
+ihlal log kısmını tamamen çalışacak hale getir talimatlar.md kısmına yaz
+uygulamayı .exe kurulumu yapıp indirdikten sonra uygulamanın veritabanı komple silinmiş olmasına rağmen önceki günlere ait veriler halen duruyor senlik bir hataysa derhal düzelt eğer benim cache(dosya yollarını komple silip sıfırdan kurmam mı gerek)hatasıysa söyle yapmam gerekenleri
+örneğin bir sayı ekleyeceğim saat deneme,soru veya çalışma süresi veya net hesaplama kısmında örneğin 15 yazcam ama 0 varken yazmaya çalışınca 015 oluyo onu düzelt 0 varken yazdıgımda kaç yazıyosam o gözüksün
+Yeni Görev Ekle kısmında Bitiş Tarihi kısmını Görevin Bitirilme Tarihi olarak değiştir ve açılan tarih kısmını Yeni Deneme Sonucu kısmındaki Tarih seçme kısmındaki kaliteli yap tüm tarih seçme kısımlarını öyle yap.
+hava durumu kısmının doğruluğunu arttır
+📚 Haftalık Soru Çözüm Analizi kısmında günlük kısmında tarih seçebiliyoruz fakat görünüm farklılaşıyor şöyle yap tarih seçme butonununa tıklayınca direk tarih açılsın butonlar kaymasın ayrıca haftalık kısmına geçince tarih butonuna basılmıyor onu da düzelt.
+tray ikonuna tıklayınca acılan 📊 Aktiviteler
+Yapılan İşlemler - Berat Cankır YKS Analiz Sistemi kısmı son 1 ayda yapılan tüm aktiviteleri göstersin
