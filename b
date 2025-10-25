@@ -1,7 +1,0 @@
-yapılacaklar kısmında eklenen görevler sırayla en son eklenen den ilk eklenene doğru yukardan aşağı olacak ayrıca en sol taraftan mouse imlecini basılı tutup yukarı aşağı çekebileceğimiz şekilde ayarla yerini değiştirebilme özelliği koy.
-📊 Deneme Analiz Sistemi kısmında önceki günleri seçtiğimde grafikler ve gösterilen netler seçtiğim tarihteki denemeleri göstermiyor: grafikler,netler eş zamanlı olarak o gün yapılanları gösterecek şekilde değişecek hale getir derhal düzelt.
-soru verisi eklediğim zaman tarih kısmında örneğin Soru: TYT Türkçe 15 doğru olarak gösteriyor böyle göstermek yerine doğru yanlış boş(eğer varsa) net i göstersin eklenen soru verisi takvimde.
-tekrar gözden geçir Genel Deneme Ortalamaları,Branş Deneme Ortalamaları VE Soru İstatistikleri kısmındaki verilerr doğru mu gösteriliyor.
-📊 Deneme Analiz Sistemi kısmında Genel Deneme Analiz kısmın daki🔵 TYT Ders Özeti ve 🟢 AYT Ders Özeti kısmındaki görünümler şunun gibi olsun : 📚 Branş Denemeleri Özeti
-Çalışma Saatleri kısmında en alttaki En Çok Çalışılan Ay kısmının altına En Çok Çalışılan Gün kısmını da ekle o günün çalışılan neti olsun.
- 📅 Filtrele butonuna basınca Genel Deneme Analiz ve Branş Deneme Analiz kısmının kutusu büyüyor eş zamanlı olarak onu düzelt çok kötü görüntü oluyor.
