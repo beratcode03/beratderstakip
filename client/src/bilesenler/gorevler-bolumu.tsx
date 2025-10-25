@@ -353,29 +353,33 @@ export function TasksSection({ onAddTask }: TasksSectionProps) {
                        filter === "archived" ? archivedTasks : tasks;
 
   // Sort tasks by createdAt in descending order (newest first)
-  const sortedTasks = [...displayTasks].sort((a, b) => {
-    const dateA = new Date(a.createdAt || 0).getTime();
-    const dateB = new Date(b.createdAt || 0).getTime();
-    return dateB - dateA;
-  });
+  const sortedTasks = useMemo(() => {
+    return [...displayTasks].sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0).getTime();
+      const dateB = new Date(b.createdAt || 0).getTime();
+      return dateB - dateA;
+    });
+  }, [displayTasks]);
 
-  const filteredTasks = sortedTasks.filter(task => {
-    if (filter === "archived") return true;
-    switch (filter) {
-      case "pending":
-        return !task.completed;
-      case "completed":
-        return task.completed;
-      case "high":
-        return task.priority === "high";
-      case "weekly":
-        return task.recurrenceType === "weekly";
-      case "monthly":
-        return task.recurrenceType === "monthly";
-      default:
-        return true;
-    }
-  });
+  const filteredTasks = useMemo(() => {
+    return sortedTasks.filter(task => {
+      if (filter === "archived") return true;
+      switch (filter) {
+        case "pending":
+          return !task.completed;
+        case "completed":
+          return task.completed;
+        case "high":
+          return task.priority === "high";
+        case "weekly":
+          return task.recurrenceType === "weekly";
+        case "monthly":
+          return task.recurrenceType === "monthly";
+        default:
+          return true;
+      }
+    });
+  }, [sortedTasks, filter]);
 
   const [localTasks, setLocalTasks] = useState(filteredTasks);
 
