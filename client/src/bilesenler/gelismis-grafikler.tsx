@@ -250,26 +250,54 @@ function AdvancedChartsComponent() {
 
   const isLoading = isLoadingExams || isLoadingQuestions || isLoadingExamNets;
 
-  // Her zaman arşivlenmiş verileri dahil et
+  // Her zaman arşivlenmiş verileri dahil et - Eksik Konular için
+  const topicsFilteredExams = useMemo(() => {
+    let combined = [...examResults, ...archivedExamResults];
+    if (useDateFilterTopics && selectedDateTopics) {
+      combined = combined.filter(exam => exam.exam_date === selectedDateTopics);
+    }
+    return combined;
+  }, [examResults, archivedExamResults, useDateFilterTopics, selectedDateTopics]);
+  
+  const topicsFilteredQuestions = useMemo(() => {
+    let combined = [...questionLogs, ...archivedQuestionLogs];
+    if (useDateFilterTopics && selectedDateTopics) {
+      combined = combined.filter(log => log.study_date === selectedDateTopics);
+    }
+    return combined;
+  }, [questionLogs, archivedQuestionLogs, useDateFilterTopics, selectedDateTopics]);
+  
+  // Hata Analizi için
+  const errorsFilteredExams = useMemo(() => {
+    let combined = [...examResults, ...archivedExamResults];
+    if (useDateFilterErrors && selectedDateErrors) {
+      combined = combined.filter(exam => exam.exam_date === selectedDateErrors);
+    }
+    return combined;
+  }, [examResults, archivedExamResults, useDateFilterErrors, selectedDateErrors]);
+  
+  const errorsFilteredQuestions = useMemo(() => {
+    let combined = [...questionLogs, ...archivedQuestionLogs];
+    if (useDateFilterErrors && selectedDateErrors) {
+      combined = combined.filter(log => log.study_date === selectedDateErrors);
+    }
+    return combined;
+  }, [questionLogs, archivedQuestionLogs, useDateFilterErrors, selectedDateErrors]);
+  
+  // Ana Analiz için
   const allExamResults = useMemo(() => {
     let combined = [...examResults, ...archivedExamResults];
-    
-    // Tarih filtresi aktifse
     if (useDateFilter && selectedDate) {
       combined = combined.filter(exam => exam.exam_date === selectedDate);
     }
-    
     return combined;
   }, [examResults, archivedExamResults, useDateFilter, selectedDate]);
   
   const allQuestionLogs = useMemo(() => {
     let combined = [...questionLogs, ...archivedQuestionLogs];
-    
-    // Tarih filtresi aktifse
     if (useDateFilter && selectedDate) {
       combined = combined.filter(log => log.study_date === selectedDate);
     }
-    
     return combined;
   }, [questionLogs, archivedQuestionLogs, useDateFilter, selectedDate]);
 
@@ -278,7 +306,7 @@ function AdvancedChartsComponent() {
     const topicMap = new Map<string, MissingTopic>();
 
     // Sınav sonuçlarını işleyin - eksik konuları subjects_data'dan çıkarmamız gerekiyor
-    allExamResults.forEach(exam => {
+    topicsFilteredExams.forEach(exam => {
       if (exam.subjects_data) {
         try {
           const subjectsData = JSON.parse(exam.subjects_data);
@@ -338,9 +366,10 @@ function AdvancedChartsComponent() {
         try {
           const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
           if (Array.isArray(wrongTopics)) {
-            const exam = allExamResults.find((e: any) => e.id === subjectNet.exam_id);
-            const examDate = exam ? exam.exam_date : new Date().toISOString();
-            const examScope = exam ? exam.exam_scope : 'full';
+            const exam = topicsFilteredExams.find((e: any) => e.id === subjectNet.exam_id);
+            if (!exam) return; // Tarih filtresi aktifse ve eşleşme yoksa atla
+            const examDate = exam.exam_date;
+            const examScope = exam.exam_scope;
             
             wrongTopics.forEach((topicItem: any) => {
               const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic;
@@ -371,7 +400,7 @@ function AdvancedChartsComponent() {
     });
 
     // Soru günlüklerinden yanlış konuları işle
-    allQuestionLogs.forEach((log: QuestionLog) => {
+    topicsFilteredQuestions.forEach((log: QuestionLog) => {
       if (log.wrong_topics) {
         try {
           const wrongTopics = typeof log.wrong_topics === 'string' 
@@ -429,7 +458,7 @@ function AdvancedChartsComponent() {
     return Array.from(topicMap.values())
       .filter(topic => topic.frequency >= 1)
       .sort((a, b) => b.frequency - a.frequency);
-  }, [allExamResults, allQuestionLogs, examSubjectNets]);
+  }, [topicsFilteredExams, topicsFilteredQuestions, examSubjectNets]);
 
   // Net Analiz Verilerini İşleyin - Ortalama netleri göstermek için hareketli ortalama ekle
   const netAnalysisData = useMemo(() => {
@@ -947,7 +976,7 @@ function AdvancedChartsComponent() {
             }> = [];
 
             // Soru günlüklerini işle - SORU GÜNLÜĞÜ VERİLERİ
-            allQuestionLogs.forEach(log => {
+            errorsFilteredQuestions.forEach(log => {
               if (log.wrong_topics && log.wrong_topics.length > 0) {
                 // Öncelikle wrong_topics_json'dan yapılandırılmış verileri ayrıştırmayı deneyin
                 let structuredTopics: Array<{
@@ -1009,9 +1038,10 @@ function AdvancedChartsComponent() {
                 try {
                   const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
                   if (Array.isArray(wrongTopics)) {
-                    const exam = allExamResults.find((e: any) => e.id === subjectNet.exam_id);
-                    const examDate = exam ? exam.exam_date : new Date().toISOString();
-                    const examScope = exam ? exam.exam_scope : 'full';
+                    const exam = errorsFilteredExams.find((e: any) => e.id === subjectNet.exam_id);
+                    if (!exam) return; // Tarih filtresi aktifse ve eşleşme yoksa atla
+                    const examDate = exam.exam_date;
+                    const examScope = exam.exam_scope;
                     
                     wrongTopics.forEach((topicItem: any) => {
                       const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic;
@@ -1662,23 +1692,10 @@ function AdvancedChartsComponent() {
                       <h4 className="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-300">🔵 TYT Ders Özeti</h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                         {tytSubjectAnalysisData.map((subject, index) => (
-                          <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="text-center mb-2">
-                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200">{subject.subject}</h4>
-                            </div>
-                            <div className="space-y-1.5">
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
-                                <span className="text-xs font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
-                                <span className="text-xs font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
-                              </div>
-                              <div className="flex justify-between items-center border-t pt-1.5 mt-1.5">
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Net</span>
-                                <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
-                              </div>
+                          <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="text-center">
+                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">{subject.subject}</h4>
+                              <div className="text-xl font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</div>
                             </div>
                           </div>
                         ))}
@@ -1692,23 +1709,10 @@ function AdvancedChartsComponent() {
                       <h4 className="text-lg font-semibold mb-3 text-green-700 dark:text-green-300">🟢 AYT Ders Özeti</h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                         {aytSubjectAnalysisData.map((subject, index) => (
-                          <div key={index} className="bg-green-50/60 dark:bg-green-900/20 rounded-xl p-3 border border-green-200/40 dark:border-green-700/40 hover:shadow-lg transition-all duration-200">
-                            <div className="text-center mb-2">
-                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200">{subject.subject}</h4>
-                            </div>
-                            <div className="space-y-1.5">
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
-                                <span className="text-xs font-semibold text-green-600 dark:text-green-400">{subject.correct}</span>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
-                                <span className="text-xs font-semibold text-red-600 dark:text-red-400">{subject.wrong}</span>
-                              </div>
-                              <div className="flex justify-between items-center border-t pt-1.5 mt-1.5">
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Net</span>
-                                <span className="text-sm font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</span>
-                              </div>
+                          <div key={index} className="bg-green-50/60 dark:bg-green-900/20 rounded-xl p-4 border border-green-200/40 dark:border-green-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="text-center">
+                              <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">{subject.subject}</h4>
+                              <div className="text-xl font-bold" style={{ color: subject.color }}>{subject.netScore.toFixed(1)}</div>
                             </div>
                           </div>
                         ))}
