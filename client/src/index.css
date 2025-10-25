@@ -6,6 +6,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sayfa kaymasını önle - sürükleme sırasında scroll oluşmasın */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  position: relative;
+}
+
 /* Heatmap bugünkü gün için yumuşak mor parıldama nefes efekti */
 @keyframes purpleGlow {
   0%, 100% {
