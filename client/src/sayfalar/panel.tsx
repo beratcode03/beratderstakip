@@ -56,7 +56,15 @@ const cleanNumberInput = (value: string): string => {
 };
 
 // Konu isimlerinden TYT/AYT ve ders başlıklarını kaldıran yardımcı fonksiyon
-const normalizeTopic = (topic: string): string => {
+const normalizeTopic = (topic: any): string => {
+  // topic'in string olduğundan emin ol
+  if (typeof topic !== 'string') {
+    if (topic && typeof topic === 'object') {
+      topic = topic.topic || topic.name || String(topic);
+    } else {
+      topic = String(topic || '');
+    }
+  }
   // "TYT Türkçe - " veya "AYT Fizik - " gibi desenleri konu isimlerinden kaldırır
   return topic.replace(/^(TYT|AYT)\s+[^-]+\s*-\s*/, '').trim();
 };

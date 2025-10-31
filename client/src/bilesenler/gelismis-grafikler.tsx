@@ -697,7 +697,7 @@ function AdvancedChartsComponent() {
 
     // examSubjectNets'ten de yanlış konuları işle
     examSubjectNets.forEach((subjectNet: any) => {
-      if (subjectNet.wrong_topics_json) {
+      if (subjectNet.wrong_topics_json && subjectNet.wrong_topics_json.trim() !== '' && subjectNet.wrong_topics_json !== 'null' && subjectNet.wrong_topics_json !== '[]') {
         try {
           const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
           if (Array.isArray(wrongTopics)) {
@@ -1555,7 +1555,7 @@ function AdvancedChartsComponent() {
 
             // examSubjectNets'ten de yanlış konuları işle - DENEME VERİLERİ
             examSubjectNets.forEach((subjectNet: any) => {
-              if (subjectNet.wrong_topics_json) {
+              if (subjectNet.wrong_topics_json && subjectNet.wrong_topics_json.trim() !== '' && subjectNet.wrong_topics_json !== 'null' && subjectNet.wrong_topics_json !== '[]') {
                 try {
                   const wrongTopics = JSON.parse(subjectNet.wrong_topics_json);
                   if (Array.isArray(wrongTopics)) {
@@ -1806,7 +1806,9 @@ function AdvancedChartsComponent() {
                                         topic: item.topic,
                                         tag: 'Branş Denemesi',
                                         frequency: item.frequency,
-                                        exam_type: item.exam_type
+                                        exam_type: item.exam_type,
+                                        difficulty: item.difficulty,
+                                        category: item.category
                                       });
                                     }
                                     localStorage.setItem('completedBranchExamErrors', JSON.stringify(arr));
@@ -1830,7 +1832,9 @@ function AdvancedChartsComponent() {
                                         topic: item.topic,
                                         tag: 'Genel Deneme',
                                         frequency: item.frequency,
-                                        exam_type: item.exam_type
+                                        exam_type: item.exam_type,
+                                        difficulty: item.difficulty,
+                                        category: item.category
                                       });
                                     }
                                     localStorage.setItem('completedGeneralExamErrors', JSON.stringify(arr));
@@ -1861,7 +1865,9 @@ function AdvancedChartsComponent() {
                                       topic: item.topic,
                                       tag: 'Soru',
                                       frequency: item.frequency,
-                                      exam_type: item.exam_type
+                                      exam_type: item.exam_type,
+                                      difficulty: item.difficulty,
+                                      category: item.category
                                     });
                                   }
                                   localStorage.setItem('completedQuestionErrors', JSON.stringify(arr));
