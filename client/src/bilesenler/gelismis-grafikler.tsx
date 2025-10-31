@@ -1469,6 +1469,7 @@ function AdvancedChartsComponent() {
               study_date: string;
               difficulty?: 'kolay' | 'orta' | 'zor';
               category?: 'kavram' | 'hesaplama' | 'analiz' | 'dikkatsizlik';
+              createdAt?: string;
             }> = [];
 
             // Soru günlüklerini işle - SORU GÜNLÜĞÜ VERİLERİ
@@ -1525,7 +1526,7 @@ function AdvancedChartsComponent() {
                     study_date: log.study_date,
                     difficulty: topicItem.difficulty,
                     category: topicItem.category,
-                    createdAt: log.createdAt
+                    createdAt: log.createdAt instanceof Date ? log.createdAt.toISOString() : log.createdAt
                   });
                 });
               } else if (log.wrong_topics && log.wrong_topics.length > 0) {
@@ -1546,9 +1547,9 @@ function AdvancedChartsComponent() {
                       exam_type: log.exam_type,
                       wrong_count: parseInt(log.wrong_count) || 0,
                       study_date: log.study_date,
-                      createdAt: log.createdAt,
+                      createdAt: log.createdAt instanceof Date ? log.createdAt.toISOString() : log.createdAt,
                       difficulty: 'orta',
-                      category: 'bilgi'
+                      category: 'kavram'
                     });
                   }
                 });
@@ -1609,7 +1610,7 @@ function AdvancedChartsComponent() {
                           exam_scope: examScope as 'full' | 'branch',
                           wrong_count: parseInt(subjectNet.wrong_count) || 0,
                           study_date: examDate,
-                          createdAt: examCreatedAt
+                          createdAt: examCreatedAt instanceof Date ? examCreatedAt.toISOString() : examCreatedAt
                         });
                       }
                     });
@@ -1781,13 +1782,18 @@ function AdvancedChartsComponent() {
                         </div>
                         <div className="flex items-center gap-4">
                           <Checkbox
-                            checked={(item.sources && item.sources.includes('exam') ? completedExamErrors : completedQuestionErrors).has(errorTopicKey)}
+                            checked={
+                              (item.sources && item.sources.includes('exam') && completedExamErrors.has(errorTopicKey)) ||
+                              (item.sources && item.sources.includes('question') && completedQuestionErrors.has(errorTopicKey))
+                            }
                             onCheckedChange={(checked) => {
-                              const isExamError = item.sources && item.sources.includes('exam');
+                              const hasExamError = item.sources && item.sources.includes('exam');
+                              const hasQuestionError = item.sources && item.sources.includes('question');
                               if (checked) {
                                 const completedAt = new Date().toISOString();
                                 
-                                if (isExamError) {
+                                // Eğer deneme hatası varsa, deneme hatası olarak kaydet
+                                if (hasExamError) {
                                   // Sınav hatası - exam_scope'a göre localStorage'a kaydet
                                   if (item.exam_scope === 'branch') {
                                     const saved = localStorage.getItem('completedBranchExamErrors');
@@ -1851,7 +1857,10 @@ function AdvancedChartsComponent() {
                                   
                                   // Tamamlanan Hatalı Sorular Geçmişi modalını refresh et
                                   setCompletedErrorsRefreshKey(prev => prev + 1);
-                                } else {
+                                }
+                                
+                                // Eğer soru hatası varsa, soru hatası olarak da kaydet (exam ile birlikte olsa bile)
+                                if (hasQuestionError) {
                                   const saved = localStorage.getItem('completedQuestionErrors');
                                   const arr = saved ? JSON.parse(saved) : [];
                                   const existing = arr.find((entry: any) => entry.key === errorTopicKey);
@@ -1887,6 +1896,7 @@ function AdvancedChartsComponent() {
                                   // Tamamlanan Hatalı Sorular Geçmişi modalını refresh et
                                   setCompletedErrorsRefreshKey(prev => prev + 1);
                                 }
+                                
                                 setCelebratingErrorTopics(prev => new Set([...prev, errorTopicKey]));
                                 toast({ 
                                   title: "🎉 Tebrikler!", 
@@ -1906,7 +1916,8 @@ function AdvancedChartsComponent() {
                                   setRemovedErrorTopics(prev => new Set([...prev, errorTopicKey]));
                                 }, 1500);
                               } else {
-                                if (isExamError) {
+                                // Checkbox işareti kaldırılıyor - tüm kayıtları temizle
+                                if (hasExamError) {
                                   // localStorage'dan kaldır
                                   if (item.exam_scope === 'branch') {
                                     const saved = localStorage.getItem('completedBranchExamErrors');
@@ -1931,13 +1942,24 @@ function AdvancedChartsComponent() {
                                     newMap.delete(errorTopicKey);
                                     return newMap;
                                   });
-                                } else {
+                                }
+                                
+                                if (hasQuestionError) {
+                                  const saved = localStorage.getItem('completedQuestionErrors');
+                                  if (saved) {
+                                    const arr = JSON.parse(saved);
+                                    const filtered = arr.filter((entry: any) => entry.key !== errorTopicKey);
+                                    localStorage.setItem('completedQuestionErrors', JSON.stringify(filtered));
+                                    window.dispatchEvent(new Event('localStorageUpdate'));
+                                  }
+                                  
                                   setCompletedQuestionErrors(prev => {
                                     const newMap = new Map(prev);
                                     newMap.delete(errorTopicKey);
                                     return newMap;
                                   });
                                 }
+                                
                                 setRemovedErrorTopics(prev => {
                                   const newSet = new Set(prev);
                                   newSet.delete(errorTopicKey);
@@ -3738,15 +3760,45 @@ function AdvancedChartsComponent() {
               
               // Konu bazında grupla
               const errorGroups = allCompletedErrorsRaw.reduce((acc: any, item: any) => {
-                // Eski format (sadece key ve completedAt) ise atla
-                if (!item.subject && !item.topic) {
-                  return acc;
+                // Eski format (sadece key ve completedAt) ise key'den parse et
+                let subject = item.subject;
+                let topic = item.topic;
+                let tag = item.tag;
+                let exam_type = item.exam_type || 'TYT';
+                
+                if (!subject || !topic) {
+                  // Key formatı: "exam_type-subject-topic" veya "subject-topic"
+                  if (item.key) {
+                    const parts = item.key.split('-');
+                    if (parts.length >= 3) {
+                      // Format: "TYT-TYT Türkçe-Bvbb" veya "AYT-AYT Matematik-Bbb"
+                      exam_type = parts[0]; // TYT veya AYT
+                      subject = parts[1]; // "TYT Türkçe", "AYT Matematik"
+                      topic = parts.slice(2).join('-'); // "Bvbb", geri kalan tüm parçalar
+                      
+                      // Subject'i normalize et - "TYT Türkçe" -> "Türkçe"
+                      subject = subject.replace(/^(TYT|AYT)\s+/, '');
+                      
+                      // Tag'i completedErrorsFilter'dan tahmin et
+                      if (completedErrorsFilter === 'general') {
+                        tag = 'Genel Deneme';
+                      } else if (completedErrorsFilter === 'branch') {
+                        tag = 'Branş Deneme';
+                      } else if (completedErrorsFilter === 'question') {
+                        tag = 'Soru';
+                      } else {
+                        tag = 'Soru'; // Default
+                      }
+                    } else {
+                      // Başarısız parse, atla
+                      return acc;
+                    }
+                  } else {
+                    // Key de yok, atla
+                    return acc;
+                  }
                 }
                 
-                let subject = item.subject || 'Genel';
-                let topic = item.topic || 'Konu Belirtilmemiş';
-                const tag = item.tag || 'Genel';
-                const exam_type = item.exam_type || 'TYT';
                 const topicKey = `${subject}-${topic}`;
                 
                 if (!acc[topicKey]) {
