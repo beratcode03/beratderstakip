@@ -93,28 +93,7 @@
   ],
   "ruhHalleri": [],
   "hedefler": [],
-  "soruGunlukleri": [
-    {
-      "id": "adc48af7-1675-42cb-b63e-f650cd31833a",
-      "exam_type": "TYT",
-      "subject": "Fizik",
-      "topic": null,
-      "correct_count": "3",
-      "wrong_count": "3",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Brjrej"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Brjrej\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T12:24:53.964Z"
-    }
-  ],
+  "soruGunlukleri": [],
   "sinavSonuclari": [
     {
       "id": "2af1c40e-b7b4-4193-b9a7-63c44570b3de",

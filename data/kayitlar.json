@@ -93,7 +93,29 @@
   ],
   "ruhHalleri": [],
   "hedefler": [],
-  "soruGunlukleri": [],
+  "soruGunlukleri": [
+    {
+      "id": "d4f8af5e-14c1-4511-a7e0-0a28342d9a4e",
+      "exam_type": "TYT",
+      "subject": "Fizik",
+      "topic": null,
+      "correct_count": "3",
+      "wrong_count": "2",
+      "blank_count": "0",
+      "wrong_topics": [
+        "Test Konusu",
+        "Deneme Konusu"
+      ],
+      "wrong_topics_json": null,
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T12:37:11.654Z"
+    }
+  ],
   "sinavSonuclari": [
     {
       "id": "2af1c40e-b7b4-4193-b9a7-63c44570b3de",
