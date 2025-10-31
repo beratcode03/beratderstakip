@@ -1859,71 +1859,300 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sum + (s.hours || 0) * 60 + (s.minutes || 0), 0
       );
       
-      // Create email HTML content
+      // Calculate detailed statistics
+      const completedTasks = tasks.filter((t: any) => t.completed).length;
+      const activeTasks = tasks.filter((t: any) => !t.completed).length;
+      const totalCorrect = recentQuestions.reduce((sum: number, q: any) => sum + (q.correct_count || 0), 0);
+      const totalWrong = recentQuestions.reduce((sum: number, q: any) => sum + (q.wrong_count || 0), 0);
+      const totalEmpty = recentQuestions.reduce((sum: number, q: any) => sum + (q.empty_count || 0), 0);
+      
+      // Get longest study day
+      const longestStudy = recentStudy.reduce((max: any, curr: any) => {
+        const currMinutes = (curr.hours || 0) * 60 + (curr.minutes || 0);
+        const maxMinutes = max ? (max.hours || 0) * 60 + (max.minutes || 0) : 0;
+        return currMinutes > maxMinutes ? curr : max;
+      }, null);
+      
+      const longestStudyDate = longestStudy ? new Date(longestStudy.study_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      const longestStudyTime = longestStudy ? `${String(longestStudy.hours || 0).padStart(2, '0')}:${String(longestStudy.minutes || 0).padStart(2, '0')}:${String(longestStudy.seconds || 0).padStart(2, '0')}` : '00:00:00';
+      
+      // Get average TYT net
+      const tytNets = recentExams.map((e: any) => {
+        const turkce = (e.turkce_dogru || 0) - (e.turkce_yanlis || 0) * 0.25;
+        const sosyal = (e.sosyal_dogru || 0) - (e.sosyal_yanlis || 0) * 0.25;
+        const mat = (e.mat_dogru || 0) - (e.mat_yanlis || 0) * 0.25;
+        const fen = (e.fen_dogru || 0) - (e.fen_yanlis || 0) * 0.25;
+        return turkce + sosyal + mat + fen;
+      });
+      const avgTytNet = tytNets.length > 0 ? (tytNets.reduce((a: number, b: number) => a + b, 0) / tytNets.length).toFixed(2) : '0.00';
+      
+      // Create email HTML content with beautiful design
       const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
-            .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-            .stat-card { background: #f7fafc; border-left: 4px solid #667eea; padding: 15px; border-radius: 5px; }
-            .stat-value { font-size: 24px; font-weight: bold; color: #667eea; }
-            .stat-label { color: #718096; font-size: 14px; }
-            .section { margin: 20px 0; padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
-            .footer { text-align: center; color: #718096; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 3px solid #e53935; }
+            .header { background: linear-gradient(135deg, #e53935 0%, #c62828 100%); color: white; padding: 30px 20px; text-align: center; border-bottom: 5px solid #b71c1c; }
+            .flag { width: 80px; height: 50px; margin: 0 auto 15px; }
+            .quote { font-style: italic; font-size: 13px; margin: 15px 20px; line-height: 1.6; }
+            .ataturk-name { color: #e53935; font-weight: bold; font-size: 12px; margin-top: 5px; }
+            .signature { font-family: 'Brush Script MT', cursive; font-size: 32px; margin: 10px 0; }
+            .title-section { background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); color: white; padding: 25px; text-align: center; }
+            .title-section h2 { font-size: 22px; margin-bottom: 5px; }
+            .title-section .subtitle { font-size: 13px; opacity: 0.9; }
+            .date-info { font-size: 12px; margin-top: 10px; }
+            .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+            .stat-card { border-radius: 12px; padding: 20px; text-align: center; color: white; }
+            .stat-purple { background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); }
+            .stat-red { background: linear-gradient(135deg, #e53935 0%, #c62828 100%); }
+            .stat-green { background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%); }
+            .stat-orange { background: linear-gradient(135deg, #fb8c00 0%, #ef6c00 100%); }
+            .stat-label { font-size: 11px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; }
+            .stat-value { font-size: 36px; font-weight: bold; }
+            .section { padding: 20px; margin: 10px 0; }
+            .section-title { background: #f3e5f5; color: #7b1fa2; padding: 12px 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-bottom: 15px; }
+            .exam-card { background: #fafafa; border: 2px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+            .exam-name { color: #9c27b0; font-weight: bold; font-size: 15px; margin-bottom: 10px; }
+            .exam-date { color: #666; font-size: 12px; margin-bottom: 10px; }
+            .net-badge { background: #9c27b0; color: white; padding: 10px 20px; border-radius: 8px; font-size: 20px; font-weight: bold; text-align: center; margin: 10px 0; }
+            .performance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+            .perf-box { border: 2px solid; border-radius: 8px; padding: 12px 8px; text-align: center; }
+            .perf-correct { border-color: #43a047; background: #e8f5e9; }
+            .perf-wrong { border-color: #e53935; background: #ffebee; }
+            .perf-empty { border-color: #fb8c00; background: #fff3e0; }
+            .perf-net { border-color: #9c27b0; background: #f3e5f5; color: white; background: #9c27b0; }
+            .perf-label { font-size: 10px; margin-bottom: 5px; color: #666; }
+            .perf-net .perf-label { color: white; }
+            .perf-value { font-size: 18px; font-weight: bold; }
+            .perf-correct .perf-value { color: #43a047; }
+            .perf-wrong .perf-value { color: #e53935; }
+            .perf-empty .perf-value { color: #fb8c00; }
+            .perf-net .perf-value { color: white; }
+            .wrong-topics { background: #ffebee; border-left: 4px solid #e53935; padding: 12px; border-radius: 5px; margin-top: 10px; }
+            .wrong-topics h4 { color: #e53935; font-size: 13px; margin-bottom: 8px; }
+            .wrong-topics ul { margin-left: 20px; }
+            .wrong-topics li { color: #666; font-size: 12px; margin: 5px 0; }
+            .footer-note { background: #ffebee; border: 2px solid #e53935; border-radius: 10px; padding: 15px; margin: 20px; text-align: center; color: #c62828; font-size: 13px; }
+            .footer { text-align: center; padding: 20px; background: #fafafa; color: #666; font-size: 11px; }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>📊 Aylık İlerleme Raporu</h1>
-            <p>Son 30 günlük çalışma özeti</p>
-          </div>
-          
-          <div class="stats">
-            <div class="stat-card">
-              <div class="stat-value">${totalQuestions}</div>
-              <div class="stat-label">Çözülen Soru</div>
+          <div class="container">
+            <div class="header">
+              <div class="flag">🇹🇷</div>
+              <div class="quote">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+              <div class="ataturk-name">- Mustafa Kemal Atatürk -</div>
+              <div class="signature">M.Kemal</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${recentExams.length}</div>
-              <div class="stat-label">Deneme Sınavı</div>
+            
+            <div class="title-section">
+              <h2>🎓 BERAT CANKIR</h2>
+              <div class="subtitle">KİŞİSEL ÇALIŞMA ANALİZ RAPORU</div>
+              <div class="date-info">📅 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | ⏰ ${recentExams.length} Deneme kaydedildi</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${Math.floor(totalStudyMinutes / 60)}s ${totalStudyMinutes % 60}dk</div>
-              <div class="stat-label">Toplam Çalışma</div>
+            
+            <div class="stats-grid">
+              <div class="stat-card stat-purple">
+                <div class="stat-label">✅ Çözülen Soru</div>
+                <div class="stat-value">${totalQuestions}</div>
+              </div>
+              <div class="stat-card stat-red">
+                <div class="stat-label">🔴 Çözülen Deneme</div>
+                <div class="stat-value">${recentExams.length}</div>
+              </div>
+              <div class="stat-card stat-green">
+                <div class="stat-label">📊 Toplam Aktivite</div>
+                <div class="stat-value">${tasks.length}</div>
+              </div>
+              <div class="stat-card stat-orange">
+                <div class="stat-label">⏱️ Net Çalışma Süresi</div>
+                <div class="stat-value" style="font-size: 20px;">${Math.floor(totalStudyMinutes / 60)}:${String(totalStudyMinutes % 60).padStart(2, '0')}:00</div>
+              </div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value">${tasks.length}</div>
-              <div class="stat-label">Aktif Görev</div>
+            
+            ${longestStudy ? `
+            <div class="section" style="background: #e8f5e9;">
+              <div style="text-align: center;">
+                <div style="font-size: 16px; color: #2e7d32; font-weight: bold; margin-bottom: 10px;">⏰ Çalışılan En Uzun Gün</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 8px;">📅 ${longestStudyDate}</div>
+                <div style="font-size: 32px; color: #43a047; font-weight: bold;">${longestStudyTime}</div>
+                <div style="font-size: 11px; color: #666; margin-top: 8px;">🔥 Rekor çalışma günü! Bu tempoyu korumaya devam edin!</div>
+              </div>
             </div>
-          </div>
-          
-          <div class="section">
-            <h3>🎯 Son Deneme Sonuçları</h3>
-            ${recentExams.length > 0 ? `
-              <ul>
-                ${recentExams.slice(0, 5).map((exam: any) => `
-                  <li><strong>${exam.exam_name}</strong> - ${new Date(exam.exam_date).toLocaleDateString('tr-TR')}</li>
-                `).join('')}
-              </ul>
-            ` : '<p>Son 30 günde deneme sınavı kaydedilmemiş.</p>'}
-          </div>
-          
-          <div class="section">
-            <h3>💡 Öneriler</h3>
-            <ul>
-              <li>Günlük çalışma hedefini ${totalStudyMinutes < 1800 ? 'artırın' : 'devam ettirin'} (Hedef: 30 saat/ay)</li>
-              <li>Haftada en az 2 deneme sınavı çözmeye devam edin</li>
-              <li>Hatalı konuları düzenli olarak gözden geçirin</li>
-            </ul>
-          </div>
-          
-          <div class="footer">
-            <p>Bu rapor YKS Çalışma Takip Sistemi tarafından otomatik olarak oluşturulmuştur.</p>
-            <p>Başarılar dileriz! 🎓</p>
+            ` : ''}
+            
+            <div class="section" style="background: #f3e5f5;">
+              <div style="text-align: center;">
+                <div style="font-size: 16px; color: #7b1fa2; font-weight: bold; margin-bottom: 10px;">📈 Özel İstatistikler</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
+                  <div>
+                    <div style="font-size: 11px; color: #666;">En Uzun Çalışma Serisi</div>
+                    <div style="font-size: 24px; color: #43a047; font-weight: bold;">${recentStudy.length}</div>
+                    <div style="font-size: 10px; color: #999;">ardışık gün</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: #666;">Bir Ay Hatalı Soru</div>
+                    <div style="font-size: 24px; color: #e53935; font-weight: bold;">${totalWrong}</div>
+                    <div style="font-size: 10px; color: #999;">yanlış çözüldü</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: #666;">Düzenlillik</div>
+                    <div style="font-size: 24px; color: #2e7d32; font-weight: bold;">${Math.min(recentStudy.length, 30)}</div>
+                    <div style="font-size: 10px; color: #999;">konu düzeltildi</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">📊 Branş Deneme Rekor Netleri</div>
+              ${recentExams.length > 0 ? `
+                <div style="background: #f3e5f5; border-radius: 8px; padding: 12px; margin-bottom: 10px; text-align: center;">
+                  <div style="font-size: 13px; color: #666; margin-bottom: 5px;">TYT Branş Rekor</div>
+                  <div style="font-size: 28px; color: #9c27b0; font-weight: bold;">${avgTytNet}</div>
+                </div>
+              ` : '<p style="color: #999; text-align: center;">Henüz deneme sınavı kaydedilmemiş.</p>'}
+            </div>
+            
+            <div class="section">
+              <div class="section-title">📋 Deneme Detayları</div>
+              ${recentExams.slice(0, 10).map((exam: any) => {
+                const net = ((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25) +
+                           ((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25) +
+                           ((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25) +
+                           ((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25);
+                
+                const wrongTopics: string[] = [];
+                if (exam.turkce_wrong_topics) wrongTopics.push(...exam.turkce_wrong_topics.split(',').map((t: string) => `Türkçe: ${t.trim()}`));
+                if (exam.mat_wrong_topics) wrongTopics.push(...exam.mat_wrong_topics.split(',').map((t: string) => `Matematik: ${t.trim()}`));
+                if (exam.fen_wrong_topics) wrongTopics.push(...exam.fen_wrong_topics.split(',').map((t: string) => `Fen: ${t.trim()}`));
+                if (exam.sosyal_wrong_topics) wrongTopics.push(...exam.sosyal_wrong_topics.split(',').map((t: string) => `Sosyal: ${t.trim()}`));
+                
+                return `
+                  <div class="exam-card">
+                    <div class="exam-name">${exam.exam_name}</div>
+                    <div class="exam-date">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${exam.exam_type === 'TYT' ? 'TYT' : exam.exam_type}</div>
+                    <div class="net-badge">TYT Net<br/>${net.toFixed(2)}</div>
+                    <div style="margin-top: 15px; font-weight: bold; font-size: 13px; color: #333; margin-bottom: 10px;">📊 Ders Bazında Performans</div>
+                    
+                    ${exam.turkce_dogru !== undefined ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Türkçe</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct">
+                          <div class="perf-label">Doğru</div>
+                          <div class="perf-value">${exam.turkce_dogru || 0}</div>
+                        </div>
+                        <div class="perf-box perf-wrong">
+                          <div class="perf-label">Yanlış</div>
+                          <div class="perf-value">${exam.turkce_yanlis || 0}</div>
+                        </div>
+                        <div class="perf-box perf-empty">
+                          <div class="perf-label">Boş</div>
+                          <div class="perf-value">${exam.turkce_bos || 0}</div>
+                        </div>
+                        <div class="perf-box perf-net">
+                          <div class="perf-label">Net</div>
+                          <div class="perf-value">${((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25).toFixed(2)}</div>
+                        </div>
+                      </div>
+                      ${exam.turkce_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.turkce_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    ${exam.mat_dogru !== undefined ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Matematik</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct">
+                          <div class="perf-label">Doğru</div>
+                          <div class="perf-value">${exam.mat_dogru || 0}</div>
+                        </div>
+                        <div class="perf-box perf-wrong">
+                          <div class="perf-label">Yanlış</div>
+                          <div class="perf-value">${exam.mat_yanlis || 0}</div>
+                        </div>
+                        <div class="perf-box perf-empty">
+                          <div class="perf-label">Boş</div>
+                          <div class="perf-value">${exam.mat_bos || 0}</div>
+                        </div>
+                        <div class="perf-box perf-net">
+                          <div class="perf-label">Net</div>
+                          <div class="perf-value">${((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25).toFixed(2)}</div>
+                        </div>
+                      </div>
+                      ${exam.mat_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.mat_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    ${exam.fen_dogru !== undefined ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Fen Bilimleri</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct">
+                          <div class="perf-label">Doğru</div>
+                          <div class="perf-value">${exam.fen_dogru || 0}</div>
+                        </div>
+                        <div class="perf-box perf-wrong">
+                          <div class="perf-label">Yanlış</div>
+                          <div class="perf-value">${exam.fen_yanlis || 0}</div>
+                        </div>
+                        <div class="perf-box perf-empty">
+                          <div class="perf-label">Boş</div>
+                          <div class="perf-value">${exam.fen_bos || 0}</div>
+                        </div>
+                        <div class="perf-box perf-net">
+                          <div class="perf-label">Net</div>
+                          <div class="perf-value">${((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25).toFixed(2)}</div>
+                        </div>
+                      </div>
+                      ${exam.fen_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.fen_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    ${exam.sosyal_dogru !== undefined ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Sosyal Bilimler</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct">
+                          <div class="perf-label">Doğru</div>
+                          <div class="perf-value">${exam.sosyal_dogru || 0}</div>
+                        </div>
+                        <div class="perf-box perf-wrong">
+                          <div class="perf-label">Yanlış</div>
+                          <div class="perf-value">${exam.sosyal_yanlis || 0}</div>
+                        </div>
+                        <div class="perf-box perf-empty">
+                          <div class="perf-label">Boş</div>
+                          <div class="perf-value">${exam.sosyal_bos || 0}</div>
+                        </div>
+                        <div class="perf-box perf-net">
+                          <div class="perf-label">Net</div>
+                          <div class="perf-value">${((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25).toFixed(2)}</div>
+                        </div>
+                      </div>
+                      ${exam.sosyal_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.sosyal_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            
+            <div class="footer-note">
+              🎯 Bu rapor ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde otomatik olarak oluşturulmuştur.<br/>
+              🏆 Berat Cankır Kişisel Analiz Sistemi 🏆
+            </div>
+            
+            <div class="footer">
+              Bu rapor YKS Çalışma Takip Sistemi tarafından otomatik olarak oluşturulmuştur.<br/>
+              Başarılar dileriz! 🎓 BERAT CANKIR
+            </div>
           </div>
         </body>
         </html>
