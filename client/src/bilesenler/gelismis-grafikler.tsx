@@ -642,11 +642,11 @@ function AdvancedChartsComponent() {
               } else if (subjectLower === 'geometri' || subjectKey === 'Geometri') {
                 normalizedSubject = examType === 'AYT' ? 'AYT Geometri' : 'TYT Geometri';
               } else if (subjectLower === 'fizik' || subjectKey === 'Fizik') {
-                normalizedSubject = 'AYT Fizik';
+                normalizedSubject = examType === 'AYT' ? 'AYT Fizik' : 'TYT Fizik';
               } else if (subjectLower === 'kimya' || subjectKey === 'Kimya') {
-                normalizedSubject = 'AYT Kimya';
+                normalizedSubject = examType === 'AYT' ? 'AYT Kimya' : 'TYT Kimya';
               } else if (subjectLower === 'biyoloji' || subjectKey === 'Biyoloji') {
-                normalizedSubject = 'AYT Biyoloji';
+                normalizedSubject = examType === 'AYT' ? 'AYT Biyoloji' : 'TYT Biyoloji';
               } else {
                 normalizedSubject = subjectKey;
               }
@@ -720,11 +720,11 @@ function AdvancedChartsComponent() {
             } else if (subjectLower === 'geometri' || subjectNet.subject === 'Geometri') {
               normalizedSubject = examType === 'AYT' ? 'AYT Geometri' : 'TYT Geometri';
             } else if (subjectLower === 'fizik' || subjectNet.subject === 'Fizik') {
-              normalizedSubject = 'AYT Fizik';
+              normalizedSubject = examType === 'AYT' ? 'AYT Fizik' : 'TYT Fizik';
             } else if (subjectLower === 'kimya' || subjectNet.subject === 'Kimya') {
-              normalizedSubject = 'AYT Kimya';
+              normalizedSubject = examType === 'AYT' ? 'AYT Kimya' : 'TYT Kimya';
             } else if (subjectLower === 'biyoloji' || subjectNet.subject === 'Biyoloji') {
-              normalizedSubject = 'AYT Biyoloji';
+              normalizedSubject = examType === 'AYT' ? 'AYT Biyoloji' : 'TYT Biyoloji';
             } else {
               normalizedSubject = subjectNet.subject;
             }
@@ -793,11 +793,11 @@ function AdvancedChartsComponent() {
             } else if (subjectLower === 'geometri' || log.subject === 'Geometri') {
               normalizedSubject = examType === 'AYT' ? 'AYT Geometri' : 'TYT Geometri';
             } else if (subjectLower === 'fizik' || log.subject === 'Fizik') {
-              normalizedSubject = 'AYT Fizik';
+              normalizedSubject = examType === 'AYT' ? 'AYT Fizik' : 'TYT Fizik';
             } else if (subjectLower === 'kimya' || log.subject === 'Kimya') {
-              normalizedSubject = 'AYT Kimya';
+              normalizedSubject = examType === 'AYT' ? 'AYT Kimya' : 'TYT Kimya';
             } else if (subjectLower === 'biyoloji' || log.subject === 'Biyoloji') {
-              normalizedSubject = 'AYT Biyoloji';
+              normalizedSubject = examType === 'AYT' ? 'AYT Biyoloji' : 'TYT Biyoloji';
             } else {
               normalizedSubject = log.subject;
             }
@@ -3651,7 +3651,7 @@ function AdvancedChartsComponent() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => {
-                                // LocalStorage'dan tüm bu konuya ait kayıtları sil
+                                // LocalStorage'dan tüm bu konuya ait kayıtları sil ve state'i güncelle
                                 item.allEntries.forEach((entry: any) => {
                                   const saved = localStorage.getItem('completedTopicsFromMissing');
                                   if (saved) {
@@ -3659,18 +3659,24 @@ function AdvancedChartsComponent() {
                                     const filtered = arr.filter((e: any) => e.key !== entry.key);
                                     localStorage.setItem('completedTopicsFromMissing', JSON.stringify(filtered));
                                   }
+                                  // State'ten de sil
+                                  setCompletedTopics(prev => {
+                                    const newSet = new Set(prev);
+                                    newSet.delete(entry.key);
+                                    return newSet;
+                                  });
                                 });
                                 
-                                // State'i güncelle
+                                // State güncelleme event'i tetikle
                                 window.dispatchEvent(new Event('localStorageUpdate'));
                                 
                                 // Modalı yenile
                                 setCompletedTopicsRefreshKey(prev => prev + 1);
                                 
                                 toast({ 
-                                  title: "Silindi", 
+                                  title: "✅ Silindi", 
                                   description: `${item.topic} konusu tamamlananlardan kaldırıldı.`,
-                                  duration: 3000
+                                  duration: 2000
                                 });
                               }}
                               className="p-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 rounded-lg transition-colors"
@@ -3911,7 +3917,7 @@ function AdvancedChartsComponent() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => {
-                                // LocalStorage'dan tüm bu hataya ait kayıtları sil
+                                // LocalStorage'dan tüm bu hataya ait kayıtları sil ve state'i güncelle
                                 item.allEntries.forEach((entry: any) => {
                                   if (item.tag === 'Genel Deneme') {
                                     const saved = localStorage.getItem('completedGeneralExamErrors');
@@ -3920,6 +3926,12 @@ function AdvancedChartsComponent() {
                                       const filtered = arr.filter((e: any) => e.key !== entry.key);
                                       localStorage.setItem('completedGeneralExamErrors', JSON.stringify(filtered));
                                     }
+                                    // State'ten de sil
+                                    setCompletedExamErrors(prev => {
+                                      const newMap = new Map(prev);
+                                      newMap.delete(entry.key);
+                                      return newMap;
+                                    });
                                   } else if (item.tag === 'Branş Deneme') {
                                     const saved = localStorage.getItem('completedBranchExamErrors');
                                     if (saved) {
@@ -3927,6 +3939,12 @@ function AdvancedChartsComponent() {
                                       const filtered = arr.filter((e: any) => e.key !== entry.key);
                                       localStorage.setItem('completedBranchExamErrors', JSON.stringify(filtered));
                                     }
+                                    // State'ten de sil
+                                    setCompletedExamErrors(prev => {
+                                      const newMap = new Map(prev);
+                                      newMap.delete(entry.key);
+                                      return newMap;
+                                    });
                                   } else {
                                     const saved = localStorage.getItem('completedQuestionErrors');
                                     if (saved) {
@@ -3934,19 +3952,25 @@ function AdvancedChartsComponent() {
                                       const filtered = arr.filter((e: any) => e.key !== entry.key);
                                       localStorage.setItem('completedQuestionErrors', JSON.stringify(filtered));
                                     }
+                                    // State'ten de sil
+                                    setCompletedQuestionErrors(prev => {
+                                      const newMap = new Map(prev);
+                                      newMap.delete(entry.key);
+                                      return newMap;
+                                    });
                                   }
                                 });
                                 
-                                // State'i güncelle
+                                // State güncelleme event'i tetikle
                                 window.dispatchEvent(new Event('localStorageUpdate'));
                                 
                                 // Modalı yenile
                                 setCompletedErrorsRefreshKey(prev => prev + 1);
                                 
                                 toast({ 
-                                  title: "Silindi", 
+                                  title: "✅ Silindi", 
                                   description: `${item.topic} hatası tamamlananlardan kaldırıldı.`,
-                                  duration: 3000
+                                  duration: 2000
                                 });
                               }}
                               className="p-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 rounded-lg transition-colors"

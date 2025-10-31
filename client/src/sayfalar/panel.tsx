@@ -2202,17 +2202,17 @@ export default function Dashboard() {
             <div className="space-y-6">
               {/* Özet */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl">
-                  <div className="text-2xl font-bold text-green-600">{selectedHeatmapDay.dayActivities.questions.length}</div>
-                  <div className="text-sm text-muted-foreground">Soru Çözümü</div>
-                </div>
                 <div className="text-center p-4 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl">
                   <div className="text-2xl font-bold text-blue-600">{selectedHeatmapDay.dayActivities.tasks.filter((task: any) => task.completed).length}</div>
                   <div className="text-sm text-muted-foreground">Tamamlanan Görev</div>
                 </div>
+                <div className="text-center p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl">
+                  <div className="text-2xl font-bold text-green-600">{selectedHeatmapDay.dayActivities.questions.length}</div>
+                  <div className="text-sm text-muted-foreground">Çözülen Toplam Soru</div>
+                </div>
                 <div className="text-center p-4 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl">
                   <div className="text-2xl font-bold text-purple-600">{selectedHeatmapDay.dayActivities.exams.length}</div>
-                  <div className="text-sm text-muted-foreground">Deneme Sınavı</div>
+                  <div className="text-sm text-muted-foreground">Çözülen Toplam Deneme</div>
                 </div>
                 <div className="text-center p-4 bg-gradient-to-r from-cyan-100 to-teal-100 dark:from-cyan-900/20 dark:to-teal-900/20 rounded-xl">
                   <div className="text-2xl font-bold text-cyan-600">
@@ -2229,7 +2229,7 @@ export default function Dashboard() {
                       return `${hours}s ${minutes}dk`;
                     })()}
                   </div>
-                  <div className="text-sm text-muted-foreground">Çalışma Saati</div>
+                  <div className="text-sm text-muted-foreground">Toplam Çalışılan Saat</div>
                 </div>
               </div>
 
@@ -2242,7 +2242,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {selectedHeatmapDay.dayActivities.questions.map((question: any, index: number) => (
-                      <div key={index} className="p-3 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-800">
+                      <div key={question.id || `question-${index}-${question.subject}`} className="p-3 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-800">
                         <div className="flex flex-col gap-2">
                           <div className="flex justify-between items-center">
                             <span className="font-medium">
@@ -2281,7 +2281,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => !task.completed).map((task: any, index: number) => (
-                      <div key={index} className="p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-800">
+                      <div key={task.id || `task-pending-${index}`} className="p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-800">
                         <div className="font-medium">
                           {task.title}
                           {task.archived && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-200">(arşivlendi)</span>}
@@ -2305,7 +2305,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {selectedHeatmapDay.dayActivities.tasks.filter((task: any) => task.completed).map((task: any, index: number) => (
-                      <div key={index} className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div key={task.id || `task-completed-${index}`} className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="font-medium">
                           {task.title}
                           {task.archived && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-200">(arşivlendi)</span>}
@@ -2328,7 +2328,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {selectedHeatmapDay.dayActivities.exams.map((exam: any, index: number) => (
-                      <div key={index} className="p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
+                      <div key={exam.id || `exam-${index}-${exam.exam_name}`} className="p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800">
                         <div className="flex justify-between items-center">
                           <span className="font-medium">
                             {exam.display_name || exam.exam_name}
@@ -2365,7 +2365,7 @@ export default function Dashboard() {
                (!selectedHeatmapDay.dayActivities.studyHours || selectedHeatmapDay.dayActivities.studyHours.length === 0) && (
                 <div className="text-center py-8 text-muted-foreground">
                   <CalendarDays className="h-12 w-12 mx-auto mb-3 opacity-40" />
-                  <p>Bu günde herhangi bir aktivite kaydedilmemiş.</p>
+                  <p>Bugünde herhangi bir aktivite kaydedilmemiş.</p>
                 </div>
               )}
             </div>
@@ -5640,16 +5640,16 @@ export default function Dashboard() {
             <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               📁 Arşivlenen Veriler
             </DialogTitle>
-            <DialogDescription className="text-center space-y-2">
-              <p className="text-muted-foreground">
+            <div className="text-center space-y-2">
+              <div className="text-muted-foreground text-sm">
                 Her Pazar 23:59'da otomatik olarak arşivlenen eski verileriniz
-              </p>
+              </div>
               {nextArchiveCountdown && (
-                <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 rounded-lg py-2 px-4 inline-block">
+                <div className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 rounded-lg py-2 px-4 inline-block">
                   ⏳ {nextArchiveCountdown}
-                </p>
+                </div>
               )}
-            </DialogDescription>
+            </div>
           </DialogHeader>
           
           <div className="space-y-4">

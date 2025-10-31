@@ -4,22 +4,64 @@
   "hedefler": [],
   "soruGunlukleri": [
     {
-      "id": "7e1de9ee-efdb-4b36-904d-711d03106756",
-      "exam_type": "TYT",
-      "subject": "Türkçe",
+      "id": "8ce3ba3b-27c6-4089-bb7a-bbaad92e1750",
+      "exam_type": "AYT",
+      "subject": "Fizik",
+      "topic": null,
+      "correct_count": "6",
+      "wrong_count": "6",
+      "blank_count": "0",
+      "wrong_topics": [
+        "5"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"5\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T19:49:19.883Z"
+    },
+    {
+      "id": "3a736caa-0aed-483e-91ec-5f3b13ed0624",
+      "exam_type": "AYT",
+      "subject": "Kimya",
+      "topic": null,
+      "correct_count": "6",
+      "wrong_count": "6",
+      "blank_count": "0",
+      "wrong_topics": [
+        "7"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"7\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T19:49:27.246Z"
+    },
+    {
+      "id": "586999b9-9024-4848-8d71-ad375844a819",
+      "exam_type": "AYT",
+      "subject": "Biyoloji",
       "topic": null,
       "correct_count": "3",
       "wrong_count": "3",
       "blank_count": "0",
-      "wrong_topics": [],
-      "wrong_topics_json": null,
+      "wrong_topics": [
+        "8"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"8\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
-      "deleted": true,
-      "deletedAt": "2025-10-31T19:02:06.331Z",
-      "archived": true,
-      "archivedAt": "2025-10-31T18:53:18.549Z",
-      "createdAt": "2025-10-31T18:35:15.192Z"
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T19:49:36.126Z"
     }
   ],
   "sinavSonuclari": [

@@ -11,7 +11,7 @@ import { Header } from "@/bilesenler/baslik";
 import { EnhancedWeatherWidget } from "@/bilesenler/gelismis-hava-durumu-widget";
 import { CountdownWidget } from "@/bilesenler/geri-sayim-widget";
 import { TodaysTasksWidget } from "@/bilesenler/gunun-gorevleri-widget";
-import { Calendar, TrendingUp, Clock, ChevronLeft, ChevronRight, Mail, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, TrendingUp, Clock, ChevronLeft, ChevronRight, Mail, Zap, ChevronDown, ChevronUp, Lock, Unlock } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { Task, QuestionLog, ExamResult } from "@shared/sema";
@@ -111,6 +111,7 @@ const CenteredWelcomeSection = memo(function CenteredWelcomeSection() {
 
 export default function Homepage() {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   
   // Bugünün tarihini YYYY-MM-DD formatında al (Türkiye saat dilimi)
   const getTodayDateString = () => {
@@ -127,6 +128,20 @@ export default function Homepage() {
   const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [isReportButtonUnlocked, setIsReportButtonUnlocked] = useState<boolean>(false);
+  const [showReportModal, setShowReportModal] = useState<boolean>(false);
+  
+  // Rapor gönderme mutation
+  const sendReportMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/reports/send", {}),
+    onSuccess: () => {
+      toast({ title: "📧 Rapor Gönderildi", description: "Aylık ilerleme raporunuz e-posta adresinize gönderildi.", duration: 1500 });
+      setIsReportButtonUnlocked(false);
+      setShowReportModal(false);
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Rapor gönderilemedi. EMAIL ayarlarını kontrol edin.", variant: "destructive", duration: 1500 });
+    },
+  });
   
   // Takvim navigasyonu için durum (Türkiye saat dilimi)
   const getTurkeyDate = () => {
@@ -191,8 +206,6 @@ export default function Homepage() {
   
   const [expandedQuestionLogs, setExpandedQuestionLogs] = useState<Set<string>>(new Set());
   const [expandedExams, setExpandedExams] = useState<Set<string>>(new Set());
-  
-  const { toast } = useToast();
 
   const { data: calendarData } = useQuery<{
     date: string;
@@ -432,37 +445,59 @@ export default function Homepage() {
               <div className="flex items-center gap-2">
                   {/* Rapor Gönder Butonu - Sol ok butonunun solunda */}
                   <div className="relative mr-2">
-                    {/* Kilit İkonu */}
-                    {!isReportButtonUnlocked && (
-                      <button
-                        onClick={() => setIsReportButtonUnlocked(true)}
-                        className="absolute -top-2 -right-2 z-10 text-2xl hover:scale-110 transition-transform duration-200 cursor-pointer"
-                        title="Kilidi Aç"
-                      >
-                        🔒
-                      </button>
-                    )}
+                    {/* Kilit İkonu - Red when locked, Green when unlocked */}
+                    <button
+                      onClick={() => {
+                        if (!isReportButtonUnlocked) {
+                          setIsReportButtonUnlocked(true);
+                          toast({
+                            title: "Kilit Açıldı",
+                            description: "Şuana kadar yapmış olduğunuz veriyi gönderebilmek için butona tıklayın ve e-postanızda raporunuzu analiz etmeye başlayabilirsiniz",
+                            duration: 1500,
+                          });
+                        } else {
+                          setIsReportButtonUnlocked(false);
+                          toast({
+                            title: "Kilit Kapatıldı",
+                            description: "Rapor gönderme butonu kilitlendi",
+                            duration: 1500,
+                          });
+                        }
+                      }}
+                      className={`absolute -top-2 -right-2 z-10 p-1.5 rounded-full transition-all duration-300 ${
+                        isReportButtonUnlocked 
+                          ? 'bg-green-500 hover:bg-green-600' 
+                          : 'bg-red-500 hover:bg-red-600'
+                      } hover:scale-110 cursor-pointer shadow-lg`}
+                      title={isReportButtonUnlocked ? "Kilidi Kapatmak İçin Tıklayın" : "Kilidi Açmak İçin Tıklayın"}
+                    >
+                      {isReportButtonUnlocked ? (
+                        <Unlock className="h-4 w-4 text-white" />
+                      ) : (
+                        <Lock className="h-4 w-4 text-white" />
+                      )}
+                    </button>
                     
                     <button
                       onClick={() => {
                         if (isReportButtonUnlocked) {
-                          navigate('/panel?openReport=true');
+                          setShowReportModal(true);
                         }
                       }}
                       disabled={!isReportButtonUnlocked}
-                      className={`px-4 py-2 bg-black/40 dark:bg-gray-950/40 rounded-lg transition-all duration-300 border border-purple-500/30 backdrop-blur-sm ${
-                        isReportButtonUnlocked 
+                      className={`px-4 py-2 bg-black/20 dark:bg-gray-950/20 rounded-lg transition-all duration-300 border border-purple-500/30 backdrop-blur-sm ${
+                        isReportButtonUnlocked
                           ? 'hover:shadow-lg hover:shadow-purple-600/50 cursor-pointer opacity-100' 
-                          : 'cursor-not-allowed opacity-40'
+                          : 'cursor-not-allowed opacity-30'
                       }`}
                       style={{
-                        minWidth: '160px'
+                        minWidth: '170px'
                       }}
                       title={isReportButtonUnlocked ? "Rapor Gönder" : "Önce kilidi açın"}
                     >
                       <div className="text-center">
                         <div 
-                          className="text-xs font-bold mb-1"
+                          className="text-sm font-bold mb-1"
                           style={{
                             color: '#a855f7',
                             textShadow: isReportButtonUnlocked ? '0 0 10px rgba(168, 85, 247, 0.6)' : 'none'
@@ -471,7 +506,7 @@ export default function Homepage() {
                           Rapor Gönder
                         </div>
                         <div 
-                          className="text-sm font-mono tabular-nums font-bold"
+                          className="text-base font-mono tabular-nums font-bold"
                           id="month-countdown"
                           style={{
                             color: '#a855f7',
@@ -1610,6 +1645,108 @@ export default function Homepage() {
           <CountdownWidget className="p-5 md:p-6" />
         </div>
       </main>
+
+      {/* Rapor Gönderme Modalı */}
+      <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              📊 Aylık İlerleme Raporu
+            </DialogTitle>
+            <DialogDescription>
+              Tüm aktivitelerinizin özet raporu
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* İstatistikler */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="text-sm text-muted-foreground mb-1">Toplam Aktivite</div>
+                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                  {(tasks.length || 0) + (questionLogs.length || 0) + (examResults.length || 0)}
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="text-sm text-muted-foreground mb-1">Tamamlanan Görevler</div>
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {tasks.filter(t => t.completed).length} / {tasks.length}
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="text-sm text-muted-foreground mb-1">Çözülen Soru Sayısı</div>
+                <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  {questionLogs.reduce((sum, log) => sum + (Number(log.correct_count) || 0) + (Number(log.wrong_count) || 0) + (Number(log.blank_count) || 0), 0)}
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                <div className="text-sm text-muted-foreground mb-1">Toplam Denemeler</div>
+                <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                  {examResults.length}
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/30 dark:to-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800 col-span-2">
+                <div className="text-sm text-muted-foreground mb-1">Toplam Çalışma Saati</div>
+                <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                  {studyHours.reduce((sum, sh) => sum + (Number(sh.hours) || 0), 0)} saat
+                </div>
+              </div>
+            </div>
+            
+            {/* Email Bilgisi */}
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border">
+              <Label className="text-sm font-medium mb-2 block">E-posta Adresi</Label>
+              <Input 
+                type="email" 
+                value="Belirlediğiniz e-posta adresine rapor gönderilecektir"
+                disabled
+                className="bg-muted/30 text-muted-foreground blur-[2px] cursor-not-allowed"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                📧 .env dosyasında tanımlı EMAIL_FROM adresine detaylı rapor gönderilecek
+              </p>
+            </div>
+            
+            {/* Bilgilendirme */}
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+              <p className="text-sm font-medium text-center">
+                💡 Detaylı Analiz Raporu İçin Gönder Butonuna Tıklayın
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex gap-2 justify-end mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowReportModal(false)}
+              disabled={sendReportMutation.isPending}
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={() => sendReportMutation.mutate()}
+              disabled={sendReportMutation.isPending}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+            >
+              {sendReportMutation.isPending ? (
+                <>
+                  <span className="animate-spin mr-2">⏳</span>
+                  Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <Mail className="h-4 w-4 mr-2" />
+                  Gönder
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* copyright beroooş */}
       <footer className="bg-muted/30 border-t border-border mt-16">

@@ -2,26 +2,7 @@
   "gorevler": [],
   "ruhHalleri": [],
   "hedefler": [],
-  "soruGunlukleri": [
-    {
-      "id": "7e1de9ee-efdb-4b36-904d-711d03106756",
-      "exam_type": "TYT",
-      "subject": "Türkçe",
-      "topic": null,
-      "correct_count": "3",
-      "wrong_count": "3",
-      "blank_count": "0",
-      "wrong_topics": [],
-      "wrong_topics_json": null,
-      "time_spent_minutes": null,
-      "study_date": "2025-10-31",
-      "deleted": true,
-      "deletedAt": "2025-10-31T19:02:07.704Z",
-      "archived": true,
-      "archivedAt": "2025-10-31T18:53:18.549Z",
-      "createdAt": "2025-10-31T18:35:15.192Z"
-    }
-  ],
+  "soruGunlukleri": [],
   "sinavSonuclari": [
     {
       "id": "c13bd4dc-da09-427b-89ca-4a7642ea49f9",
