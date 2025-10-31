@@ -126,6 +126,7 @@ export default function Homepage() {
   const [activityFilter, setActivityFilter] = useState<'all' | 'tasks' | 'questions' | 'exams'>('all');
   const [showAllTasks, setShowAllTasks] = useState<boolean>(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [isReportButtonUnlocked, setIsReportButtonUnlocked] = useState<boolean>(false);
   
   // Takvim navigasyonu için durum (Türkiye saat dilimi)
   const getTurkeyDate = () => {
@@ -430,36 +431,58 @@ export default function Homepage() {
               
               <div className="flex items-center gap-2">
                   {/* Rapor Gönder Butonu - Sol ok butonunun solunda */}
-                  <button
-                    onClick={() => navigate('/panel?openReport=true')}
-                    className="px-3 py-1.5 bg-black dark:bg-gray-950 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/50 border border-purple-500 mr-2"
-                    style={{
-                      minWidth: '140px'
-                    }}
-                    title="Rapor Gönder"
-                  >
-                    <div className="text-center">
-                      <div 
-                        className="text-[10px] font-bold mb-0.5"
-                        style={{
-                          color: '#a855f7',
-                          textShadow: '0 0 10px rgba(168, 85, 247, 0.6)'
-                        }}
+                  <div className="relative mr-2">
+                    {/* Kilit İkonu */}
+                    {!isReportButtonUnlocked && (
+                      <button
+                        onClick={() => setIsReportButtonUnlocked(true)}
+                        className="absolute -top-2 -right-2 z-10 text-2xl hover:scale-110 transition-transform duration-200 cursor-pointer"
+                        title="Kilidi Aç"
                       >
-                        📧 Rapor Gönder
+                        🔒
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={() => {
+                        if (isReportButtonUnlocked) {
+                          navigate('/panel?openReport=true');
+                        }
+                      }}
+                      disabled={!isReportButtonUnlocked}
+                      className={`px-4 py-2 bg-black/40 dark:bg-gray-950/40 rounded-lg transition-all duration-300 border border-purple-500/30 backdrop-blur-sm ${
+                        isReportButtonUnlocked 
+                          ? 'hover:shadow-lg hover:shadow-purple-600/50 cursor-pointer opacity-100' 
+                          : 'cursor-not-allowed opacity-40'
+                      }`}
+                      style={{
+                        minWidth: '160px'
+                      }}
+                      title={isReportButtonUnlocked ? "Rapor Gönder" : "Önce kilidi açın"}
+                    >
+                      <div className="text-center">
+                        <div 
+                          className="text-xs font-bold mb-1"
+                          style={{
+                            color: '#a855f7',
+                            textShadow: isReportButtonUnlocked ? '0 0 10px rgba(168, 85, 247, 0.6)' : 'none'
+                          }}
+                        >
+                          Rapor Gönder
+                        </div>
+                        <div 
+                          className="text-sm font-mono tabular-nums font-bold"
+                          id="month-countdown"
+                          style={{
+                            color: '#a855f7',
+                            textShadow: isReportButtonUnlocked ? '0 0 8px rgba(168, 85, 247, 0.4)' : 'none'
+                          }}
+                        >
+                          Loading...
+                        </div>
                       </div>
-                      <div 
-                        className="text-[9px] font-mono tabular-nums"
-                        id="month-countdown"
-                        style={{
-                          color: '#a855f7',
-                          textShadow: '0 0 8px rgba(168, 85, 247, 0.4)'
-                        }}
-                      >
-                        Loading...
-                      </div>
-                    </div>
-                  </button>
+                    </button>
+                  </div>
                   
                   <Button
                     variant="ghost"

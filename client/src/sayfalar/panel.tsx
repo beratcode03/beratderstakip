@@ -680,13 +680,18 @@ export default function Dashboard() {
   const deleteQuestionLogMutation = useMutation({
     mutationFn: (id: string) => apiRequest("DELETE", `/api/question-logs/${id}`),
     onSuccess: () => {
+      // Tüm ilgili query'leri invalidate et
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/question-logs"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/question-logs/archived"] });
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/stats"] });
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/priority"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/calendar"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/summary/daily"] });
       toast({ title: "🗑️ Soru kaydı silindi", description: "Soru çözüm kaydınız başarıyla silindi." });
     },
-    onError: () => {
-      toast({ title: "❌ Hata", description: "Soru kaydı silinemedi.", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Delete error:", error);
+      toast({ title: "❌ Hata", description: error?.message || "Soru kaydı silinemedi.", variant: "destructive" });
     },
   });
 
@@ -6488,33 +6493,105 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Rapor Gönderme Modal */}
+      {/* Rapor Gönderme Modal - Detaylı İstatistikler */}
       <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
-        <DialogContent className="max-w-md" data-report-button="true">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" data-report-button="true">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
-              <FileText className="h-5 w-5" />
-              📧 Aylık İlerleme Raporu Gönder
+            <DialogTitle className="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <FileText className="h-6 w-6" />
+              📊 Aylık İlerleme Raporu
             </DialogTitle>
             <DialogDescription>
-              Çalışma istatistikleriniz, deneme sonuçlarınız ve ilerleme raporunuz .env dosyasındaki email adresine gönderilecek.
+              Tüm aktivitelerinizin özet raporu
             </DialogDescription>
           </DialogHeader>
+          
           <div className="space-y-4 py-4">
-            <div className="bg-purple-50 dark:bg-purple-950/30 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
-              <p className="text-sm text-purple-700 dark:text-purple-400">
-                <strong>Rapor İçeriği:</strong>
-              </p>
-              <ul className="text-xs text-purple-600 dark:text-purple-500 mt-1 space-y-0.5 list-disc list-inside">
-                <li>Son 30 günlük çalışma özeti</li>
-                <li>Deneme sınav sonuçları ve trendler</li>
-                <li>Eksik konular analizi</li>
-                <li>Öncelikli çalışma önerileri</li>
-              </ul>
+            {/* Toplam Aktivite */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h3 className="font-bold text-blue-700 dark:text-blue-400 mb-3 flex items-center gap-2">
+                📈 Toplam Aktivite
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {tasks.length + archivedTasks.length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Toplam Görev</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {tasks.filter(t => t.completed).length + archivedTasks.filter(t => t.completed).length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Tamamlanan Görev</div>
+                </div>
+              </div>
             </div>
+
+            {/* Çözülen Denemeler */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+              <h3 className="font-bold text-purple-700 dark:text-purple-400 mb-3 flex items-center gap-2">
+                📝 Çözülen Denemeler
+              </h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {allExamResults.length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Toplam Deneme</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {allExamResults.filter(e => e.exam_scope === 'full').length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Genel Deneme</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-pink-600 dark:text-pink-400">
+                    {allExamResults.filter(e => e.exam_scope === 'branch').length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Branş Deneme</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Çözülen Sorular */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-4 rounded-lg border border-green-200 dark:border-green-800">
+              <h3 className="font-bold text-green-700 dark:text-green-400 mb-3 flex items-center gap-2">
+                ✅ Çözülen Sorular
+              </h3>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {allQuestionLogs.reduce((sum, log) => sum + (Number(log.correct_count) || 0) + (Number(log.wrong_count) || 0) + (Number(log.blank_count) || 0), 0)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Toplam Soru</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {allQuestionLogs.reduce((sum, log) => sum + (Number(log.correct_count) || 0), 0)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">✓ Doğru</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {allQuestionLogs.reduce((sum, log) => sum + (Number(log.wrong_count) || 0), 0)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">✗ Yanlış</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                    {allQuestionLogs.reduce((sum, log) => sum + (Number(log.blank_count) || 0), 0)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">○ Boş</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Email Gönderme Bilgisi */}
             <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
               <p className="text-xs text-gray-600 dark:text-gray-400">
-                <strong>Alıcı:</strong> .env dosyasında tanımlı EMAIL_FROM adresi
+                <strong>Email Raporu:</strong> .env dosyasında tanımlı EMAIL_FROM adresine detaylı rapor gönderilecek
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
                 Ay sonuna kalan süre: <strong className="text-purple-600 dark:text-purple-400">
@@ -6523,13 +6600,14 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
+          
           <div className="flex gap-2 justify-end">
             <Button
               variant="outline"
               onClick={() => setShowReportModal(false)}
               disabled={sendReportMutation.isPending}
             >
-              İptal
+              Kapat
             </Button>
             <Button
               onClick={() => sendReportMutation.mutate()}
@@ -6543,8 +6621,8 @@ export default function Dashboard() {
                 </>
               ) : (
                 <>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Rapor Gönder
+                  <Mail className="h-4 w-4 mr-2" />
+                  Email Gönder
                 </>
               )}
             </Button>

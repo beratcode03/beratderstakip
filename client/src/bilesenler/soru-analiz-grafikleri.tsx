@@ -45,6 +45,11 @@ export function QuestionAnalysisCharts() {
     queryKey: ["/api/question-logs"],
   });
   
+  // Arşivlenen soru kayıtlarını da çek
+  const { data: archivedQuestionLogs = [] } = useQuery<QuestionLog[]>({
+    queryKey: ["/api/question-logs/archived"],
+  });
+  
   const { data: examResults = [] } = useQuery<ExamResult[]>({
     queryKey: ["/api/exam-results"],
   });
@@ -87,10 +92,10 @@ export function QuestionAnalysisCharts() {
     return logs;
   }, [allExamResults, examSubjectNets]);
   
-  // questionLogs ile branchExamLogs'u birleştir
+  // questionLogs, arşivlenen questionLogs ve branchExamLogs'u birleştir
   const allQuestionLogs = useMemo(() => {
-    return [...questionLogs, ...branchExamLogs];
-  }, [questionLogs, branchExamLogs]);
+    return [...questionLogs, ...archivedQuestionLogs, ...branchExamLogs];
+  }, [questionLogs, archivedQuestionLogs, branchExamLogs]);
 
   // Günlük/haftalık soru tablosu verilerini hazırlayın
   const prepareDailyWeeklyData = () => {
