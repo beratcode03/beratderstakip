@@ -130,11 +130,31 @@
       "ayt_net": "0.00",
       "subjects_data": "{\"turkce\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"matematik\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"sosyal\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"fen\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"fizik\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"kimya\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"biyoloji\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"geometri\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]}}",
       "time_spent_minutes": 0,
+      "deleted": true,
+      "deletedAt": "2025-10-31T12:30:07.831Z",
+      "archived": true,
+      "archivedAt": "2025-10-31T12:30:08.418Z",
+      "createdAt": "2025-10-31T12:27:25.859Z"
+    },
+    {
+      "id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_name": "Genel TYT Deneme",
+      "display_name": "Genel TYT Deneme",
+      "exam_date": "2025-10-31",
+      "exam_type": "TYT",
+      "exam_scope": "full",
+      "selected_subject": null,
+      "notes": null,
+      "ranking": null,
+      "tyt_net": "18.75",
+      "ayt_net": "0.00",
+      "subjects_data": "{\"turkce\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"matematik\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"sosyal\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"fen\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]},\"fizik\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"kimya\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"biyoloji\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"geometri\":{\"correct\":\"5\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[]}}",
+      "time_spent_minutes": 0,
       "deleted": false,
       "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T12:27:25.859Z"
+      "archived": true,
+      "archivedAt": "2025-10-31T12:30:42.545Z",
+      "createdAt": "2025-10-31T12:30:28.673Z"
     }
   ],
   "sinavKonuNetleri": [
@@ -197,6 +217,66 @@
       "blank_count": "0",
       "wrong_topics_json": null,
       "createdAt": "2025-10-31T12:27:25.897Z"
+    },
+    {
+      "id": "6e61adc4-1918-46b1-a106-e7be5bb10a8a",
+      "exam_id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_type": "TYT",
+      "subject": "Türkçe",
+      "net_score": "3.75",
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics_json": null,
+      "createdAt": "2025-10-31T12:30:28.679Z"
+    },
+    {
+      "id": "b733c704-84c1-45f5-81d7-98661123c775",
+      "exam_id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_type": "TYT",
+      "subject": "Matematik",
+      "net_score": "3.75",
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics_json": null,
+      "createdAt": "2025-10-31T12:30:28.744Z"
+    },
+    {
+      "id": "65c45085-2571-4dbc-b391-ac8c8e38b5c3",
+      "exam_id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_type": "TYT",
+      "subject": "Sosyal Bilimler",
+      "net_score": "3.75",
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics_json": null,
+      "createdAt": "2025-10-31T12:30:28.750Z"
+    },
+    {
+      "id": "0d093cfe-f0b4-4ed1-9203-fd9a76984f8a",
+      "exam_id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_type": "TYT",
+      "subject": "Fen Bilimleri",
+      "net_score": "3.75",
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics_json": null,
+      "createdAt": "2025-10-31T12:30:28.756Z"
+    },
+    {
+      "id": "c0b7a80e-e095-406b-83c0-20337dc05447",
+      "exam_id": "eace2601-cbaa-406d-bb9e-215d9222614e",
+      "exam_type": "TYT",
+      "subject": "Geometri",
+      "net_score": "3.75",
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics_json": null,
+      "createdAt": "2025-10-31T12:30:28.859Z"
     }
   ],
   "calismaSaatleri": []

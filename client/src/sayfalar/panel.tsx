@@ -1819,15 +1819,6 @@ export default function Dashboard() {
                       {archiveAllExamResultsMutation.isPending ? 'Arşivleniyor...' : 'Tümünü Arşivle'}
                     </Button>
                   )}
-                  <Button 
-                    onClick={() => setShowArchivedExamsModal(true)}
-                    size="sm" 
-                    variant="outline"
-                    className="border-blue-500 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400"
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Arşivi Görüntüle
-                  </Button>
                   {allExamResults.length > 0 && (
                     <Button 
                       onClick={() => setShowDeleteAllExamsDialog(true)}
