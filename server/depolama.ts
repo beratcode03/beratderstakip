@@ -794,7 +794,8 @@ export class MemStorage implements IStorage {
 
   // Konu istatistik işlemleri (kullanıcılar tarafından belirtilen belirli yanlış konular)
   async getTopicStats(): Promise<Array<{ topic: string; wrongMentions: number; totalSessions: number; mentionFrequency: number }>> {
-    const logs = Array.from(this.questionLogs.values());
+    // Silinmiş ve arşivlenmiş olanlar DAHİL tüm logları al - istatistikler için
+    const logs = Array.from(this.questionLogs.values()).filter(log => !log.deleted && !log.archived);
     const examSubjectNets = Array.from(this.examSubjectNets.values());
     const topicStats = new Map<string, { wrongMentions: number; sessionsAppeared: Set<string> }>();
 

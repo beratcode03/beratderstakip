@@ -80,7 +80,8 @@ function AdvancedChartsComponent() {
   const [isEditingAytTarget, setIsEditingAytTarget] = useState(false);
   const [tytSummaryExpanded, setTytSummaryExpanded] = useState(false);
   const [aytSummaryExpanded, setAytSummaryExpanded] = useState(false);
-  const [branchSummaryExpanded, setBranchSummaryExpanded] = useState(false);
+  const [tytBranchSummaryExpanded, setTytBranchSummaryExpanded] = useState(false);
+  const [aytBranchSummaryExpanded, setAytBranchSummaryExpanded] = useState(false);
   
   // Branş hedef netleri
   const [tytBranchTargetNet, setTytBranchTargetNet] = useState<number>(30);
@@ -2768,48 +2769,95 @@ function AdvancedChartsComponent() {
                   )}
                 </div>
 
-                {/* Branş Denemeleri Özet Kartları */}
-                <Collapsible open={branchSummaryExpanded} onOpenChange={setBranchSummaryExpanded}>
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-lg font-semibold text-orange-700 dark:text-orange-300">📚 Branş Denemeleri Özeti</h4>
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-2 hover:bg-orange-100 dark:hover:bg-orange-900/20 rounded-lg"
-                        data-testid="button-toggle-branch-summary"
-                      >
-                        <ChevronDown className={`h-5 w-5 text-orange-600 dark:text-orange-400 transition-transform duration-200 ${branchSummaryExpanded ? 'rotate-180' : ''}`} />
-                      </Button>
-                    </CollapsibleTrigger>
-                  </div>
-                  <CollapsibleContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {branchExamData.map((exam, index) => (
-                        <div key={index} className="bg-orange-50/60 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/40 dark:border-orange-700/40 hover:shadow-lg transition-all duration-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-gray-800 dark:text-gray-200">{exam.examName}</h4>
-                          </div>
-                          <div className="text-sm text-orange-600 dark:text-orange-400 mb-2">{exam.subject}</div>
-                          <div className="space-y-2 mb-4">
-                            <div className="flex justify-between items-center">
-                              <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
-                              <span className="text-sm font-semibold text-green-600 dark:text-green-400">{exam.correct}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
-                              <span className="text-sm font-semibold text-red-600 dark:text-red-400">{exam.wrong}</span>
-                            </div>
-                            <div className="flex justify-between items-center border-t pt-2">
-                              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
-                              <span className="text-sm font-bold text-orange-600 dark:text-orange-400">{exam.net.toFixed(1)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                {/* TYT Branş Denemeleri Özet Kartları */}
+                {branchExamData.filter(exam => exam.examType === 'TYT').length > 0 && (
+                  <Collapsible open={tytBranchSummaryExpanded} onOpenChange={setTytBranchSummaryExpanded}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-semibold text-blue-700 dark:text-blue-300">📚 TYT Branş Denemeleri Özeti</h4>
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-lg"
+                          data-testid="button-toggle-tyt-branch-summary"
+                        >
+                          <ChevronDown className={`h-5 w-5 text-blue-600 dark:text-blue-400 transition-transform duration-200 ${tytBranchSummaryExpanded ? 'rotate-180' : ''}`} />
+                        </Button>
+                      </CollapsibleTrigger>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                    <CollapsibleContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        {branchExamData.filter(exam => exam.examType === 'TYT').map((exam, index) => (
+                          <div key={index} className="bg-blue-50/60 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/40 dark:border-blue-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{exam.examName}</h4>
+                            </div>
+                            <div className="text-sm text-blue-600 dark:text-blue-400 mb-2">{exam.subject}</div>
+                            <div className="space-y-2 mb-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
+                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{exam.correct}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
+                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{exam.wrong}</span>
+                              </div>
+                              <div className="flex justify-between items-center border-t pt-2">
+                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{exam.net.toFixed(1)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+
+                {/* AYT Branş Denemeleri Özet Kartları */}
+                {branchExamData.filter(exam => exam.examType === 'AYT').length > 0 && (
+                  <Collapsible open={aytBranchSummaryExpanded} onOpenChange={setAytBranchSummaryExpanded}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-semibold text-purple-700 dark:text-purple-300">📚 AYT Branş Denemeleri Özeti</h4>
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/20 rounded-lg"
+                          data-testid="button-toggle-ayt-branch-summary"
+                        >
+                          <ChevronDown className={`h-5 w-5 text-purple-600 dark:text-purple-400 transition-transform duration-200 ${aytBranchSummaryExpanded ? 'rotate-180' : ''}`} />
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                    <CollapsibleContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {branchExamData.filter(exam => exam.examType === 'AYT').map((exam, index) => (
+                          <div key={index} className="bg-purple-50/60 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-200/40 dark:border-purple-700/40 hover:shadow-lg transition-all duration-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-800 dark:text-gray-200">{exam.examName}</h4>
+                            </div>
+                            <div className="text-sm text-purple-600 dark:text-purple-400 mb-2">{exam.subject}</div>
+                            <div className="space-y-2 mb-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-green-600 dark:text-green-400">✓ Doğru</span>
+                                <span className="text-sm font-semibold text-green-600 dark:text-green-400">{exam.correct}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-red-600 dark:text-red-400">✗ Yanlış</span>
+                                <span className="text-sm font-semibold text-red-600 dark:text-red-400">{exam.wrong}</span>
+                              </div>
+                              <div className="flex justify-between items-center border-t pt-2">
+                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Net</span>
+                                <span className="text-sm font-bold text-purple-600 dark:text-purple-400">{exam.net.toFixed(1)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
               </div>
             )
           )}

@@ -3891,7 +3891,7 @@ export default function Dashboard() {
                             }
                           });
                         }}
-                        placeholder="konu1, konu2, konu3 şeklinde virgülle ayırarak yazın..."
+                        placeholder="Limit, Türev, İntegral, Trigonometri, Logaritma gibi..."
                         className="bg-white/80 dark:bg-gray-800/80 border-blue-200 dark:border-blue-700/50 focus:border-blue-400 dark:focus:border-blue-500 rounded-xl shadow-sm"
                       />
                       {currentWrongTopics.matematik && (
@@ -4109,7 +4109,7 @@ export default function Dashboard() {
                             }
                           });
                         }}
-                        placeholder="konu1, konu2, konu3 şeklinde virgülle ayırarak yazın..."
+                        placeholder="Hareket, Newton'un Hareket Yasaları, İş Güç Enerji gibi..."
                         className="bg-white/80 dark:bg-gray-800/80 border-indigo-200 dark:border-indigo-700/50 focus:border-indigo-400 dark:focus:border-indigo-500 rounded-xl shadow-sm"
                       />
                       {currentWrongTopics.fizik && (
@@ -4218,7 +4218,7 @@ export default function Dashboard() {
                             }
                           });
                         }}
-                        placeholder="konu1, konu2, konu3 şeklinde virgülle ayırarak yazın..."
+                        placeholder="Kimyasal Denge, Asit-Baz, Elektrokimya, Organik Kimya gibi..."
                         className="bg-white/80 dark:bg-gray-800/80 border-green-200 dark:border-green-700/50 focus:border-green-400 dark:focus:border-green-500 rounded-xl shadow-sm"
                       />
                       {currentWrongTopics.kimya && (
@@ -4327,7 +4327,7 @@ export default function Dashboard() {
                             }
                           });
                         }}
-                        placeholder="konu1, konu2, konu3 şeklinde virgülle ayırarak yazın..."
+                        placeholder="Sinir Sistemi, Hücre Bölünmesi, Ekosistem, Kalıtım gibi..."
                         className="bg-white/80 dark:bg-gray-800/80 border-teal-200 dark:border-teal-700/50 focus:border-teal-400 dark:focus:border-teal-500 rounded-xl shadow-sm"
                       />
                       {currentWrongTopics.biyoloji && (
