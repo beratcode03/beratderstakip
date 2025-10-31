@@ -6342,8 +6342,8 @@ export default function Dashboard() {
             {archivedExams.length === 0 ? (
               <div className="text-center py-12">
                 <Archive className="h-24 w-24 text-amber-300 mx-auto mb-4 opacity-50" />
-                <p className="text-xl font-semibold text-muted-foreground">Arşivlenmiş deneme bulunmuyor</p>
-                <p className="text-sm text-muted-foreground mt-2">Deneme sonuçlarını arşivleyerek burada saklayabilirsiniz.</p>
+                <div className="text-xl font-semibold text-muted-foreground">Arşivlenmiş deneme bulunmuyor</div>
+                <div className="text-sm text-muted-foreground mt-2">Deneme sonuçlarını arşivleyerek burada saklayabilirsiniz.</div>
               </div>
             ) : (
               <div className="grid gap-4">

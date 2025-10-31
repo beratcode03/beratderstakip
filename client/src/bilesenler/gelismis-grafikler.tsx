@@ -1846,6 +1846,9 @@ function AdvancedChartsComponent() {
                                     newMap.set(errorTopicKey, completedAt);
                                     return newMap;
                                   });
+                                  
+                                  // Tamamlanan Hatalı Sorular Geçmişi modalını refresh et
+                                  setCompletedErrorsRefreshKey(prev => prev + 1);
                                 } else {
                                   const saved = localStorage.getItem('completedQuestionErrors');
                                   const arr = saved ? JSON.parse(saved) : [];
@@ -1878,6 +1881,9 @@ function AdvancedChartsComponent() {
                                     newMap.set(errorTopicKey, completedAt);
                                     return newMap;
                                   });
+                                  
+                                  // Tamamlanan Hatalı Sorular Geçmişi modalını refresh et
+                                  setCompletedErrorsRefreshKey(prev => prev + 1);
                                 }
                                 setCelebratingErrorTopics(prev => new Set([...prev, errorTopicKey]));
                                 toast({ 
