@@ -1809,18 +1809,6 @@ export default function Dashboard() {
                   </Button>
                   {allExamResults.length > 0 && (
                     <Button 
-                      onClick={() => archiveAllExamResultsMutation.mutate()}
-                      size="sm" 
-                      variant="outline"
-                      className="border-amber-500 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400"
-                      disabled={archiveAllExamResultsMutation.isPending}
-                    >
-                      <Archive className="h-4 w-4 mr-1" />
-                      {archiveAllExamResultsMutation.isPending ? 'Arşivleniyor...' : 'Tümünü Arşivle'}
-                    </Button>
-                  )}
-                  {allExamResults.length > 0 && (
-                    <Button 
                       onClick={() => setShowDeleteAllExamsDialog(true)}
                       size="sm" 
                       variant="outline"

@@ -49,15 +49,23 @@ export function QuestionAnalysisCharts() {
     queryKey: ["/api/exam-results"],
   });
   
+  // Arşivlenen denemeleri de çek
+  const { data: archivedExamResults = [] } = useQuery<ExamResult[]>({
+    queryKey: ["/api/exam-results/archived"],
+  });
+  
   const { data: examSubjectNets = [] } = useQuery<ExamSubjectNet[]>({
     queryKey: ["/api/exam-subject-nets"],
   });
+  
+  // Tüm denemeleri birleştir (aktif + arşivlenmiş)
+  const allExamResults = useMemo(() => [...examResults, ...archivedExamResults], [examResults, archivedExamResults]);
   
   // Branş ve Genel deneme verilerini questionLog formatına çevir
   const branchExamLogs = useMemo(() => {
     const logs: QuestionLog[] = [];
     
-    examResults.forEach(exam => {
+    allExamResults.forEach(exam => {
       // Branş ve Genel denemeleri al (full scope da genel deneme olarak kabul edilir)
       if (exam.exam_scope === 'branch' || exam.exam_scope === 'general' || exam.exam_scope === 'full') {
         // Bu exam'e ait subject netlerini bul
@@ -77,7 +85,7 @@ export function QuestionAnalysisCharts() {
     });
     
     return logs;
-  }, [examResults, examSubjectNets]);
+  }, [allExamResults, examSubjectNets]);
   
   // questionLogs ile branchExamLogs'u birleştir
   const allQuestionLogs = useMemo(() => {
