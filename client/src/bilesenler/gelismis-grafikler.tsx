@@ -1546,7 +1546,9 @@ function AdvancedChartsComponent() {
                       exam_type: log.exam_type,
                       wrong_count: parseInt(log.wrong_count) || 0,
                       study_date: log.study_date,
-                      createdAt: log.createdAt
+                      createdAt: log.createdAt,
+                      difficulty: 'orta',
+                      category: 'bilgi'
                     });
                   }
                 });

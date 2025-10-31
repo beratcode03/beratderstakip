@@ -1807,7 +1807,7 @@ export default function Dashboard() {
                     <Eye className="h-4 w-4 mr-1" />
                     Deneme Geçmişi
                   </Button>
-                  {allExamResults.length > 0 && (
+                  {examResults.length > 0 && (
                     <Button 
                       onClick={() => setShowDeleteAllExamsDialog(true)}
                       size="sm" 
@@ -1824,7 +1824,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="pt-0">
             
-            {allExamResults.length === 0 ? (
+            {examResults.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
                   <Target className="h-16 w-16 text-emerald-500" />
@@ -1839,9 +1839,9 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* ARŞİVLİ VERİLER DAHİL - Tüm denemeler gösterilecek */}
+                {/* SADECE AKTİF DENEMELER - Arşivlenenler hariç */}
                 <div className="space-y-6 max-h-[800px] overflow-y-auto custom-scrollbar">
-                  {allExamResults
+                  {examResults
                     .sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime())
                     .map((exam, index) => {
                   // Sınav türünü ve ilgili net puanı öğrenin
@@ -1849,7 +1849,7 @@ export default function Dashboard() {
                   const relevantNet = examType === 'TYT' ? parseFloat(exam.tyt_net) || 0 : parseFloat(exam.ayt_net) || 0;
                   
                   // Sınav türünü ve ilgili net puanı alınBu sınav türü için sınav numarasını hesaplayın
-                  const sameTypeExams = allExamResults
+                  const sameTypeExams = examResults
                     .filter(e => (e.exam_type || (parseFloat(e.ayt_net) > 0 ? 'AYT' : 'TYT')) === examType)
                     .sort((a, b) => new Date(a.exam_date).getTime() - new Date(b.exam_date).getTime());
                   const examNumber = sameTypeExams.findIndex(e => e.id === exam.id) + 1;
