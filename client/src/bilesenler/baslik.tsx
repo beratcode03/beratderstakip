@@ -12,24 +12,6 @@ import { EmojiPicker } from "./emoji-secici";
 import { MotivationalQuote } from "./motivasyon-sozu";
 import { Link, useLocation } from "wouter";
 
-// Electron API - type-safe
-declare global {
-  interface Window {
-    electronAPI?: {
-      minimizeWindow: () => void;
-      maximizeWindow: () => void;
-      closeWindow: () => void;
-      goBack: () => void;
-      goForward: () => void;
-      reload: () => void;
-      toggleFullscreen: () => void;
-      onFullscreenChange: (callback: (isFullscreen: boolean) => void) => void;
-      isMaximized: () => Promise<boolean>;
-      onMaximizeChange: (callback: (isMaximized: boolean) => void) => void;
-    };
-  }
-}
-
 interface HeaderProps {
   hideClockOnHomepage?: boolean;
   onReportCounterClick?: () => void;

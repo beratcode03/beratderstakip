@@ -284,7 +284,7 @@ export default function Dashboard() {
   });
 
   const deleteExamResultMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/exam-results/${id}`),
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/exam-results/${id}`),
     onSuccess: () => {
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
@@ -297,7 +297,7 @@ export default function Dashboard() {
   });
 
   const archiveExamResultMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: true, archivedAt: new Date().toISOString() }),
+    mutationFn: (id: string) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: true, archivedAt: new Date().toISOString() }),
     onSuccess: () => {
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
@@ -310,7 +310,7 @@ export default function Dashboard() {
   });
 
   const unarchiveExamResultMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: false, archivedAt: null }),
+    mutationFn: (id: string) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: false, archivedAt: null }),
     onSuccess: () => {
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
       sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
@@ -324,7 +324,8 @@ export default function Dashboard() {
 
   const archiveAllExamResultsMutation = useMutation({
     mutationFn: async () => {
-      const results = await apiRequest("GET", "/api/exam-results") as ExamResult[];
+      const response = await apiRequest("GET", "/api/exam-results");
+      const results = await response.json() as ExamResult[];
       const archivePromises = results.map((exam: ExamResult) => 
         apiRequest("PUT", `/api/exam-results/${exam.id}`, { archived: true, archivedAt: new Date().toISOString() })
       );
@@ -1980,7 +1981,7 @@ export default function Dashboard() {
                                 <Archive className="h-4 w-4" />
                               </button>
                               <button
-                                onClick={() => deleteExamResultMutation.mutate(String(exam.id))}
+                                onClick={() => deleteExamResultMutation.mutate(exam.id)}
                                 disabled={deleteExamResultMutation.isPending}
                                 className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                               >
@@ -5043,7 +5044,7 @@ export default function Dashboard() {
                                   size="sm"
                                   onClick={() => {
                                     if (confirm(`"${exam.display_name || exam.exam_name}" isimli denemeyi silmek istediğinizden emin misiniz?`)) {
-                                      deleteExamResultMutation.mutate(String(exam.id));
+                                      deleteExamResultMutation.mutate(exam.id);
                                     }
                                   }}
                                   className="h-9 w-9 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
@@ -5249,7 +5250,7 @@ export default function Dashboard() {
               .reduce((sum, exam) => {
                 const subjects = typeof exam.subjects_data === 'string' ? JSON.parse(exam.subjects_data) : exam.subjects_data;
                 if (subjects && typeof subjects === 'object') {
-                  return sum + Object.values(subjects).reduce((s: number, subject: any) => 
+                  return sum + (Object.values(subjects) as any[]).reduce((s: number, subject: any) => 
                     s + (Number(subject.correct) || 0) + (Number(subject.wrong) || 0) + (Number(subject.blank) || 0), 0);
                 }
                 return sum;
@@ -5263,7 +5264,7 @@ export default function Dashboard() {
               .reduce((sum, exam) => {
                 const subjects = typeof exam.subjects_data === 'string' ? JSON.parse(exam.subjects_data) : exam.subjects_data;
                 if (subjects && typeof subjects === 'object') {
-                  return sum + Object.values(subjects).reduce((s: number, subject: any) => 
+                  return sum + (Object.values(subjects) as any[]).reduce((s: number, subject: any) => 
                     s + (Number(subject.correct) || 0) + (Number(subject.wrong) || 0) + (Number(subject.blank) || 0), 0);
                 }
                 return sum;
@@ -5459,11 +5460,11 @@ export default function Dashboard() {
                             return null;
                           }
                           
-                          const totalQuestions = Object.values(subjects).reduce((sum: number, subject: any) => 
+                          const totalQuestions = (Object.values(subjects) as any[]).reduce((sum: number, subject: any) => 
                             sum + (Number(subject.correct) || 0) + (Number(subject.wrong) || 0) + (Number(subject.blank) || 0), 0);
-                          const totalCorrect: number = Object.values(subjects).reduce((sum: number, subject: any) => sum + (Number(subject.correct) || 0), 0);
-                          const totalWrong: number = Object.values(subjects).reduce((sum: number, subject: any) => sum + (Number(subject.wrong) || 0), 0);
-                          const totalBlank: number = Object.values(subjects).reduce((sum: number, subject: any) => sum + (Number(subject.blank) || 0), 0);
+                          const totalCorrect: number = (Object.values(subjects) as any[]).reduce((sum: number, subject: any) => sum + (Number(subject.correct) || 0), 0);
+                          const totalWrong: number = (Object.values(subjects) as any[]).reduce((sum: number, subject: any) => sum + (Number(subject.wrong) || 0), 0);
+                          const totalBlank: number = (Object.values(subjects) as any[]).reduce((sum: number, subject: any) => sum + (Number(subject.blank) || 0), 0);
                           
                           return (
                             <div 
@@ -6390,7 +6391,7 @@ export default function Dashboard() {
                                 <CheckCircle className="h-5 w-5" />
                               </button>
                               <button
-                                onClick={() => deleteExamResultMutation.mutate(String(exam.id))}
+                                onClick={() => deleteExamResultMutation.mutate(exam.id)}
                                 disabled={deleteExamResultMutation.isPending}
                                 className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 rounded-lg transition-all"
                                 title="Sil"
