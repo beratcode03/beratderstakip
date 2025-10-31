@@ -18,8 +18,6 @@
 
 import { test, expect, Page } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:5000';
-
 // ============================================================================
 // DETAYLI TEST VERİLERİ
 // ============================================================================
@@ -96,15 +94,14 @@ async function bekle(ms: number) {
 
 async function sayfayaGit(page: Page, path: string, baslik: string) {
   console.log(`\n📄 ${baslik} sayfasına gidiliyor...`);
-  await page.goto(`${BASE_URL}${path}`);
+  await page.goto(path);
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(1000);
 }
 
 async function apiYanitKontrol(page: Page, endpoint: string): Promise<boolean> {
   try {
-    const fullUrl = `${BASE_URL}${endpoint}`;
-    const response = await page.request.get(fullUrl);
+    const response = await page.request.get(endpoint);
     const basarili = response.ok();
     console.log(`${basarili ? '✅' : '❌'} API: ${endpoint} - Durum: ${response.status()}`);
     return basarili;
@@ -146,7 +143,7 @@ test.describe('🔥 ÇOK KAPSAMLI SİSTEM TESTİ - YKS Analiz Takip Sistemi', ()
   
   test.beforeEach(async ({ page }) => {
     console.log('\n' + '='.repeat(80));
-    await page.goto(BASE_URL);
+    await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1500);
   });
