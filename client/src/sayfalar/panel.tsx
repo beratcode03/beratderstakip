@@ -5360,7 +5360,7 @@ export default function Dashboard() {
                                     {log.exam_type}
                                   </span>
                                   <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 text-xs font-bold rounded-full">
-                                    {log.subject}
+                                    {log.exam_type} {log.subject}
                                   </span>
                                 </div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
@@ -5621,7 +5621,7 @@ export default function Dashboard() {
                         <div key={log.id} className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-800 space-y-2">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <div className="font-semibold text-foreground text-lg">{log.exam_type} - {log.subject}</div>
+                              <div className="font-semibold text-foreground text-lg">{log.exam_type} {log.subject}</div>
                               {log.topic && <div className="text-sm font-medium text-muted-foreground">📚 Konu: {log.topic}</div>}
                               <div className="text-sm text-muted-foreground">📅 {new Date(log.study_date).toLocaleDateString('tr-TR')}</div>
                             </div>

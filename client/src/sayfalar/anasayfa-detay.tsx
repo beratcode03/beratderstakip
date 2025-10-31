@@ -161,13 +161,13 @@ export default function Homepage() {
       case "sosyal":
         return "Sosyal Bilimler";
       case "matematik":
-        return "Matematik";
+        return "TYT Matematik";
       case "fizik":
-        return "Fizik";
+        return "TYT Fizik";
       case "kimya":
-        return "Kimya";
+        return "TYT Kimya";
       case "biyoloji":
-        return "Biyoloji";
+        return "TYT Biyoloji";
       case "tyt-geometri":
         return "TYT Geometri";
       case "ayt-geometri":

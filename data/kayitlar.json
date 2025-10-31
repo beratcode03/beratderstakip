@@ -95,128 +95,126 @@
   "hedefler": [],
   "soruGunlukleri": [
     {
-      "id": "4762f2c3-81fa-491f-b97e-bae5f16c2417",
-      "exam_type": "TYT",
-      "subject": "Türkçe",
-      "topic": null,
-      "correct_count": "5",
-      "wrong_count": "5",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Bbb"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:21.047Z"
-    },
-    {
-      "id": "00fec840-0f66-4c84-a956-6c8db9941e67",
-      "exam_type": "TYT",
-      "subject": "Sosyal Bilimler",
-      "topic": null,
-      "correct_count": "5",
-      "wrong_count": "5",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Bbb"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:25.666Z"
-    },
-    {
-      "id": "960ebcc0-72b1-4b79-9698-481e60468146",
-      "exam_type": "TYT",
+      "id": "c16434eb-f48f-49de-88ba-ad4aaab0f49f",
+      "exam_type": "AYT",
       "subject": "Matematik",
       "topic": null,
       "correct_count": "5",
       "wrong_count": "5",
       "blank_count": "0",
       "wrong_topics": [
-        "Bbb"
+        "Aaa"
       ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "wrong_topics_json": "[{\"topic\":\"Aaa\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
       "deleted": false,
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:29.625Z"
+      "createdAt": "2025-10-31T13:29:31.565Z"
     },
     {
-      "id": "3eab0c55-2129-4c8f-805f-f3bc6af355ae",
-      "exam_type": "TYT",
+      "id": "3000ee4a-33f5-4ecb-8002-6212a616b819",
+      "exam_type": "AYT",
       "subject": "Geometri",
       "topic": null,
       "correct_count": "5",
       "wrong_count": "5",
       "blank_count": "0",
       "wrong_topics": [
-        "Bbb"
+        "Aaa"
       ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "wrong_topics_json": "[{\"topic\":\"Aaa\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
       "deleted": false,
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:35.630Z"
+      "createdAt": "2025-10-31T13:29:38.982Z"
     },
     {
-      "id": "c69669bd-b3ae-48a7-a5bb-395b4ec01dc0",
-      "exam_type": "TYT",
+      "id": "e46ba7f3-0e33-4061-99e2-724d34319f62",
+      "exam_type": "AYT",
       "subject": "Fizik",
       "topic": null,
       "correct_count": "5",
-      "wrong_count": "2",
+      "wrong_count": "5",
       "blank_count": "0",
       "wrong_topics": [
-        "Bbb"
+        "Aaa"
       ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "wrong_topics_json": "[{\"topic\":\"Aaa\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
       "deleted": false,
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:45.037Z"
+      "createdAt": "2025-10-31T13:29:46.063Z"
     },
     {
-      "id": "aa7d2a03-b816-4b0a-92f4-e7737a8b9cd8",
-      "exam_type": "TYT",
+      "id": "c01dfa00-37fc-466d-82ef-2e794cda357c",
+      "exam_type": "AYT",
       "subject": "Kimya",
+      "topic": null,
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics": [
+        "Aaa"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"Aaa\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T13:29:51.873Z"
+    },
+    {
+      "id": "deaf4348-99f4-4ffe-aa4b-196f076a2ad1",
+      "exam_type": "AYT",
+      "subject": "Kimya",
+      "topic": null,
+      "correct_count": "5",
+      "wrong_count": "5",
+      "blank_count": "0",
+      "wrong_topics": [
+        "Aaa"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"Aaa\",\"difficulty\":\"zor\",\"category\":\"kavram\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T13:29:58.025Z"
+    },
+    {
+      "id": "b5749ef8-e90e-46da-8593-b87a3b0b3df7",
+      "exam_type": "AYT",
+      "subject": "Biyoloji",
       "topic": null,
       "correct_count": "3",
       "wrong_count": "3",
       "blank_count": "0",
-      "wrong_topics": [
-        "Bbb"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "wrong_topics": [],
+      "wrong_topics_json": null,
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-10-31T13:30:13.017Z",
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:50.326Z"
+      "createdAt": "2025-10-31T13:30:04.930Z"
     },
     {
-      "id": "5a97ae0f-0a55-4b30-8258-025486068416",
-      "exam_type": "TYT",
+      "id": "b30ec253-0ad0-4b13-a25c-7730c0144357",
+      "exam_type": "AYT",
       "subject": "Biyoloji",
       "topic": null,
       "correct_count": "3",
@@ -225,14 +223,34 @@
       "wrong_topics": [
         "Bbb"
       ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
+      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"hesaplama\"}]",
       "time_spent_minutes": null,
       "study_date": "2025-10-31",
       "deleted": false,
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:26:55.369Z"
+      "createdAt": "2025-10-31T13:30:11.692Z"
+    },
+    {
+      "id": "820bc021-759b-44b4-9524-4bd7d7a752c5",
+      "exam_type": "AYT",
+      "subject": "Biyoloji",
+      "topic": null,
+      "correct_count": "5",
+      "wrong_count": "6",
+      "blank_count": "0",
+      "wrong_topics": [
+        "Rtryrt"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"Rtryrt\",\"difficulty\":\"kolay\",\"category\":\"hesaplama\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T13:30:36.023Z"
     }
   ],
   "sinavSonuclari": [
