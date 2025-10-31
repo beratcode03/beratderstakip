@@ -322,6 +322,25 @@ export default function Dashboard() {
     },
   });
 
+  const archiveAllExamResultsMutation = useMutation({
+    mutationFn: async () => {
+      const results = await apiRequest("GET", "/api/exam-results") as ExamResult[];
+      const archivePromises = results.map((exam: ExamResult) => 
+        apiRequest("PUT", `/api/exam-results/${exam.id}`, { archived: true, archivedAt: new Date().toISOString() })
+      );
+      await Promise.all(archivePromises);
+    },
+    onSuccess: () => {
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-subject-nets"] });
+      toast({ title: "📦 Tümü Arşivlendi", description: "Tüm deneme sonuçları arşive taşındı. Raporlarda görünmeye devam edecek.", duration: 3000 });
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Denemeler arşivlenemedi.", variant: "destructive", duration: 3000 });
+    },
+  });
+
   // TÜM VERİLERİ VE CACHE'LERİ TEMİZLE
   const deleteAllDataMutation = useMutation({
     mutationFn: async () => {
@@ -1788,14 +1807,26 @@ export default function Dashboard() {
                     <Eye className="h-4 w-4 mr-1" />
                     Deneme Geçmişi
                   </Button>
+                  {allExamResults.length > 0 && (
+                    <Button 
+                      onClick={() => archiveAllExamResultsMutation.mutate()}
+                      size="sm" 
+                      variant="outline"
+                      className="border-amber-500 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400"
+                      disabled={archiveAllExamResultsMutation.isPending}
+                    >
+                      <Archive className="h-4 w-4 mr-1" />
+                      {archiveAllExamResultsMutation.isPending ? 'Arşivleniyor...' : 'Tümünü Arşivle'}
+                    </Button>
+                  )}
                   <Button 
                     onClick={() => setShowArchivedExamsModal(true)}
                     size="sm" 
                     variant="outline"
-                    className="border-amber-500 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400"
+                    className="border-blue-500 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-400"
                   >
-                    <Archive className="h-4 w-4 mr-1" />
-                    Arşiv
+                    <Eye className="h-4 w-4 mr-1" />
+                    Arşivi Görüntüle
                   </Button>
                   {allExamResults.length > 0 && (
                     <Button 
