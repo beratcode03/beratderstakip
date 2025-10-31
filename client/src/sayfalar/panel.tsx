@@ -1613,15 +1613,6 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-2">
                   <Button 
-                    onClick={handleOpenQuestionDialog}
-                    size="sm" 
-                    variant="outline"
-                    className="text-xs border-green-300 text-green-700 hover:bg-green-50"
-                  >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Soru Ekle
-                  </Button>
-                  <Button 
                     onClick={() => setShowQuestionHistoryModal(true)}
                     size="sm" 
                     variant="outline"
@@ -1629,6 +1620,15 @@ export default function Dashboard() {
                   >
                     <Eye className="h-3 w-3 mr-1" />
                     Soru Geçmişi
+                  </Button>
+                  <Button 
+                    onClick={handleOpenQuestionDialog}
+                    size="sm" 
+                    variant="outline"
+                    className="text-xs border-green-300 text-green-700 hover:bg-green-50"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Soru Ekle
                   </Button>
                   {questionLogs.length > 0 && (
                     <Button 
@@ -1789,15 +1789,6 @@ export default function Dashboard() {
                 </CardTitle>
                 <div className="flex gap-2">
                   <Button 
-                    onClick={() => setShowExamDialog(true)}
-                    size="sm" 
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                    data-testid="button-add-exam-result"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Deneme Ekle
-                  </Button>
-                  <Button 
                     onClick={() => setShowExamHistoryModal(true)}
                     size="sm" 
                     variant="outline"
@@ -1806,6 +1797,15 @@ export default function Dashboard() {
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     Deneme Geçmişi
+                  </Button>
+                  <Button 
+                    onClick={() => setShowExamDialog(true)}
+                    size="sm" 
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    data-testid="button-add-exam-result"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Deneme Ekle
                   </Button>
                   {examResults.length > 0 && (
                     <Button 

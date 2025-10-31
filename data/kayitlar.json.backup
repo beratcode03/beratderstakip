@@ -231,6 +231,26 @@
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-10-31T13:30:11.692Z"
+    },
+    {
+      "id": "820bc021-759b-44b4-9524-4bd7d7a752c5",
+      "exam_type": "AYT",
+      "subject": "Biyoloji",
+      "topic": null,
+      "correct_count": "5",
+      "wrong_count": "6",
+      "blank_count": "0",
+      "wrong_topics": [
+        "Rtryrt"
+      ],
+      "wrong_topics_json": "[{\"topic\":\"Rtryrt\",\"difficulty\":\"kolay\",\"category\":\"hesaplama\"}]",
+      "time_spent_minutes": null,
+      "study_date": "2025-10-31",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-10-31T13:30:36.023Z"
     }
   ],
   "sinavSonuclari": [
