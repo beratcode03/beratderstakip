@@ -93,28 +93,7 @@
   ],
   "ruhHalleri": [],
   "hedefler": [],
-  "soruGunlukleri": [
-    {
-      "id": "75f6539a-e5e7-4da9-8f31-384ae972285c",
-      "exam_type": "AYT",
-      "subject": "Matematik",
-      "topic": null,
-      "correct_count": "15",
-      "wrong_count": "5",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Bbb"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Bbb\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T13:12:26.041Z"
-    }
-  ],
+  "soruGunlukleri": [],
   "sinavSonuclari": [
     {
       "id": "60a3a7e0-3a7e-4e2e-8c3a-9478d3575703",

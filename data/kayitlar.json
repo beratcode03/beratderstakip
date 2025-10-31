@@ -95,12 +95,12 @@
   "hedefler": [],
   "soruGunlukleri": [
     {
-      "id": "75f6539a-e5e7-4da9-8f31-384ae972285c",
-      "exam_type": "AYT",
-      "subject": "Matematik",
+      "id": "28d0de34-66c6-41a9-9e96-18527dd7ac7e",
+      "exam_type": "TYT",
+      "subject": "Fizik",
       "topic": null,
-      "correct_count": "15",
-      "wrong_count": "5",
+      "correct_count": "5",
+      "wrong_count": "2",
       "blank_count": "0",
       "wrong_topics": [
         "Bbb"
@@ -112,27 +112,7 @@
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:12:26.041Z"
-    },
-    {
-      "id": "6316e069-8e3d-412e-8669-377a3666b37a",
-      "exam_type": "TYT",
-      "subject": "Geometri",
-      "topic": null,
-      "correct_count": "5",
-      "wrong_count": "5",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Ofofof"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Ofofof\",\"difficulty\":\"kolay\",\"category\":\"hesaplama\"}]",
-      "time_spent_minutes": 5,
-      "study_date": "2025-10-31",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-10-31T13:12:47.023Z"
+      "createdAt": "2025-10-31T13:19:33.716Z"
     }
   ],
   "sinavSonuclari": [
