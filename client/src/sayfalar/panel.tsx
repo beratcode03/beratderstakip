@@ -4831,6 +4831,7 @@ export default function Dashboard() {
                 <Input
                   type="number"
                   min="0"
+                  max="24"
                   placeholder="0"
                   value={newStudyHours.hours}
                   onChange={(e) => setNewStudyHours(prev => ({ ...prev, hours: parseInt(e.target.value) || 0 }))}
@@ -4846,7 +4847,7 @@ export default function Dashboard() {
                 <Input
                   type="number"
                   min="0"
-                  max="59"
+                  max="60"
                   placeholder="0"
                   value={newStudyHours.minutes}
                   onChange={(e) => setNewStudyHours(prev => ({ ...prev, minutes: parseInt(e.target.value) || 0 }))}
@@ -4862,7 +4863,7 @@ export default function Dashboard() {
                 <Input
                   type="number"
                   min="0"
-                  max="59"
+                  max="60"
                   placeholder="0"
                   value={newStudyHours.seconds}
                   onChange={(e) => setNewStudyHours(prev => ({ ...prev, seconds: parseInt(e.target.value) || 0 }))}

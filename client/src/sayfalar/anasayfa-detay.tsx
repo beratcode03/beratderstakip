@@ -634,7 +634,7 @@ export default function Homepage() {
                         return (
                           <div className="text-center py-4">
                             <p className="text-sm font-medium text-muted-foreground">
-                              Bu gün hiç aktivite yapılmamış :(
+                              Bugün hiç aktivite yapılmamış :(
                             </p>
                           </div>
                         );

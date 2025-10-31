@@ -1831,12 +1831,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Send monthly report via email
   app.post("/api/reports/send", async (req, res) => {
     try {
-      // .env dosyasından email adresini al
-      const email = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+      // .env dosyasından email adreslerini al
+      const emailUser = process.env.EMAIL_USER;
+      const emailFrom = process.env.EMAIL_FROM;
       
-      if (!email) {
+      if (!emailUser && !emailFrom) {
         return res.status(400).json({ message: ".env dosyasında EMAIL_FROM veya EMAIL_USER tanımlı değil" });
       }
+      
+      // Her iki email adresini de alıcı olarak ekle (farklıysa)
+      const recipients = [];
+      if (emailUser) recipients.push(emailUser);
+      if (emailFrom && emailFrom !== emailUser) recipients.push(emailFrom);
+      const toEmails = recipients.join(', ');
 
       // Get all data for report
       const [tasks, questionLogs, examResults, studyHours] = await Promise.all([
@@ -2169,13 +2176,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send email
       await transporter.sendMail({
-        from: `"YKS Çalışma Takip" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
-        to: email,
+        from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
+        to: toEmails,
         subject: `📊 Aylık İlerleme Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
         html: htmlContent,
       });
 
-      logActivity('Rapor Gönderildi', email);
+      logActivity('Rapor Gönderildi', toEmails);
       res.json({ message: "Rapor başarıyla gönderildi" });
     } catch (error) {
       console.error("Error sending report:", error);
