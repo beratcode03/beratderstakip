@@ -1180,6 +1180,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/question-logs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const updated = await storage.updateQuestionLog(id, updates);
+      
+      if (!updated) {
+        return res.status(404).json({ message: "Question log not found" });
+      }
+
+      if (updates.archived) {
+        logActivity('Soru Kaydı Arşivlendi');
+      }
+
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update question log" });
+    }
+  });
+
   app.get("/api/question-logs/archived", async (req, res) => {
     try {
       const logs = await storage.getArchivedQuestionLogs();
@@ -1805,6 +1825,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Eski veriler başarıyla arşivlendi" });
     } catch (error) {
       res.status(500).json({ message: "Auto-archive işlemi başarısız oldu" });
+    }
+  });
+
+  // Send monthly report via email
+  app.post("/api/reports/send", async (req, res) => {
+    try {
+      // .env dosyasından email adresini al
+      const email = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+      
+      if (!email) {
+        return res.status(400).json({ message: ".env dosyasında EMAIL_FROM veya EMAIL_USER tanımlı değil" });
+      }
+
+      // Get all data for report
+      const [tasks, questionLogs, examResults, studyHours] = await Promise.all([
+        storage.getTasks(),
+        storage.getQuestionLogs(),
+        storage.getExamResults(),
+        storage.getStudyHours()
+      ]);
+
+      // Calculate report statistics
+      const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const recentQuestions = questionLogs.filter((q: any) => new Date(q.log_date) >= last30Days);
+      const recentExams = examResults.filter((e: any) => new Date(e.exam_date) >= last30Days);
+      const recentStudy = studyHours.filter((s: any) => new Date(s.study_date) >= last30Days);
+      
+      const totalQuestions = recentQuestions.reduce((sum: number, q: any) => 
+        sum + (q.correct_count || 0) + (q.wrong_count || 0) + (q.empty_count || 0), 0
+      );
+      const totalStudyMinutes = recentStudy.reduce((sum: number, s: any) => 
+        sum + (s.hours || 0) * 60 + (s.minutes || 0), 0
+      );
+      
+      // Create email HTML content
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
+            .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+            .stat-card { background: #f7fafc; border-left: 4px solid #667eea; padding: 15px; border-radius: 5px; }
+            .stat-value { font-size: 24px; font-weight: bold; color: #667eea; }
+            .stat-label { color: #718096; font-size: 14px; }
+            .section { margin: 20px 0; padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
+            .footer { text-align: center; color: #718096; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>📊 Aylık İlerleme Raporu</h1>
+            <p>Son 30 günlük çalışma özeti</p>
+          </div>
+          
+          <div class="stats">
+            <div class="stat-card">
+              <div class="stat-value">${totalQuestions}</div>
+              <div class="stat-label">Çözülen Soru</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${recentExams.length}</div>
+              <div class="stat-label">Deneme Sınavı</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${Math.floor(totalStudyMinutes / 60)}s ${totalStudyMinutes % 60}dk</div>
+              <div class="stat-label">Toplam Çalışma</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${tasks.length}</div>
+              <div class="stat-label">Aktif Görev</div>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h3>🎯 Son Deneme Sonuçları</h3>
+            ${recentExams.length > 0 ? `
+              <ul>
+                ${recentExams.slice(0, 5).map((exam: any) => `
+                  <li><strong>${exam.exam_name}</strong> - ${new Date(exam.exam_date).toLocaleDateString('tr-TR')}</li>
+                `).join('')}
+              </ul>
+            ` : '<p>Son 30 günde deneme sınavı kaydedilmemiş.</p>'}
+          </div>
+          
+          <div class="section">
+            <h3>💡 Öneriler</h3>
+            <ul>
+              <li>Günlük çalışma hedefini ${totalStudyMinutes < 1800 ? 'artırın' : 'devam ettirin'} (Hedef: 30 saat/ay)</li>
+              <li>Haftada en az 2 deneme sınavı çözmeye devam edin</li>
+              <li>Hatalı konuları düzenli olarak gözden geçirin</li>
+            </ul>
+          </div>
+          
+          <div class="footer">
+            <p>Bu rapor YKS Çalışma Takip Sistemi tarafından otomatik olarak oluşturulmuştur.</p>
+            <p>Başarılar dileriz! 🎓</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Configure nodemailer transporter with Gmail SMTP
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      // Send email
+      await transporter.sendMail({
+        from: `"YKS Çalışma Takip" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+        to: email,
+        subject: `📊 Aylık İlerleme Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
+        html: htmlContent,
+      });
+
+      logActivity('Rapor Gönderildi', email);
+      res.json({ message: "Rapor başarıyla gönderildi" });
+    } catch (error) {
+      console.error("Error sending report:", error);
+      res.status(500).json({ message: "Rapor gönderilirken hata oluştu. SMTP ayarlarını kontrol edin." });
     }
   });
 

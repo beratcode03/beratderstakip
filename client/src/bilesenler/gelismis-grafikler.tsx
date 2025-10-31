@@ -1566,7 +1566,8 @@ function AdvancedChartsComponent() {
                     if (!exam) return; // Tarih filtresi aktifse ve eşleşme yoksa atla
                     
                     // Subject'i normalize et - exam_type'a göre - TYT/AYT ibaresi her ders için
-                    const examType = exam.exam_type || 'TYT';
+                    // ÖNEMLİ: subjectNet.exam_type kullan (exam.exam_type DEĞİL) - AYT Fizik/Kimya/Biyoloji hatası düzeltildi
+                    const examType = subjectNet.exam_type || exam.exam_type || 'TYT';
                     const subjectLower = subjectNet.subject.toLowerCase();
                     
                     let normalizedSubject = '';
@@ -3057,12 +3058,12 @@ function AdvancedChartsComponent() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 pb-2 border-b-2 border-green-300/50 dark:border-green-700/50">
                       <span className="text-sm font-black text-green-600 dark:text-green-400 px-3 py-1 bg-green-100/80 dark:bg-green-900/40 rounded-full">AYT</span>
-                      {topicsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].includes(s)).length > 0 && (
-                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">{topicsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].includes(s)).length} seçili</span>
+                      {topicsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].includes(s)).length > 0 && (
+                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">{topicsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].includes(s)).length} seçili</span>
                       )}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      {['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject, idx) => (
+                      {['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].map((subject, idx) => (
                         <div key={subject} className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-green-50/80 dark:hover:bg-green-950/40 transition-all duration-200 group/item" style={{animationDelay: `${idx * 30}ms`}}>
                           <Checkbox
                             id={`topicsSubject-${subject}`}
@@ -3340,12 +3341,12 @@ function AdvancedChartsComponent() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 pb-2 border-b-2 border-green-300/50 dark:border-green-700/50">
                       <span className="text-sm font-black text-green-600 dark:text-green-400 px-3 py-1 bg-green-100/80 dark:bg-green-900/40 rounded-full">AYT</span>
-                      {errorsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].includes(s)).length > 0 && (
-                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">{errorsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].includes(s)).length} seçili</span>
+                      {errorsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].includes(s)).length > 0 && (
+                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">{errorsFilterValues.subjects.filter(s => ['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].includes(s)).length} seçili</span>
                       )}
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      {['AYT Matematik', 'AYT Geometri', 'Fizik', 'Kimya', 'Biyoloji'].map((subject, idx) => (
+                      {['AYT Matematik', 'AYT Geometri', 'AYT Fizik', 'AYT Kimya', 'AYT Biyoloji'].map((subject, idx) => (
                         <div key={subject} className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-green-50/80 dark:hover:bg-green-950/40 transition-all duration-200 group/item" style={{animationDelay: `${idx * 30}ms`}}>
                           <Checkbox
                             id={`errorsSubject-${subject}`}

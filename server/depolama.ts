@@ -44,6 +44,8 @@ export interface IStorage {
   getArchivedQuestionLogs(): Promise<QuestionLog[]>;
   getAllQuestionLogsIncludingDeleted(): Promise<QuestionLog[]>; // İstatistikler için silinen kayıtları da dahil et
   createQuestionLog(log: InsertQuestionLog): Promise<QuestionLog>;
+  updateQuestionLog(id: string, updates: Partial<InsertQuestionLog> | any): Promise<QuestionLog | undefined>;
+  archiveQuestionLog(id: string): Promise<QuestionLog | undefined>;
   getQuestionLogsByDateRange(startDate: string, endDate: string): Promise<QuestionLog[]>;
   deleteQuestionLog(id: string): Promise<boolean>;
   deleteAllQuestionLogs(): Promise<boolean>;
@@ -634,6 +636,35 @@ export class MemStorage implements IStorage {
       const logDate = log.study_date;
       return logDate >= startDate && logDate <= endDate;
     }).sort((a, b) => new Date(b.study_date).getTime() - new Date(a.study_date).getTime());
+  }
+
+  async updateQuestionLog(id: string, updates: Partial<InsertQuestionLog> | any): Promise<QuestionLog | undefined> {
+    const log = this.questionLogs.get(id);
+    if (!log) return undefined;
+    
+    const updatedLog: QuestionLog = {
+      ...log,
+      ...updates,
+      id,
+    } as QuestionLog;
+    
+    this.questionLogs.set(id, updatedLog);
+    await this.saveToFile();
+    return updatedLog;
+  }
+
+  async archiveQuestionLog(id: string): Promise<QuestionLog | undefined> {
+    const log = this.questionLogs.get(id);
+    if (!log) return undefined;
+    
+    const updatedLog: QuestionLog = {
+      ...log,
+      archived: true,
+      archivedAt: new Date().toISOString(),
+    };
+    this.questionLogs.set(id, updatedLog);
+    await this.saveToFile();
+    return updatedLog;
   }
 
   async deleteQuestionLog(id: string): Promise<boolean> {
@@ -1406,6 +1437,19 @@ export class DbStorage implements IStorage {
 
   async createQuestionLog(insertLog: InsertQuestionLog): Promise<QuestionLog> {
     const result = await db.insert(questionLogs).values(insertLog as any).returning();
+    return result[0];
+  }
+
+  async updateQuestionLog(id: string, updates: Partial<InsertQuestionLog> | any): Promise<QuestionLog | undefined> {
+    const result = await db.update(questionLogs).set(updates as any).where(eq(questionLogs.id, id)).returning();
+    return result[0];
+  }
+
+  async archiveQuestionLog(id: string): Promise<QuestionLog | undefined> {
+    const result = await db.update(questionLogs).set({
+      archived: true,
+      archivedAt: new Date().toISOString(),
+    } as any).where(eq(questionLogs.id, id)).returning();
     return result[0];
   }
 

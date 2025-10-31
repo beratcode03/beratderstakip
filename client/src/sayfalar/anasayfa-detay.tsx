@@ -6,6 +6,7 @@
 
 
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
+import { useLocation } from "wouter";
 import { Header } from "@/bilesenler/baslik";
 import { EnhancedWeatherWidget } from "@/bilesenler/gelismis-hava-durumu-widget";
 import { CountdownWidget } from "@/bilesenler/geri-sayim-widget";
@@ -109,6 +110,8 @@ const CenteredWelcomeSection = memo(function CenteredWelcomeSection() {
 });
 
 export default function Homepage() {
+  const [, navigate] = useLocation();
+  
   // Bugünün tarihini YYYY-MM-DD formatında al (Türkiye saat dilimi)
   const getTodayDateString = () => {
     const now = new Date();
@@ -380,6 +383,29 @@ export default function Homepage() {
     setSelectedDate(dateStr);
   };
 
+  // Ay sonu sayacını güncelle
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+      const diff = lastDayOfMonth.getTime() - now.getTime();
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      const countdownEl = document.getElementById('month-countdown');
+      if (countdownEl) {
+        countdownEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       <Header hideClockOnHomepage={true} />
@@ -403,6 +429,38 @@ export default function Homepage() {
               </h3>
               
               <div className="flex items-center gap-2">
+                  {/* Rapor Gönder Butonu - Sol ok butonunun solunda */}
+                  <button
+                    onClick={() => navigate('/panel?openReport=true')}
+                    className="px-3 py-1.5 bg-black dark:bg-gray-950 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/50 border border-purple-500 mr-2"
+                    style={{
+                      minWidth: '140px'
+                    }}
+                    title="Rapor Gönder"
+                  >
+                    <div className="text-center">
+                      <div 
+                        className="text-[10px] font-bold mb-0.5"
+                        style={{
+                          color: '#a855f7',
+                          textShadow: '0 0 10px rgba(168, 85, 247, 0.6)'
+                        }}
+                      >
+                        📧 Rapor Gönder
+                      </div>
+                      <div 
+                        className="text-[9px] font-mono tabular-nums"
+                        id="month-countdown"
+                        style={{
+                          color: '#a855f7',
+                          textShadow: '0 0 8px rgba(168, 85, 247, 0.4)'
+                        }}
+                      >
+                        Loading...
+                      </div>
+                    </div>
+                  </button>
+                  
                   <Button
                     variant="ghost"
                     size="sm"

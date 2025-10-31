@@ -225,6 +225,42 @@ export default function Dashboard() {
   const [showCompletedTopicsModal, setShowCompletedTopicsModal] = useState(false);
   const [completedTopicsRefreshKey, setCompletedTopicsRefreshKey] = useState(0);
   
+  // Rapor Gönderme Modal ve Lock Durumu
+  const [reportLockEnabled, setReportLockEnabled] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  
+  // Ay sonu geri sayım hesaplama - gerçek zamanlı
+  const [monthEndCountdown, setMonthEndCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+      const diff = lastDayOfMonth.getTime() - now.getTime();
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setMonthEndCountdown({ hours, minutes, seconds });
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // URL parametresi kontrolü - Rapor modalını aç
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openReport') === 'true') {
+      setShowReportModal(true);
+      // URL'den parametreyi temizle
+      window.history.replaceState({}, '', '/panel');
+    }
+  }, []);
+  
   // Tüm Verileri Temizle 3. Modal ve Geri Sayım - BERAT CANKIR - 03:03:03
   const [showDeleteAllDataCountdownDialog, setShowDeleteAllDataCountdownDialog] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(300); // 5 dakika = 300 saniye
@@ -319,6 +355,17 @@ export default function Dashboard() {
     },
     onError: () => {
       toast({ title: "❌ Hata", description: "Deneme arşivden çıkarılamadı.", variant: "destructive", duration: 3000 });
+    },
+  });
+
+  const sendReportMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/reports/send", {}),
+    onSuccess: () => {
+      toast({ title: "📧 Rapor Gönderildi", description: "Aylık ilerleme raporunuz .env dosyasındaki email adresine gönderildi.", duration: 5000 });
+      setShowReportModal(false);
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Rapor gönderilemedi. .env dosyasındaki EMAIL_USER ve EMAIL_PASS ayarlarını kontrol edin.", variant: "destructive", duration: 5000 });
     },
   });
 
@@ -640,6 +687,20 @@ export default function Dashboard() {
     },
     onError: () => {
       toast({ title: "❌ Hata", description: "Soru kaydı silinemedi.", variant: "destructive" });
+    },
+  });
+
+  const archiveQuestionLogMutation = useMutation({
+    mutationFn: (id: string) => apiRequest("PUT", `/api/question-logs/${id}`, { archived: true, archivedAt: new Date().toISOString() }),
+    onSuccess: () => {
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/question-logs"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/question-logs/archived"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/stats"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/topics/priority"] });
+      toast({ title: "📦 Arşivlendi", description: "Soru kaydı arşive taşındı. Raporlarda görünmeye devam edecek.", duration: 3000 });
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Soru kaydı arşivlenemedi.", variant: "destructive", duration: 3000 });
     },
   });
 
@@ -1413,7 +1474,7 @@ export default function Dashboard() {
                 <CalendarDays className="h-6 w-6 text-purple-500" />
                 📈 Yıllık Aktivite Heatmap
               </CardTitle>
-              <p className="text-sm text-purple-600/70 dark:text-purple-400/70 font-medium">1 Ocak {new Date().getFullYear()} - Bugün • Her gün için aktivite yoğunluğu</p>
+              <p className="text-sm text-purple-600/70 dark:text-purple-400/70 font-medium mt-1">1 Ocak {new Date().getFullYear()} - Bugün • Her gün için aktivite yoğunluğu</p>
             </CardHeader>
             <CardContent className="p-4">
               {/* Heatmap Container - Düzgün Boyut ve Boşluklar */}
@@ -1622,15 +1683,6 @@ export default function Dashboard() {
                     <Eye className="h-3 w-3 mr-1" />
                     Soru Geçmişi
                   </Button>
-                  <Button 
-                    onClick={handleOpenQuestionDialog}
-                    size="sm" 
-                    variant="outline"
-                    className="text-xs border-green-300 text-green-700 hover:bg-green-50"
-                  >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Soru Ekle
-                  </Button>
                   {questionLogs.length > 0 && (
                     <Button 
                       onClick={() => setShowDeleteAllQuestionsDialog(true)}
@@ -1643,6 +1695,15 @@ export default function Dashboard() {
                       {deleteAllQuestionLogsMutation.isPending ? 'Siliniyor...' : 'Tüm Soruları Sil'}
                     </Button>
                   )}
+                  <Button 
+                    onClick={handleOpenQuestionDialog}
+                    size="sm" 
+                    variant="outline"
+                    className="text-xs border-green-300 text-green-700 hover:bg-green-50"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Soru Ekle
+                  </Button>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -1736,9 +1797,18 @@ export default function Dashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <button
+                              onClick={() => archiveQuestionLogMutation.mutate(log.id)}
+                              disabled={archiveQuestionLogMutation.isPending}
+                              className="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                              title="Arşive Taşı"
+                            >
+                              <Archive className="h-3 w-3" />
+                            </button>
+                            <button
                               onClick={() => deleteQuestionLogMutation.mutate(log.id)}
                               disabled={deleteQuestionLogMutation.isPending}
                               className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                              title="Sil"
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>
@@ -1799,15 +1869,6 @@ export default function Dashboard() {
                     <Eye className="h-4 w-4 mr-1" />
                     Deneme Geçmişi
                   </Button>
-                  <Button 
-                    onClick={() => setShowExamDialog(true)}
-                    size="sm" 
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                    data-testid="button-add-exam-result"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Deneme Ekle
-                  </Button>
                   {examResults.length > 0 && (
                     <Button 
                       onClick={() => setShowDeleteAllExamsDialog(true)}
@@ -1817,9 +1878,18 @@ export default function Dashboard() {
                       disabled={deleteAllExamResultsMutation.isPending}
                     >
                       <Trash2 className="h-4 w-4 mr-1" />
-                      {deleteAllExamResultsMutation.isPending ? 'Siliniyor...' : 'Sil'}
+                      {deleteAllExamResultsMutation.isPending ? 'Siliniyor...' : 'Tüm Denemeleri Sil'}
                     </Button>
                   )}
+                  <Button 
+                    onClick={() => setShowExamDialog(true)}
+                    size="sm" 
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    data-testid="button-add-exam-result"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Deneme Ekle
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -5373,6 +5443,14 @@ export default function Dashboard() {
                                   })}
                                 </div>
                               </div>
+                              <button
+                                onClick={() => deleteQuestionLogMutation.mutate(log.id)}
+                                disabled={deleteQuestionLogMutation.isPending}
+                                className="ml-2 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                title="Soru Kaydını Sil"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
                             </div>
 
                             {/* Soru İstatistikleri */}
@@ -6406,6 +6484,70 @@ export default function Dashboard() {
                   })}
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rapor Gönderme Modal */}
+      <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
+        <DialogContent className="max-w-md" data-report-button="true">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+              <FileText className="h-5 w-5" />
+              📧 Aylık İlerleme Raporu Gönder
+            </DialogTitle>
+            <DialogDescription>
+              Çalışma istatistikleriniz, deneme sonuçlarınız ve ilerleme raporunuz .env dosyasındaki email adresine gönderilecek.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-purple-50 dark:bg-purple-950/30 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+              <p className="text-sm text-purple-700 dark:text-purple-400">
+                <strong>Rapor İçeriği:</strong>
+              </p>
+              <ul className="text-xs text-purple-600 dark:text-purple-500 mt-1 space-y-0.5 list-disc list-inside">
+                <li>Son 30 günlük çalışma özeti</li>
+                <li>Deneme sınav sonuçları ve trendler</li>
+                <li>Eksik konular analizi</li>
+                <li>Öncelikli çalışma önerileri</li>
+              </ul>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                <strong>Alıcı:</strong> .env dosyasında tanımlı EMAIL_FROM adresi
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
+                Ay sonuna kalan süre: <strong className="text-purple-600 dark:text-purple-400">
+                  {String(monthEndCountdown.hours).padStart(2, '0')}:{String(monthEndCountdown.minutes).padStart(2, '0')}:{String(monthEndCountdown.seconds).padStart(2, '0')}
+                </strong>
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setShowReportModal(false)}
+              disabled={sendReportMutation.isPending}
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={() => sendReportMutation.mutate()}
+              disabled={sendReportMutation.isPending}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            >
+              {sendReportMutation.isPending ? (
+                <>
+                  <span className="animate-spin mr-2">⏳</span>
+                  Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Rapor Gönder
+                </>
+              )}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
