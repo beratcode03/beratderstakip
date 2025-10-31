@@ -95,12 +95,12 @@
   "hedefler": [],
   "soruGunlukleri": [
     {
-      "id": "28d0de34-66c6-41a9-9e96-18527dd7ac7e",
+      "id": "1d294b91-4043-437c-8f89-66f78829dd67",
       "exam_type": "TYT",
-      "subject": "Fizik",
+      "subject": "Kimya",
       "topic": null,
-      "correct_count": "5",
-      "wrong_count": "2",
+      "correct_count": "3",
+      "wrong_count": "3",
       "blank_count": "0",
       "wrong_topics": [
         "Bbb"
@@ -112,7 +112,7 @@
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-10-31T13:19:33.716Z"
+      "createdAt": "2025-10-31T13:21:06.955Z"
     }
   ],
   "sinavSonuclari": [
