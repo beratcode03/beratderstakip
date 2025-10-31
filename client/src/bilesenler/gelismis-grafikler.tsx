@@ -1473,83 +1473,83 @@ function AdvancedChartsComponent() {
 
             // Soru günlüklerini işle - SORU GÜNLÜĞÜ VERİLERİ
             errorsFilteredQuestions.forEach(log => {
-              if (log.wrong_topics && log.wrong_topics.length > 0) {
-                // Subject'i normalize et - exam_type'a göre - TYT/AYT ibaresi her ders için
-                const examType = log.exam_type || 'TYT';
-                const subjectLower = log.subject.toLowerCase();
-                
-                let normalizedSubject = '';
-                if (subjectLower === 'turkce' || log.subject === 'Türkçe') {
-                  normalizedSubject = `${examType} Türkçe`;
-                } else if (subjectLower === 'sosyal' || log.subject === 'Sosyal' || log.subject === 'Sosyal Bilimler') {
-                  normalizedSubject = `${examType} Sosyal Bilimler`;
-                } else if (subjectLower === 'fen' || log.subject === 'Fen' || log.subject === 'Fen Bilimleri') {
-                  normalizedSubject = `${examType} Fen Bilimleri`;
-                } else if (subjectLower === 'matematik' || log.subject === 'Matematik') {
-                  normalizedSubject = `${examType} Matematik`;
-                } else if (subjectLower === 'geometri' || log.subject === 'Geometri') {
-                  normalizedSubject = `${examType} Geometri`;
-                } else if (subjectLower === 'fizik' || log.subject === 'Fizik') {
-                  normalizedSubject = `${examType} Fizik`;
-                } else if (subjectLower === 'kimya' || log.subject === 'Kimya') {
-                  normalizedSubject = `${examType} Kimya`;
-                } else if (subjectLower === 'biyoloji' || log.subject === 'Biyoloji') {
-                  normalizedSubject = `${examType} Biyoloji`;
-                } else {
-                  normalizedSubject = `${examType} ${log.subject}`;
+              // Subject'i normalize et - exam_type'a göre - TYT/AYT ibaresi her ders için
+              const examType = log.exam_type || 'TYT';
+              const subjectLower = log.subject.toLowerCase();
+              
+              let normalizedSubject = '';
+              if (subjectLower === 'turkce' || log.subject === 'Türkçe') {
+                normalizedSubject = `${examType} Türkçe`;
+              } else if (subjectLower === 'sosyal' || log.subject === 'Sosyal' || log.subject === 'Sosyal Bilimler') {
+                normalizedSubject = `${examType} Sosyal Bilimler`;
+              } else if (subjectLower === 'fen' || log.subject === 'Fen' || log.subject === 'Fen Bilimleri') {
+                normalizedSubject = `${examType} Fen Bilimleri`;
+              } else if (subjectLower === 'matematik' || log.subject === 'Matematik') {
+                normalizedSubject = `${examType} Matematik`;
+              } else if (subjectLower === 'geometri' || log.subject === 'Geometri') {
+                normalizedSubject = `${examType} Geometri`;
+              } else if (subjectLower === 'fizik' || log.subject === 'Fizik') {
+                normalizedSubject = `${examType} Fizik`;
+              } else if (subjectLower === 'kimya' || log.subject === 'Kimya') {
+                normalizedSubject = `${examType} Kimya`;
+              } else if (subjectLower === 'biyoloji' || log.subject === 'Biyoloji') {
+                normalizedSubject = `${examType} Biyoloji`;
+              } else {
+                normalizedSubject = `${examType} ${log.subject}`;
+              }
+              
+              // Öncelikle wrong_topics_json'dan yapılandırılmış verileri ayrıştırmayı deneyin
+              let structuredTopics: Array<{
+                topic: string;
+                difficulty: 'kolay' | 'orta' | 'zor';
+                category: 'kavram' | 'hesaplama' | 'analiz' | 'dikkatsizlik';
+              }> = [];
+              
+              try {
+                if (log.wrong_topics_json && log.wrong_topics_json.trim() !== '' && log.wrong_topics_json !== 'null' && log.wrong_topics_json !== '[]') {
+                  structuredTopics = JSON.parse(log.wrong_topics_json);
                 }
-                
-                // Öncelikle wrong_topics_json'dan yapılandırılmış verileri ayrıştırmayı deneyin
-                let structuredTopics: Array<{
-                  topic: string;
-                  difficulty: 'kolay' | 'orta' | 'zor';
-                  category: 'kavram' | 'hesaplama' | 'analiz' | 'dikkatsizlik';
-                }> = [];
-                
-                try {
-                  if (log.wrong_topics_json && log.wrong_topics_json.trim() !== '' && log.wrong_topics_json !== 'null' && log.wrong_topics_json !== '[]') {
-                    structuredTopics = JSON.parse(log.wrong_topics_json);
-                  }
-                } catch (e) {
-                  console.error('Error parsing wrong_topics_json:', e);
-                }
+              } catch (e) {
+                console.error('Error parsing wrong_topics_json:', e);
+              }
 
-                // Yapılandırılmış konular mevcutsa ekleyin
-                if (structuredTopics.length > 0) {
-                  structuredTopics.forEach(topicItem => {
+              // Yapılandırılmış konular mevcutsa ekleyin
+              if (structuredTopics.length > 0) {
+                structuredTopics.forEach(topicItem => {
+                  allWrongTopicData.push({
+                    topic: normalizeTopic(topicItem.topic),
+                    source: 'question',
+                    subject: normalizedSubject,
+                    exam_type: log.exam_type,
+                    wrong_count: parseInt(log.wrong_count) || 0,
+                    study_date: log.study_date,
+                    difficulty: topicItem.difficulty,
+                    category: topicItem.category,
+                    createdAt: log.createdAt
+                  });
+                });
+              } else if (log.wrong_topics && log.wrong_topics.length > 0) {
+                // Fall back to simple wrong_topics array
+                log.wrong_topics.forEach(topic => {
+                  let topicName = '';
+                  if (typeof topic === 'string') {
+                    topicName = topic;
+                  } else if (topic && typeof topic === 'object') {
+                    topicName = (topic as any)?.topic || (topic as any)?.name || '';
+                  }
+                  
+                  if (topicName && topicName.trim()) {
                     allWrongTopicData.push({
-                      topic: normalizeTopic(topicItem.topic),
+                      topic: normalizeTopic(topicName),
                       source: 'question',
                       subject: normalizedSubject,
                       exam_type: log.exam_type,
                       wrong_count: parseInt(log.wrong_count) || 0,
                       study_date: log.study_date,
-                      difficulty: topicItem.difficulty,
-                      category: topicItem.category
+                      createdAt: log.createdAt
                     });
-                  });
-                } else {
-                  // Fall back to simple wrong_topics array
-                  log.wrong_topics.forEach(topic => {
-                    let topicName = '';
-                    if (typeof topic === 'string') {
-                      topicName = topic;
-                    } else if (topic && typeof topic === 'object') {
-                      topicName = (topic as any)?.topic || (topic as any)?.name || '';
-                    }
-                    
-                    if (topicName && topicName.trim()) {
-                      allWrongTopicData.push({
-                        topic: normalizeTopic(topicName),
-                        source: 'question',
-                        subject: normalizedSubject,
-                        exam_type: log.exam_type,
-                        wrong_count: parseInt(log.wrong_count) || 0,
-                        study_date: log.study_date
-                      });
-                    }
-                  });
-                }
+                  }
+                });
               }
             });
 
@@ -1594,6 +1594,7 @@ function AdvancedChartsComponent() {
                     
                     const examDate = exam.exam_date;
                     const examScope = exam.exam_scope;
+                    const examCreatedAt = exam.createdAt;
                     
                     wrongTopics.forEach((topicItem: any) => {
                       const topicName = typeof topicItem === 'string' ? topicItem : topicItem.topic;
@@ -1605,7 +1606,8 @@ function AdvancedChartsComponent() {
                           exam_type: subjectNet.exam_type,
                           exam_scope: examScope as 'full' | 'branch',
                           wrong_count: parseInt(subjectNet.wrong_count) || 0,
-                          study_date: examDate
+                          study_date: examDate,
+                          createdAt: examCreatedAt
                         });
                       }
                     });
@@ -1631,6 +1633,10 @@ function AdvancedChartsComponent() {
                   acc[key].category = item.category;
                   acc[key].exam_scope = item.exam_scope;
                 }
+                // İlk ekleme zamanını koru (en eski createdAt)
+                if (item.createdAt && (!acc[key].createdAt || new Date(item.createdAt) < new Date(acc[key].createdAt))) {
+                  acc[key].createdAt = item.createdAt;
+                }
               } else {
                 acc[key] = {
                   topic: item.topic,
@@ -1640,6 +1646,7 @@ function AdvancedChartsComponent() {
                   frequency: 1,
                   totalWrong: item.wrong_count,
                   lastSeen: item.study_date,
+                  createdAt: item.createdAt,
                   difficulty: item.difficulty,
                   category: item.category,
                   sources: [item.source]

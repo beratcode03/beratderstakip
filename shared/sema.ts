@@ -18,7 +18,10 @@ export const SUBJECT_LIMITS: Record<string, Record<string, number>> = {
     'Sosyal Bilimler': 20,
     'Matematik': 30,
     'Geometri': 10,
-    'Fen Bilimleri': 20
+    'Fen Bilimleri': 20,
+    'Fizik': 7,
+    'Kimya': 7,
+    'Biyoloji': 6
   },
   AYT: {
     'Matematik': 30,

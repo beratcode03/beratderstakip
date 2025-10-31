@@ -36,6 +36,7 @@ import {
 } from "@/bilesenler/arayuz/alert-dialog";
 import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { useToast } from "@/hooks/use-toast";
+import { tytTopics, aytTopics } from "@/data/yks-konular";
 
 // Başlık harflerinin dönüştürülmesi için yardımcı işlev
 const toTitleCase = (str: string): string => {
@@ -58,6 +59,50 @@ const cleanNumberInput = (value: string): string => {
 const normalizeTopic = (topic: string): string => {
   // "TYT Türkçe - " veya "AYT Fizik - " gibi desenleri konu isimlerinden kaldırır
   return topic.replace(/^(TYT|AYT)\s+[^-]+\s*-\s*/, '').trim();
+};
+
+// Ders adına göre örnek konular döndüren yardımcı fonksiyon
+const getTopicExamples = (examType: string, subject: string): string => {
+  const allTopics = examType === 'TYT' ? tytTopics : aytTopics;
+  const subjectData = allTopics.find(s => s.name === subject || s.name.includes(subject));
+  
+  if (subjectData && subjectData.topics.length > 0) {
+    const exampleTopics = subjectData.topics.slice(0, 3).map(t => t.topic).join(', ');
+    return `Örnek: ${exampleTopics}...`;
+  }
+  
+  return "Konu adını yazın ve Enter'a basın...";
+};
+
+// Deneme modalı için ders adına göre örnek konular döndüren yardımcı fonksiyon
+const getTopicExamplesForExam = (examType: string, subjectKey: string): string => {
+  const subjectNameMap: {[key: string]: string} = {
+    'turkce': 'Türkçe',
+    'matematik': 'Matematik',
+    'fizik': 'Fizik',
+    'kimya': 'Kimya',
+    'biyoloji': 'Biyoloji',
+    'sosyal': 'Sosyal Bilimler',
+    'fen': 'Fen Bilimleri',
+    'geometri': 'Geometri'
+  };
+  
+  const subjectName = subjectNameMap[subjectKey] || subjectKey;
+  const allTopics = examType === 'TYT' ? tytTopics : aytTopics;
+  const subjectData = allTopics.find(s => {
+    if (examType === 'TYT') {
+      return s.name === `TYT ${subjectName}` || s.name.includes(subjectName);
+    } else {
+      return s.name === `AYT ${subjectName}` || s.name.includes(subjectName);
+    }
+  });
+  
+  if (subjectData && subjectData.topics.length > 0) {
+    const exampleTopics = subjectData.topics.slice(0, 4).map(t => t.topic).join(', ');
+    return `Örnek: ${exampleTopics}...`;
+  }
+  
+  return `Örnek konular: konu1, konu2, konu3...`;
 };
 
 interface DailySummary {
@@ -169,6 +214,7 @@ export default function Dashboard() {
   
   // Tamamlanan Hatalı Konular Modal Durumu
   const [showCompletedTopicsModal, setShowCompletedTopicsModal] = useState(false);
+  const [completedTopicsRefreshKey, setCompletedTopicsRefreshKey] = useState(0);
   
   // Tüm Verileri Temizle 3. Modal ve Geri Sayım - BERAT CANKIR - 03:03:03
   const [showDeleteAllDataCountdownDialog, setShowDeleteAllDataCountdownDialog] = useState(false);
@@ -433,6 +479,19 @@ export default function Dashboard() {
     
     return () => clearInterval(timer);
   }, [showDeleteAllDataCountdownDialog]);
+
+  // localStorage değişikliklerini dinle (Tamamlanan Hatalı Konular için)
+  useEffect(() => {
+    const handleLocalStorageUpdate = () => {
+      setCompletedTopicsRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('localStorageUpdate', handleLocalStorageUpdate);
+    
+    return () => {
+      window.removeEventListener('localStorageUpdate', handleLocalStorageUpdate);
+    };
+  }, []);
 
   // Eski çalışma saatlerini SİLME - ar şivleme sistemi kullan
   // useEffect kaldırıldı - veriler artık otomatik arşivleniyor, silinmiyor
@@ -2344,25 +2403,23 @@ export default function Dashboard() {
                   <Input
                     value={wrongTopicInput}
                     onChange={(e) => setWrongTopicInput(e.target.value)}
-                    placeholder="Konu adını yazın ve Enter'a basın..."
+                    placeholder={getTopicExamples(newQuestion.exam_type, newQuestion.subject)}
                     className="pl-10 pr-16 h-12 text-base bg-white/80 dark:bg-gray-800/80 border-red-200 dark:border-red-700/50 focus:border-red-400 dark:focus:border-red-500 rounded-xl shadow-sm"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && wrongTopicInput.trim()) {
                         // Title case conversion: her kelimenin baş harfini büyük yap
                         const titleCaseTopic = toTitleCase(wrongTopicInput);
-                        // TYT/AYT ön ekini ekle
-                        const prefixedTopic = `${newQuestion.exam_type} ${newQuestion.subject} - ${titleCaseTopic}`;
                         
                         // Yinelenenleri kontrol et
                         const isDuplicate = newQuestion.wrong_topics.some(existingTopic => 
-                          existingTopic.topic.toLowerCase() === prefixedTopic.toLowerCase()
+                          existingTopic.topic.toLowerCase() === titleCaseTopic.toLowerCase()
                         );
                         
                         if (!isDuplicate) {
                           setNewQuestion({
                             ...newQuestion, 
                             wrong_topics: [...newQuestion.wrong_topics, {
-                              topic: prefixedTopic,
+                              topic: titleCaseTopic,
                               difficulty: selectedTopicDifficulty,
                               category: selectedTopicCategory
                             }]
@@ -2383,20 +2440,19 @@ export default function Dashboard() {
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
                       onClick={() => {
                         if (wrongTopicInput.trim()) {
-                          // Başlık durumuna dönüştürme ve TYT/AYT ön ekini ekle
+                          // Başlık durumuna dönüştürme
                           const titleCaseTopic = toTitleCase(wrongTopicInput);
-                          const prefixedTopic = `${newQuestion.exam_type} ${newQuestion.subject} - ${titleCaseTopic}`;
 
                           // Yinelenenleri kontrol et
                           const isDuplicate = newQuestion.wrong_topics.some(existingTopic =>
-                            existingTopic.topic.toLowerCase() === prefixedTopic.toLowerCase()
+                            existingTopic.topic.toLowerCase() === titleCaseTopic.toLowerCase()
                           );
                           
                           if (!isDuplicate) {
                             setNewQuestion({
                               ...newQuestion, 
                               wrong_topics: [...newQuestion.wrong_topics, {
-                                topic: prefixedTopic,
+                                topic: titleCaseTopic,
                                 difficulty: selectedTopicDifficulty,
                                 category: selectedTopicCategory
                               }]
@@ -3075,7 +3131,7 @@ export default function Dashboard() {
 
                   const selectedSubject = newExamResult.selectedSubject;
                   const colors = subjectColors[selectedSubject] || subjectColors.turkce;
-                  const placeholder = subjectExamples[selectedSubject] || subjectExamples.turkce;
+                  const placeholder = getTopicExamplesForExam(newExamResult.exam_type, selectedSubject);
                   const wrongCount = parseInt(newExamResult.subjects[newExamResult.selectedSubject]?.wrong) || 0;
 
                   // Sadece yanlış sayısı > 0 olduğunda göster
@@ -5784,7 +5840,7 @@ export default function Dashboard() {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
+          <div className="space-y-4" key={completedTopicsRefreshKey}>
             {(() => {
               // LocalStorage'dan tüm tamamlanan konuları topla
               const completedGeneral = JSON.parse(localStorage.getItem('completedGeneralExamErrors') || '[]');
@@ -5846,10 +5902,41 @@ export default function Dashboard() {
                               })}
                             </div>
                           </div>
-                          <div className="flex-shrink-0">
+                          <div className="flex-shrink-0 flex items-center gap-2">
                             <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-xl">
                               <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                             </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                              onClick={() => {
+                                const storageKey = 
+                                  item.tag === 'Genel Deneme' ? 'completedGeneralExamErrors' :
+                                  item.tag === 'Branş Denemesi' ? 'completedBranchExamErrors' :
+                                  'completedQuestionErrors';
+                                
+                                console.log('Silme işlemi:', { storageKey, itemKey: item.key, itemTag: item.tag, itemTopic: item.topic });
+                                
+                                const saved = localStorage.getItem(storageKey);
+                                if (saved) {
+                                  const arr = JSON.parse(saved);
+                                  console.log('Mevcut veriler:', arr);
+                                  const filtered = arr.filter((entry: any) => entry.key !== item.key);
+                                  console.log('Filtrelenmiş veriler:', filtered);
+                                  localStorage.setItem(storageKey, JSON.stringify(filtered));
+                                  window.dispatchEvent(new Event('localStorageUpdate'));
+                                  toast({ 
+                                    title: "🗑️ Silindi", 
+                                    description: `${item.topic} tamamlanmış konulardan kaldırıldı.`
+                                  });
+                                } else {
+                                  console.error('localStorage\'da veri bulunamadı:', storageKey);
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
                       </div>
