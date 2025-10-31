@@ -21,3 +21,20 @@ coverage/
 server/index.js
 server/index.js.map
 *.py
+
+# Test sonuçları (otomatik oluşturulan)
+test-results/
+playwright-report/
+.playwright/
+
+# Vite cache
+.vite/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Geçici dosyalar
+*.tmp
+*.temp
+.swp
+*~
