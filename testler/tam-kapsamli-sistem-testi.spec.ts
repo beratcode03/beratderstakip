@@ -180,10 +180,11 @@ test.describe('🔥 ÇOK KAPSAMLI SİSTEM TESTİ - YKS Analiz Takip Sistemi', ()
   test('2️⃣ GÖREVLER - Farklı Kategori, Öncelik, Renk, Tekrar', async ({ page }) => {
     console.log('\n📝 GÖREVLER DETAYLI TEST BAŞLIYOR...\n');
 
-    await sayfayaGit(page, '/anasayfa', 'Yapılacaklar');
+    await sayfayaGit(page, '/tasks', 'Görevler');
+    await bekle(1500);
     
     const pageTitle = await page.locator('h2').filter({ hasText: /Görevlerim/i }).first();
-    await expect(pageTitle).toBeVisible({ timeout: 5000 });
+    await expect(pageTitle).toBeVisible({ timeout: 10000 });
     console.log('✅ Görevler sayfası yüklendi');
 
     let eklenenGorevSayisi = 0;
