@@ -1930,7 +1930,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `;
 
       // Configure nodemailer transporter with Gmail SMTP
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.EMAIL_USER,

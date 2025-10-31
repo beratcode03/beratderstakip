@@ -1,5 +1,19 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const getBaseURL = () => {
+  if (process.env.PLAYWRIGHT_BASE_URL) {
+    return process.env.PLAYWRIGHT_BASE_URL;
+  }
+  
+  if (process.env.REPL_SLUG && process.env.REPL_OWNER) {
+    return `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+  }
+  
+  return 'http://localhost:5000';
+};
+
+const baseURL = getBaseURL();
+
 export default defineConfig({
   testDir: './testler',
   fullyParallel: true,
@@ -9,7 +23,7 @@ export default defineConfig({
   reporter: 'html',
   timeout: 120000,
   use: {
-    baseURL: 'http://localhost:5000',
+    baseURL,
     trace: 'on-first-retry',
     actionTimeout: 15000,
     navigationTimeout: 30000,
@@ -22,7 +36,7 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
+  webServer: process.env.REPL_SLUG ? undefined : {
     command: 'npm run dev',
     url: 'http://localhost:5000',
     reuseExistingServer: !process.env.CI,
