@@ -8,7 +8,7 @@
 import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Header } from "@/bilesenler/baslik";
-import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar, FileText, Archive, CheckCircle, Circle, Lock } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Brain, BookOpen, Plus, CalendarDays, X, FlaskConical, Trash2, AlertTriangle, Sparkles, Award, Clock, Zap, Edit, Search, Tag, BookX, Lightbulb, Eye, Calendar, FileText, Archive, CheckCircle, Circle, Lock, Mail } from "lucide-react";
 import { Task, Goal, QuestionLog, InsertQuestionLog, ExamResult, InsertExamResult, SUBJECT_LIMITS } from "@shared/sema";
 import { DashboardSummaryCards } from "@/bilesenler/panel-ozet-kartlar";
 import { AdvancedCharts } from "@/bilesenler/gelismis-grafikler";
