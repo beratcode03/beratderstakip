@@ -140,6 +140,7 @@ export default function Dashboard() {
   const [editingQuestionLog, setEditingQuestionLog] = useState<QuestionLog | null>(null);
   const [showDeleteAllQuestionsDialog, setShowDeleteAllQuestionsDialog] = useState(false);
   const [showDeleteAllExamsDialog, setShowDeleteAllExamsDialog] = useState(false);
+  const [showArchivedExamsModal, setShowArchivedExamsModal] = useState(false);
   const [newQuestion, setNewQuestion] = useState({ 
     exam_type: "TYT" as "TYT" | "AYT", 
     subject: "Türkçe", 
@@ -240,6 +241,12 @@ export default function Dashboard() {
     enabled: showArchivedDataModal,
   });
 
+  // Arşivlenen deneme sonuçlarını ayrı modal için getir
+  const { data: archivedExams = [] } = useQuery<ExamResult[]>({
+    queryKey: ["/api/exam-results/archived"],
+    enabled: showArchivedExamsModal,
+  });
+
   const { data: archivedTasksModal = [] } = useQuery<Task[]>({
     queryKey: ["/api/tasks/archived"],
     enabled: showArchivedDataModal,
@@ -286,6 +293,32 @@ export default function Dashboard() {
     },
     onError: () => {
       toast({ title: "❌ Hata", description: "Deneme silinemedi.", variant: "destructive", duration: 3000 });
+    },
+  });
+
+  const archiveExamResultMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: true, archivedAt: new Date().toISOString() }),
+    onSuccess: () => {
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-subject-nets"] });
+      toast({ title: "📦 Arşivlendi", description: "Deneme arşive taşındı. Raporlarda görünmeye devam edecek.", duration: 3000 });
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Deneme arşivlenemedi.", variant: "destructive", duration: 3000 });
+    },
+  });
+
+  const unarchiveExamResultMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("PUT", `/api/exam-results/${id}`, { archived: false, archivedAt: null }),
+    onSuccess: () => {
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-results/archived"] });
+      sorguIstemcisi.invalidateQueries({ queryKey: ["/api/exam-subject-nets"] });
+      toast({ title: "📤 Arşivden Çıkarıldı", description: "Deneme aktif denemelere geri taşındı.", duration: 3000 });
+    },
+    onError: () => {
+      toast({ title: "❌ Hata", description: "Deneme arşivden çıkarılamadı.", variant: "destructive", duration: 3000 });
     },
   });
 
@@ -1755,6 +1788,15 @@ export default function Dashboard() {
                     <Eye className="h-4 w-4 mr-1" />
                     Deneme Geçmişi
                   </Button>
+                  <Button 
+                    onClick={() => setShowArchivedExamsModal(true)}
+                    size="sm" 
+                    variant="outline"
+                    className="border-amber-500 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400"
+                  >
+                    <Archive className="h-4 w-4 mr-1" />
+                    Arşiv
+                  </Button>
                   {allExamResults.length > 0 && (
                     <Button 
                       onClick={() => setShowDeleteAllExamsDialog(true)}
@@ -1918,6 +1960,14 @@ export default function Dashboard() {
                                 className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
                               >
                                 <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => archiveExamResultMutation.mutate(exam.id)}
+                                disabled={archiveExamResultMutation.isPending}
+                                className="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all"
+                                title="Arşivle"
+                              >
+                                <Archive className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => deleteExamResultMutation.mutate(String(exam.id))}
@@ -6244,6 +6294,110 @@ export default function Dashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Arşivlenen Deneme Sonuçları Modalı */}
+      <Dialog open={showArchivedExamsModal} onOpenChange={setShowArchivedExamsModal}>
+        <DialogContent className="sm:max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">
+              📦 Arşivlenen Deneme Sonuçları
+            </DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground text-lg">
+              Arşivlenmiş deneme sonuçlarınız. Veriler raporlarda görünmeye devam eder.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {archivedExams.length === 0 ? (
+              <div className="text-center py-12">
+                <Archive className="h-24 w-24 text-amber-300 mx-auto mb-4 opacity-50" />
+                <p className="text-xl font-semibold text-muted-foreground">Arşivlenmiş deneme bulunmuyor</p>
+                <p className="text-sm text-muted-foreground mt-2">Deneme sonuçlarını arşivleyerek burada saklayabilirsiniz.</p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {archivedExams
+                  .sort((a, b) => new Date(b.archivedAt || b.exam_date).getTime() - new Date(a.archivedAt || a.exam_date).getTime())
+                  .map((exam) => {
+                    const examType = exam.exam_type || (parseFloat(exam.ayt_net) > 0 ? 'AYT' : 'TYT');
+                    const relevantNet = examType === 'TYT' ? parseFloat(exam.tyt_net) || 0 : parseFloat(exam.ayt_net) || 0;
+                    
+                    return (
+                      <Card key={exam.id} className="bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className={`px-3 py-1 rounded-full text-sm font-bold ${
+                                  examType === 'TYT' 
+                                    ? 'bg-blue-500 text-white' 
+                                    : 'bg-purple-500 text-white'
+                                }`}>
+                                  {examType}
+                                </div>
+                                <h3 className="text-lg font-bold text-amber-900 dark:text-amber-100">
+                                  {exam.display_name || exam.exam_name || 'Deneme'}
+                                </h3>
+                              </div>
+                              
+                              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="h-4 w-4" />
+                                  <span>
+                                    {new Date(exam.exam_date).toLocaleDateString('tr-TR', {
+                                      day: '2-digit',
+                                      month: 'long',
+                                      year: 'numeric'
+                                    })}
+                                  </span>
+                                </div>
+                                
+                                {exam.archivedAt && (
+                                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                                    <Archive className="h-4 w-4" />
+                                    <span className="text-xs">
+                                      {new Date(exam.archivedAt).toLocaleDateString('tr-TR', {
+                                        day: '2-digit',
+                                        month: 'short'
+                                      })} arşivlendi
+                                    </span>
+                                  </div>
+                                )}
+                                
+                                <div className="font-bold text-lg text-amber-700 dark:text-amber-300">
+                                  Net: {relevantNet.toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => unarchiveExamResultMutation.mutate(exam.id)}
+                                disabled={unarchiveExamResultMutation.isPending}
+                                className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 text-green-700 dark:text-green-300 rounded-lg transition-all"
+                                title="Arşivden Çıkar"
+                              >
+                                <CheckCircle className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => deleteExamResultMutation.mutate(String(exam.id))}
+                                disabled={deleteExamResultMutation.isPending}
+                                className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 rounded-lg transition-all"
+                                title="Sil"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Tüm Verileri Temizle Butonu - Sayfa Sonu - Kilit Mekanizmalı */}
       <div className="mt-16 mb-8 flex justify-center">
