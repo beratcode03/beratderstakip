@@ -397,20 +397,46 @@ export default function Homepage() {
     setSelectedDate(dateStr);
   };
 
-  // Ay sonu sayacını güncelle
+  // Pazar 23:59 geri sayım (Turkey timezone)
   useEffect(() => {
+    let hasTriggeredEmail = false;
+    
     const updateCountdown = () => {
       const now = new Date();
-      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-      const diff = lastDayOfMonth.getTime() - now.getTime();
+      const turkeyTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
       
-      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const currentDay = turkeyTime.getDay();
+      let daysUntilSunday: number;
+      
+      if (currentDay === 0) {
+        const targetTime = new Date(turkeyTime);
+        targetTime.setHours(23, 59, 0, 0);
+        daysUntilSunday = turkeyTime < targetTime ? 0 : 7;
+      } else {
+        daysUntilSunday = 7 - currentDay;
+      }
+      
+      const nextSunday = new Date(turkeyTime);
+      nextSunday.setDate(nextSunday.getDate() + daysUntilSunday);
+      nextSunday.setHours(23, 59, 0, 0);
+      
+      const diff = nextSunday.getTime() - turkeyTime.getTime();
+      
+      if (diff <= 0 && !hasTriggeredEmail) {
+        hasTriggeredEmail = true;
+        if (isReportButtonUnlocked) {
+          sendReportMutation.mutate();
+        }
+      }
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
       const countdownEl = document.getElementById('month-countdown');
       if (countdownEl) {
-        countdownEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        countdownEl.textContent = `${days} gün ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       }
     };
     
@@ -418,7 +444,7 @@ export default function Homepage() {
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [isReportButtonUnlocked, sendReportMutation]);
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -491,7 +517,7 @@ export default function Homepage() {
                           : 'cursor-not-allowed opacity-30'
                       }`}
                       style={{
-                        minWidth: '170px'
+                        minWidth: '220px'
                       }}
                       title={isReportButtonUnlocked ? "Rapor Gönder" : "Önce kilidi açın"}
                     >

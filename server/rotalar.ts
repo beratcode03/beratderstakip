@@ -1952,99 +1952,423 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f7f8fa; padding: 20px; }
-            .container { max-width: 650px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; 
+              background: #f0f2f5; 
+              padding: 40px 20px; 
+            }
             
-            .header-red { background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); border: 4px solid white; box-shadow: 0 4px 20px rgba(211,47,47,0.4); padding: 40px 30px; text-align: center; position: relative; }
-            .header-red::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, #f44336, #e53935, #c62828, #b71c1c); }
-            .flag-emoji { font-size: 72px; margin-bottom: 15px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
-            .quote { font-style: italic; font-size: 14px; margin: 20px auto; line-height: 1.8; max-width: 550px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-            .ataturk-name { color: white; font-weight: 700; font-size: 13px; margin-top: 15px; letter-spacing: 0.5px; }
-            .signature-text { font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 42px; margin: 15px 0; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-            .ataturk-emoji { font-size: 80px; margin-top: 15px; display: block; filter: grayscale(30%); }
+            .gradient-wrapper {
+              max-width: 700px;
+              margin: 0 auto;
+              padding: 8px;
+              background: linear-gradient(135deg, 
+                #ef5350 0%, 
+                #e91e63 12%, 
+                #ab47bc 24%, 
+                #9c27b0 36%, 
+                #7e57c2 48%, 
+                #66bb6a 60%, 
+                #26a69a 72%, 
+                #29b6f6 84%, 
+                #42a5f5 100%
+              );
+              border-radius: 28px;
+              box-shadow: 0 30px 90px rgba(0,0,0,0.15);
+            }
             
-            .title-section { background: linear-gradient(135deg, #8e24aa 0%, #6a1b9a 100%); color: white; padding: 30px; text-align: center; border-bottom: 4px solid #4a148c; }
-            .title-section h2 { font-size: 26px; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
-            .title-section .subtitle { font-size: 14px; opacity: 0.95; font-weight: 500; }
-            .date-info { font-size: 13px; margin-top: 12px; opacity: 0.9; }
+            .container { 
+              background: white; 
+              border-radius: 20px; 
+              overflow: hidden;
+            }
             
-            .stats-top { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; background: #fafafa; }
-            .stats-middle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 20px 20px 20px; background: #fafafa; }
+            .header-red { 
+              background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); 
+              padding: 60px 45px; 
+              text-align: center; 
+            }
             
-            .stat-card { border-radius: 15px; padding: 25px 20px; text-align: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; border: 3px solid rgba(255,255,255,0.3); }
+            .gradient-divider {
+              height: 8px;
+              background: linear-gradient(90deg, 
+                #ef5350 0%, 
+                #e91e63 12%, 
+                #ab47bc 24%, 
+                #9c27b0 36%, 
+                #7e57c2 48%, 
+                #66bb6a 60%, 
+                #26a69a 72%, 
+                #29b6f6 84%, 
+                #42a5f5 100%
+              );
+            }
+            
+            .quote { 
+              font-style: italic; 
+              font-size: 18px; 
+              margin: 30px auto; 
+              line-height: 2; 
+              max-width: 580px; 
+              color: #1a1a1a; 
+              font-weight: 600;
+              letter-spacing: 0.4px;
+            }
+            
+            .ataturk-name { 
+              color: #d32f2f; 
+              font-weight: 900; 
+              font-size: 16px; 
+              margin-top: 25px; 
+              letter-spacing: 1.5px; 
+              text-transform: uppercase;
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            
+            .title-section { 
+              background: linear-gradient(135deg, #8e24aa 0%, #6a1b9a 100%); 
+              color: white; 
+              padding: 35px 30px; 
+              text-align: center;
+            }
+            .title-section h2 { 
+              font-size: 28px; 
+              margin-bottom: 10px; 
+              font-weight: 800; 
+              letter-spacing: 1.5px; 
+            }
+            .title-section .subtitle { 
+              font-size: 15px; 
+              opacity: 0.98; 
+              font-weight: 600; 
+              letter-spacing: 0.8px;
+            }
+            .date-info { 
+              font-size: 13px; 
+              margin-top: 15px; 
+              opacity: 0.92;
+              font-weight: 500;
+            }
+            
+            .stats-top { 
+              display: grid; 
+              grid-template-columns: 1fr 1fr; 
+              gap: 18px; 
+              padding: 25px; 
+              background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+            }
+            .stats-middle { 
+              display: grid; 
+              grid-template-columns: repeat(3, 1fr); 
+              gap: 15px; 
+              padding: 0 25px 25px 25px; 
+              background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+            }
+            
+            .stat-card { 
+              border-radius: 18px; 
+              padding: 28px 22px; 
+              text-align: center; 
+              color: white; 
+              box-shadow: 0 6px 20px rgba(0,0,0,0.12); 
+              border: none;
+              position: relative;
+              overflow: hidden;
+            }
+            
+            .stat-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+              pointer-events: none;
+            }
+            
             .stat-green { background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%); }
             .stat-purple { background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); }
             .stat-blue { background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); }
             .stat-teal { background: linear-gradient(135deg, #26a69a 0%, #00897b 100%); }
             .stat-amber { background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%); }
             
-            .stat-label { font-size: 12px; opacity: 0.95; margin-bottom: 10px; font-weight: 600; letter-spacing: 0.5px; }
-            .stat-value { font-size: 42px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-            .stat-value-small { font-size: 28px; font-weight: 700; }
+            .stat-label { 
+              font-size: 12px; 
+              opacity: 0.98; 
+              margin-bottom: 12px; 
+              font-weight: 700; 
+              letter-spacing: 0.8px; 
+              text-transform: uppercase;
+            }
+            .stat-value { 
+              font-size: 44px; 
+              font-weight: 900; 
+              text-shadow: 0 3px 6px rgba(0,0,0,0.2); 
+            }
+            .stat-value-small { 
+              font-size: 30px; 
+              font-weight: 800; 
+            }
             
-            .section { padding: 25px; margin: 15px 20px; background: linear-gradient(135deg, #e8eaf6 0%, #e3f2fd 100%); border-radius: 15px; border: 2px solid #9fa8da; }
-            .section-title { color: #5e35b1; font-size: 18px; font-weight: 700; margin-bottom: 15px; padding: 12px; background: white; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .section { 
+              padding: 30px; 
+              margin: 20px 25px; 
+              background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); 
+              border-radius: 18px; 
+              border: 2px solid #e0e0e0;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            }
+            .section-title { 
+              color: #5e35b1; 
+              font-size: 19px; 
+              font-weight: 800; 
+              margin-bottom: 20px; 
+              padding: 15px; 
+              background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); 
+              border-radius: 12px; 
+              text-align: center; 
+              border: 2px solid #ce93d8;
+              letter-spacing: 0.8px;
+            }
             
-            .longest-study { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 25px; margin: 15px 20px; border-radius: 15px; border: 3px solid #64b5f6; text-align: center; }
-            .longest-study-title { color: #1976d2; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-            .longest-study-date { color: #424242; font-size: 14px; margin: 10px 0; }
-            .longest-study-time { color: #1565c0; font-size: 48px; font-weight: 800; margin: 15px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .longest-study-note { color: #616161; font-size: 12px; font-style: italic; }
+            .longest-study { 
+              background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+              padding: 30px; 
+              margin: 20px 25px; 
+              border-radius: 18px; 
+              border: 3px solid #42a5f5; 
+              text-align: center;
+              box-shadow: 0 6px 20px rgba(66,165,245,0.2);
+            }
+            .longest-study-title { 
+              color: #1565c0; 
+              font-size: 19px; 
+              font-weight: 800; 
+              margin-bottom: 15px;
+              letter-spacing: 0.8px;
+            }
+            .longest-study-date { 
+              color: #424242; 
+              font-size: 15px; 
+              margin: 12px 0;
+              font-weight: 600;
+            }
+            .longest-study-time { 
+              color: #0d47a1; 
+              font-size: 52px; 
+              font-weight: 900; 
+              margin: 18px 0; 
+              text-shadow: 0 3px 8px rgba(13,71,161,0.15);
+              letter-spacing: 2px;
+            }
+            .longest-study-note { 
+              color: #616161; 
+              font-size: 13px; 
+              font-style: italic;
+              font-weight: 500;
+            }
             
-            .special-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 25px; margin: 15px 20px; background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%); border-radius: 15px; border: 3px solid #ce93d8; }
-            .special-stat-card { background: white; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-            .special-stat-purple { border-color: #ab47bc; }
-            .special-stat-red { border-color: #ef5350; }
-            .special-stat-green { border-color: #66bb6a; }
-            .special-stat-title { font-size: 11px; color: #616161; margin-bottom: 10px; font-weight: 600; }
-            .special-stat-value { font-size: 36px; font-weight: 800; margin: 8px 0; }
+            .special-stat-card { 
+              background: #fafafa; 
+              border-radius: 12px; 
+              padding: 20px 18px; 
+              text-align: center; 
+              border: 2px solid #e0e0e0; 
+              box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            .special-stat-purple { border-left: 4px solid #ab47bc; }
+            .special-stat-red { border-left: 4px solid #ef5350; }
+            .special-stat-green { border-left: 4px solid #66bb6a; }
+            .special-stat-title { 
+              font-size: 11px; 
+              color: #757575; 
+              margin-bottom: 10px; 
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.6px;
+            }
+            .special-stat-value { 
+              font-size: 36px; 
+              font-weight: 800; 
+              margin: 8px 0;
+            }
             .special-stat-purple .special-stat-value { color: #8e24aa; }
             .special-stat-red .special-stat-value { color: #e53935; }
             .special-stat-green .special-stat-value { color: #43a047; }
-            .special-stat-label { font-size: 11px; color: #9e9e9e; }
+            .special-stat-label { 
+              font-size: 11px; 
+              color: #9e9e9e;
+              font-weight: 500;
+            }
             
-            .branch-record { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center; border: 3px solid #ba68c8; }
-            .branch-record-title { font-size: 14px; color: #6a1b9a; margin-bottom: 8px; font-weight: 600; }
-            .branch-record-value { font-size: 36px; color: #8e24aa; font-weight: 800; }
+            .branch-record { 
+              background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); 
+              border-radius: 16px; 
+              padding: 25px; 
+              margin: 18px 0; 
+              text-align: center; 
+              border: 3px solid #ba68c8;
+              box-shadow: 0 4px 14px rgba(186,104,200,0.15);
+            }
+            .branch-record-title { 
+              font-size: 15px; 
+              color: #6a1b9a; 
+              margin-bottom: 10px; 
+              font-weight: 700;
+              letter-spacing: 0.6px;
+            }
+            .branch-record-value { 
+              font-size: 40px; 
+              color: #8e24aa; 
+              font-weight: 900;
+            }
             
-            .exam-card { background: white; border: 3px solid #e0e0e0; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-            .exam-name { color: #8e24aa; font-weight: 700; font-size: 17px; margin-bottom: 8px; }
-            .exam-date { color: #757575; font-size: 13px; margin-bottom: 12px; }
-            .net-badge { background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); color: white; padding: 15px 25px; border-radius: 12px; font-size: 22px; font-weight: 800; text-align: center; margin: 12px 0; box-shadow: 0 4px 15px rgba(142,36,170,0.3); }
+            .exam-card { 
+              background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); 
+              border: 3px solid #e0e0e0; 
+              border-radius: 16px; 
+              padding: 25px; 
+              margin-bottom: 22px; 
+              box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            }
+            .exam-name { 
+              color: #7b1fa2; 
+              font-weight: 800; 
+              font-size: 18px; 
+              margin-bottom: 10px;
+              letter-spacing: 0.5px;
+            }
+            .exam-date { 
+              color: #757575; 
+              font-size: 14px; 
+              margin-bottom: 15px;
+              font-weight: 600;
+            }
+            .net-badge { 
+              background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); 
+              color: white; 
+              padding: 18px 28px; 
+              border-radius: 14px; 
+              font-size: 24px; 
+              font-weight: 900; 
+              text-align: center; 
+              margin: 15px 0; 
+              box-shadow: 0 6px 20px rgba(142,36,170,0.3);
+              letter-spacing: 1px;
+            }
             
-            .performance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
-            .perf-box { border: 3px solid; border-radius: 12px; padding: 15px 10px; text-align: center; }
-            .perf-correct { border-color: #66bb6a; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
-            .perf-wrong { border-color: #ef5350; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); }
-            .perf-empty { border-color: #ffa726; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
-            .perf-net { border-color: #ab47bc; background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); color: white; }
+            .performance-grid { 
+              display: grid; 
+              grid-template-columns: repeat(4, 1fr); 
+              gap: 12px; 
+              margin: 18px 0;
+            }
+            .perf-box { 
+              border: 3px solid; 
+              border-radius: 14px; 
+              padding: 18px 12px; 
+              text-align: center;
+              box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            }
+            .perf-correct { 
+              border-color: #66bb6a; 
+              background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+            }
+            .perf-wrong { 
+              border-color: #ef5350; 
+              background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); 
+            }
+            .perf-empty { 
+              border-color: #ffa726; 
+              background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); 
+            }
+            .perf-net { 
+              border-color: #ab47bc; 
+              background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); 
+              color: white; 
+            }
             
-            .perf-label { font-size: 11px; margin-bottom: 6px; color: #666; font-weight: 600; }
-            .perf-net .perf-label { color: white; opacity: 0.95; }
-            .perf-value { font-size: 22px; font-weight: 800; }
+            .perf-label { 
+              font-size: 11px; 
+              margin-bottom: 8px; 
+              color: #666; 
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .perf-net .perf-label { 
+              color: white; 
+              opacity: 0.98; 
+            }
+            .perf-value { 
+              font-size: 24px; 
+              font-weight: 900; 
+            }
             .perf-correct .perf-value { color: #43a047; }
             .perf-wrong .perf-value { color: #e53935; }
             .perf-empty .perf-value { color: #fb8c00; }
             .perf-net .perf-value { color: white; }
             
-            .wrong-topics { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 5px solid #e53935; padding: 15px; border-radius: 8px; margin-top: 12px; }
-            .wrong-topics h4 { color: #c62828; font-size: 14px; margin-bottom: 10px; font-weight: 700; }
-            .wrong-topics ul { margin-left: 25px; }
-            .wrong-topics li { color: #424242; font-size: 13px; margin: 6px 0; }
+            .wrong-topics { 
+              background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); 
+              border-left: 6px solid #e53935; 
+              padding: 18px; 
+              border-radius: 10px; 
+              margin-top: 15px;
+              box-shadow: 0 3px 10px rgba(229,57,53,0.1);
+            }
+            .wrong-topics h4 { 
+              color: #c62828; 
+              font-size: 15px; 
+              margin-bottom: 12px; 
+              font-weight: 800;
+              letter-spacing: 0.4px;
+            }
+            .wrong-topics ul { 
+              margin-left: 28px; 
+            }
+            .wrong-topics li { 
+              color: #424242; 
+              font-size: 13px; 
+              margin: 8px 0;
+              font-weight: 500;
+            }
             
-            .footer-note { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border: 3px solid #e53935; border-radius: 15px; padding: 20px; margin: 20px; text-align: center; color: #c62828; font-size: 14px; font-weight: 600; }
-            .footer { text-align: center; padding: 25px; background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); color: #666; font-size: 12px; }
+            .footer-note { 
+              background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); 
+              border: 3px solid #ffa726; 
+              border-radius: 16px; 
+              padding: 25px; 
+              margin: 25px; 
+              text-align: center; 
+              color: #e65100; 
+              font-size: 15px; 
+              font-weight: 700;
+              box-shadow: 0 4px 14px rgba(255,167,38,0.15);
+            }
+            .footer { 
+              text-align: center; 
+              padding: 30px; 
+              background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); 
+              color: #757575; 
+              font-size: 13px;
+              font-weight: 600;
+            }
           </style>
         </head>
         <body>
-          <div class="container">
-            <div class="header-red">
-              <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 200px; height: auto; margin: 0 auto 20px; display: block; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />
-              <div class="quote">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-              <div class="ataturk-name">- Mustafa Kemal Atatürk -</div>
-              <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 180px; height: auto; margin: 20px auto 15px; display: block; filter: brightness(0) invert(1);" />
-              <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 200px; height: auto; margin: 20px auto 0; display: block; border-radius: 15px; border: 4px solid white; box-shadow: 0 6px 20px rgba(0,0,0,0.4);" />
-            </div>
+          <div class="gradient-wrapper">
+            <div class="container">
+              <div class="header-red">
+                <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 200px; height: auto; margin: 0 auto 25px; display: block; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.35);" />
+                <div class="quote">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+                <div class="ataturk-name">— MUSTAFA KEMAL ATATÜRK —</div>
+                <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 200px; height: auto; margin: 30px auto 20px; display: block; opacity: 0.9;" />
+                <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 220px; height: auto; margin: 25px auto 0; display: block; border-radius: 18px; border: 5px solid #e0e0e0; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
+              </div>
+              
+              <div class="gradient-divider"></div>
             
             <div class="title-section">
               <h2>🎓 BERAT CANKIR</h2>
@@ -2138,18 +2462,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   <div class="exam-card">
                     <div class="exam-name">${exam.exam_name}</div>
                     <div class="exam-date">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${exam.exam_type}</div>
-                    <div class="net-badge">TYT Net<br/>${net.toFixed(2)}</div>
-                    <div style="margin-top: 15px; font-weight: bold; font-size: 13px; color: #333; margin-bottom: 10px;">📊 Ders Bazında Performans</div>
+                    <div class="net-badge">TYT Net: ${net.toFixed(2)}</div>
+                    <div style="margin-top: 20px; font-weight: 700; font-size: 14px; color: #424242; margin-bottom: 15px; letter-spacing: 0.5px;">📊 DERS BAZINDA PERFORMANS</div>
                     ${exam.turkce_dogru !== undefined ? `
-                    <div style="margin-bottom: 12px;">
-                      <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Türkçe</div>
+                    <div style="margin-bottom: 16px;">
+                      <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #5e35b1; letter-spacing: 0.3px;">📖 TÜRKÇE</div>
                       <div class="performance-grid">
-                        <div class="perf-box perf-correct"><div class="perf-label">Doğru</div><div class="perf-value">${exam.turkce_dogru || 0}</div></div>
-                        <div class="perf-box perf-wrong"><div class="perf-label">Yanlış</div><div class="perf-value">${exam.turkce_yanlis || 0}</div></div>
-                        <div class="perf-box perf-empty"><div class="perf-label">Boş</div><div class="perf-value">${exam.turkce_bos || 0}</div></div>
-                        <div class="perf-box perf-net"><div class="perf-label">Net</div><div class="perf-value">${((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25).toFixed(2)}</div></div>
+                        <div class="perf-box perf-correct"><div class="perf-label">✓ Doğru</div><div class="perf-value">${exam.turkce_dogru || 0}</div></div>
+                        <div class="perf-box perf-wrong"><div class="perf-label">✗ Yanlış</div><div class="perf-value">${exam.turkce_yanlis || 0}</div></div>
+                        <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.turkce_bos || 0}</div></div>
+                        <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25).toFixed(2)}</div></div>
                       </div>
                       ${exam.turkce_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.turkce_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    ${exam.sosyal_dogru !== undefined ? `
+                    <div style="margin-bottom: 16px;">
+                      <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #00897b; letter-spacing: 0.3px;">🌍 SOSYAL BİLİMLER</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct"><div class="perf-label">✓ Doğru</div><div class="perf-value">${exam.sosyal_dogru || 0}</div></div>
+                        <div class="perf-box perf-wrong"><div class="perf-label">✗ Yanlış</div><div class="perf-value">${exam.sosyal_yanlis || 0}</div></div>
+                        <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.sosyal_bos || 0}</div></div>
+                        <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25).toFixed(2)}</div></div>
+                      </div>
+                      ${exam.sosyal_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.sosyal_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    ${exam.mat_dogru !== undefined ? `
+                    <div style="margin-bottom: 16px;">
+                      <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #1976d2; letter-spacing: 0.3px;">🔢 MATEMATİK</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct"><div class="perf-label">✓ Doğru</div><div class="perf-value">${exam.mat_dogru || 0}</div></div>
+                        <div class="perf-box perf-wrong"><div class="perf-label">✗ Yanlış</div><div class="perf-value">${exam.mat_yanlis || 0}</div></div>
+                        <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.mat_bos || 0}</div></div>
+                        <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25).toFixed(2)}</div></div>
+                      </div>
+                      ${exam.mat_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.mat_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                    </div>
+                    ` : ''}
+                    ${exam.fen_dogru !== undefined ? `
+                    <div style="margin-bottom: 16px;">
+                      <div style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #e65100; letter-spacing: 0.3px;">🔬 FEN BİLİMLERİ</div>
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct"><div class="perf-label">✓ Doğru</div><div class="perf-value">${exam.fen_dogru || 0}</div></div>
+                        <div class="perf-box perf-wrong"><div class="perf-label">✗ Yanlış</div><div class="perf-value">${exam.fen_yanlis || 0}</div></div>
+                        <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.fen_bos || 0}</div></div>
+                        <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25).toFixed(2)}</div></div>
+                      </div>
+                      ${exam.fen_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.fen_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                     ` : ''}
                   </div>
@@ -2168,7 +2528,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   <div class="exam-card">
                     <div class="exam-name">${exam.exam_name}</div>
                     <div class="exam-date">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${subject}</div>
-                    <div class="net-badge">${subject} Net<br/>${net.toFixed(2)}</div>
+                    <div class="net-badge">${subject} Net: ${net.toFixed(2)}</div>
+                    <div style="margin-top: 20px;">
+                      <div class="performance-grid">
+                        <div class="perf-box perf-correct"><div class="perf-label">✓ Doğru</div><div class="perf-value">${exam.correct_count || 0}</div></div>
+                        <div class="perf-box perf-wrong"><div class="perf-label">✗ Yanlış</div><div class="perf-value">${exam.wrong_count || 0}</div></div>
+                        <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.empty_count || 0}</div></div>
+                        <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${net.toFixed(2)}</div></div>
+                      </div>
+                    </div>
                   </div>
                 `;
               }).join('')}
@@ -2183,6 +2551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             <div class="footer">
               Bu rapor YKS Çalışma Takip Sistemi tarafından otomatik olarak oluşturulmuştur.<br/>
               Başarılar dileriz! 🎓 BERAT CANKIR
+            </div>
             </div>
           </div>
         </body>
