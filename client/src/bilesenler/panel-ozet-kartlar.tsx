@@ -1141,7 +1141,7 @@ export function DashboardSummaryCards({ onAddStudyHours }: DashboardSummaryCards
                   <div className="bg-gradient-to-br from-emerald-50/80 to-teal-50/60 dark:from-emerald-900/30 dark:to-teal-900/20 rounded-xl p-4 backdrop-blur-sm border-2 border-emerald-200/50 dark:border-emerald-700/40 shadow-sm">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{branchAverages.totalQuestionsSolved}</div>
+                        <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{branchAverages.totalQuestionsSolved.toLocaleString('tr-TR')}</div>
                         <div className="text-xs font-medium text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
                           <CheckCircle className="h-3.5 w-3.5" />
                           Çözülen Toplam Soru (Branş Denemeleri)
