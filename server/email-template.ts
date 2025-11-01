@@ -79,8 +79,8 @@ export function generateModernEmailTemplate(data: {
                 <tr>
                   <td style="padding: 40px 30px; text-align: center; background: white;">
                     <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-                    <div style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 24px; line-height: 1.7; color: #1a1a1a; margin: 20px auto; max-width: 650px; font-weight: 700;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-                    <div style="color: #b71c1c; font-weight: 800; font-size: 19px; margin: 20px 0; letter-spacing: 1.5px; font-family: 'Trebuchet MS', Arial, sans-serif;">- Mustafa Kemal Atatürk -</div>
+                    <div style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 26px; line-height: 1.8; color: #2c2c2c; margin: 25px auto; max-width: 680px; font-weight: 600; letter-spacing: 0.3px;">"Öğrenmek, en değerli yatırımdır."</div>
+                    <div style="color: #b71c1c; font-weight: 800; font-size: 18px; margin: 20px 0; letter-spacing: 1.2px; font-family: 'Trebuchet MS', Arial, sans-serif;">— Mustafa Kemal Atatürk —</div>
                     <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
                     <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 5px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
                   </td>
