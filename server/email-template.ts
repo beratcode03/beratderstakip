@@ -23,6 +23,9 @@ export function generateModernEmailTemplate(data: {
   mostSolvedSubjects: any[];
   mostCorrectSubjects: any[];
   examSubjectNets: any[];
+  completedTopicsHistory: any[];
+  completedQuestionsHistory: any[];
+  isManualRequest: boolean;
 }) {
   const {
     totalQuestions,
@@ -48,7 +51,10 @@ export function generateModernEmailTemplate(data: {
     mostWrongSubjects,
     mostSolvedSubjects,
     mostCorrectSubjects,
-    examSubjectNets
+    examSubjectNets,
+    completedTopicsHistory,
+    completedQuestionsHistory,
+    isManualRequest
   } = data;
 
   return `
@@ -59,21 +65,21 @@ export function generateModernEmailTemplate(data: {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Aylık Çalışma Raporum</title>
     </head>
-    <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <body style="margin: 0; padding: 40px 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5;">
       
       <!-- Ana Konteyner - Gradient dış border ile -->
-      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); border: 12px solid; border-image: linear-gradient(135deg, #e91e63 0%, #9c27b0 25%, #673ab7 50%, #4caf50 75%, #2196f3 100%) 1;">
+      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.3); border: 20px solid; border-image: linear-gradient(135deg, #e91e63 0%, #9c27b0 20%, #673ab7 40%, #2196f3 60%, #4caf50 80%, #ab47bc 100%) 1;">
         
-        <!-- ATATÜRK SECTION - Tam çerçeve içinde -->
+        <!-- ATATÜRK SECTION - Gradient çerçeve ile -->
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="background: linear-gradient(135deg, #dc143c 0%, #ff1493 100%); padding: 12px;">
+            <td style="background: linear-gradient(135deg, #e91e63 0%, #9c27b0 20%, #673ab7 40%, #2196f3 60%, #4caf50 80%, #ab47bc 100%); padding: 16px;">
               <div style="background: white; border-radius: 16px; padding: 40px 30px; text-align: center;">
                 <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-                <div style="font-style: italic; font-size: 16px; line-height: 1.8; color: #2c3e50; margin: 20px auto; max-width: 650px; font-weight: 500;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-                <div style="color: #c62828; font-weight: 900; font-size: 14px; margin: 20px 0; letter-spacing: 1px;">- Mustafa Kemal Atatürk -</div>
+                <div style="font-family: 'Georgia', serif; font-style: italic; font-size: 17px; line-height: 1.8; color: #2c3e50; margin: 20px auto; max-width: 650px; font-weight: 700;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+                <div style="color: #c62828; font-weight: 900; font-size: 16px; margin: 20px 0; letter-spacing: 1.5px; font-family: 'Arial Black', sans-serif;">- Mustafa Kemal Atatürk -</div>
                 <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
-                <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 3px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+                <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 4px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
               </div>
             </td>
           </tr>
@@ -84,6 +90,17 @@ export function generateModernEmailTemplate(data: {
               <h1 style="font-size: 32px; margin: 0 0 10px 0; font-weight: 900; letter-spacing: 0.5px; color: #8e24aa;">🎓 BERAT CANKIR</h1>
               <div style="font-size: 20px; font-weight: 700; margin: 0 0 15px 0; letter-spacing: 0.3px; color: #424242;">KİŞİSEL ÇALIŞMA ANALİZ RAPORU</div>
               <div style="font-size: 16px; font-weight: 600; color: #666; margin: 0;">📅 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 🎯 Üniversite Kazanılacak !</div>
+            </td>
+          </tr>
+          
+          <!-- Otomatik/Manuel Oluşturulma Bilgisi -->
+          <tr>
+            <td style="background: white; padding: 0 30px 20px; text-align: center;">
+              <div style="background: linear-gradient(135deg, #9c27b0 0%, #ab47bc 100%); color: white; padding: 15px 25px; border-radius: 12px; font-size: 14px; font-weight: 600; display: inline-block; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">
+                🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}
+                <br/>
+                🇹🇷 Berat Cankır Kişisel Analiz Sistemi
+              </div>
             </td>
           </tr>
           
@@ -467,12 +484,83 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
+          <!-- TAMAMLANAN HATALI KONULAR GEÇMİŞİ -->
+          ${completedTopicsHistory.length > 0 ? `
+          <tr>
+            <td style="padding: 30px; background: #fafafa;">
+              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Konular Geçmişi</div>
+                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 4px solid #66bb6a; border-radius: 16px; padding: 20px;">
+                  ${completedTopicsHistory.map((topic: any, index: number) => `
+                    <div style="background: white; border-left: 5px solid #43a047; border-radius: 12px; padding: 18px 20px; margin-bottom: ${index < completedTopicsHistory.length - 1 ? '15px' : '0'}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                      <div style="color: #2e7d32; font-size: 16px; font-weight: 800; margin-bottom: 8px;">✓ ${topic.title}</div>
+                      <div style="color: #666; font-size: 13px; font-weight: 600; margin-bottom: 5px;">📚 ${topic.subject} ${topic.source ? `| 📋 ${topic.source}` : ''}</div>
+                      <div style="color: #9e9e9e; font-size: 12px; font-weight: 500;">📅 Tamamlandı: ${new Date(topic.completedAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- TAMAMLANAN HATALI SORULAR GEÇMİŞİ -->
+          ${completedQuestionsHistory.length > 0 ? `
+          <tr>
+            <td style="padding: 30px; background: #fafafa;">
+              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Sorular Geçmişi</div>
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 4px solid #2196f3; border-radius: 16px; padding: 20px;">
+                  ${completedQuestionsHistory.map((question: any, index: number) => `
+                    <div style="background: white; border-left: 5px solid #1976d2; border-radius: 12px; padding: 18px 20px; margin-bottom: ${index < completedQuestionsHistory.length - 1 ? '15px' : '0'}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                      <div style="color: #1565c0; font-size: 16px; font-weight: 800; margin-bottom: 10px;">📖 ${question.subject}</div>
+                      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                          <td width="32%" style="text-align: center; padding: 8px;">
+                            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%); border: 2px solid #66bb6a; border-radius: 10px; padding: 12px;">
+                              <div style="font-size: 11px; color: #2e7d32; font-weight: 700;">✓ Doğru</div>
+                              <div style="font-size: 20px; color: #43a047; font-weight: 900;">${question.correctCount || 0}</div>
+                            </div>
+                          </td>
+                          <td width="2%"></td>
+                          <td width="32%" style="text-align: center; padding: 8px;">
+                            <div style="background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%); border: 2px solid #ef5350; border-radius: 10px; padding: 12px;">
+                              <div style="font-size: 11px; color: #c62828; font-weight: 700;">✗ Yanlış</div>
+                              <div style="font-size: 20px; color: #e53935; font-weight: 900;">${question.wrongCount || 0}</div>
+                            </div>
+                          </td>
+                          <td width="2%"></td>
+                          <td width="32%" style="text-align: center; padding: 8px;">
+                            <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%); border: 2px solid #ffa726; border-radius: 10px; padding: 12px;">
+                              <div style="font-size: 11px; color: #e65100; font-weight: 700;">○ Boş</div>
+                              <div style="font-size: 20px; color: #fb8c00; font-weight: 900;">${question.emptyCount || 0}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      ${question.wrongTopics && question.wrongTopics.length > 0 ? `
+                        <div style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border: 2px solid #e53935; border-radius: 10px; padding: 12px; margin-top: 12px;">
+                          <div style="font-size: 12px; color: #b71c1c; font-weight: 700; margin-bottom: 8px;">❌ Yanlış Konular:</div>
+                          ${question.wrongTopics.map((topic: string) => `
+                            <div style="color: #424242; font-size: 13px; margin: 6px 0; font-weight: 600;">• ${topic}</div>
+                          `).join('')}
+                        </div>
+                      ` : ''}
+                      <div style="color: #9e9e9e; font-size: 12px; font-weight: 500; margin-top: 10px;">📅 ${new Date(question.logDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </td>
+          </tr>
+          ` : ''}
+          
           <!-- FOOTER - KUTU İÇİNDE -->
           <tr>
             <td style="background: #fafafa; padding: 30px;">
-              <div style="background: white; border: 3px solid #e0e0e0; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-                <div style="color: #c62828; font-size: 13px; font-weight: 600; margin-bottom: 8px;">🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - Otomatik Oluşturuldu</div>
-                <div style="color: #757575; font-size: 12px; font-weight: 500;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
+              <div style="background: linear-gradient(135deg, #9c27b0 0%, #ab47bc 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 8px 25px rgba(156, 39, 176, 0.3);">
+                <div style="color: white; font-size: 14px; font-weight: 700; margin-bottom: 8px;">🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}</div>
+                <div style="color: rgba(255,255,255,0.95); font-size: 13px; font-weight: 600;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
               </div>
             </td>
           </tr>

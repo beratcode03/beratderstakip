@@ -368,7 +368,7 @@ export default function Dashboard() {
   });
 
   const sendReportMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/reports/send", {}),
+    mutationFn: () => apiRequest("POST", "/api/reports/send", { isManualRequest: true }),
     onSuccess: () => {
       toast({ title: "📧 Rapor Gönderildi", description: "Aylık ilerleme raporunuz .env dosyasındaki email adresine gönderildi.", duration: 5000 });
       setShowReportModal(false);

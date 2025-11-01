@@ -1832,6 +1832,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Send monthly report via email
   app.post("/api/reports/send", async (req, res) => {
     try {
+      // Check if this is a manual request
+      const isManualRequest = req.body.isManualRequest || false;
+      
       // .env dosyasından email adreslerini al
       const emailUser = process.env.EMAIL_USER;
       const emailFrom = process.env.EMAIL_FROM;
@@ -2046,6 +2049,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
+      // Get completed topics history (from archived tasks)
+      const completedTopicsHistory = archivedTasks
+        .filter((t: any) => t.completed && (t.category === 'wrong_topic' || t.title?.toLowerCase().includes('konu')))
+        .map((t: any) => ({
+          title: t.title,
+          subject: t.subject || 'Genel',
+          source: t.source || 'Bilinmiyor',
+          completedAt: t.completedAt || t.createdAt
+        }))
+        .slice(0, 10);
+      
+      // Get completed questions history (from archived question logs)
+      const completedQuestionsHistory = archivedQuestions
+        .filter((q: any) => q.wrong_count > 0 || q.wrong_topics?.length > 0)
+        .map((q: any) => ({
+          subject: q.subject,
+          wrongCount: q.wrong_count,
+          correctCount: q.correct_count,
+          emptyCount: q.empty_count,
+          wrongTopics: q.wrong_topics || [],
+          logDate: q.log_date
+        }))
+        .slice(0, 10);
+      
       // Create email HTML content with beautiful modern design
       const htmlContent = generateModernEmailTemplate({
         totalQuestions,
@@ -2071,7 +2098,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mostWrongSubjects,
         mostSolvedSubjects,
         mostCorrectSubjects,
-        examSubjectNets
+        examSubjectNets,
+        completedTopicsHistory,
+        completedQuestionsHistory,
+        isManualRequest
       });
 
       // Configure nodemailer transporter with Gmail SMTP
