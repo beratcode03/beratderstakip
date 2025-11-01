@@ -2049,29 +2049,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Get completed topics history (from archived tasks)
-      const completedTopicsHistory = archivedTasks
-        .filter((t: any) => t.completed && (t.category === 'wrong_topic' || t.title?.toLowerCase().includes('konu')))
+      // Get completed topics history (from both archived AND recent tasks for comprehensive data)
+      const allTasksForHistory = [...tasks, ...archivedTasks];
+      const completedTopicsHistory = allTasksForHistory
+        .filter((t: any) => t.completed && (t.category === 'wrong_topic' || t.title?.toLowerCase().includes('konu') || t.title?.toLowerCase().includes('hata')))
         .map((t: any) => ({
           title: t.title,
           subject: t.subject || 'Genel',
           source: t.source || 'Bilinmiyor',
           completedAt: t.completedAt || t.createdAt
         }))
-        .slice(0, 10);
+        .sort((a: any, b: any) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+        .slice(0, 15);
       
-      // Get completed questions history (from archived question logs)
-      const completedQuestionsHistory = archivedQuestions
+      // Get completed questions history (from both archived AND recent question logs)
+      // Include all questions with wrong topics to show what was worked on
+      const allQuestionsForHistory = [...questionLogs, ...archivedQuestions];
+      const completedQuestionsHistory = allQuestionsForHistory
         .filter((q: any) => q.wrong_count > 0 || q.wrong_topics?.length > 0)
         .map((q: any) => ({
           subject: q.subject,
           wrongCount: q.wrong_count,
           correctCount: q.correct_count,
           emptyCount: q.empty_count,
-          wrongTopics: q.wrong_topics || [],
+          wrongTopics: Array.isArray(q.wrong_topics) ? q.wrong_topics.map((t: any) => typeof t === 'string' ? t : t.topic) : [],
           logDate: q.log_date
         }))
-        .slice(0, 10);
+        .sort((a: any, b: any) => new Date(b.logDate).getTime() - new Date(a.logDate).getTime())
+        .slice(0, 15);
       
       // Create email HTML content with beautiful modern design
       const htmlContent = generateModernEmailTemplate({
