@@ -1,0 +1,15 @@
+EMAIL template'i baştan yarat daha kaliteli,modern,şık attığım fotoğraflardaki gib fakat daha iyi halde yapacaksın.yalnızca düz çalışan epostadan daha fazlasını içerecek hale getireceksin.
+Görsel Hiyerarşi : En üstte ilk attığım fotoğraftaki gibi Atatürk kısmı olacak,resimler düzgünce resimdeki gibi yerleştirilecek daha sonra başlık 2. resimdeki gibi : 🎓 BERAT CANKIR
+KİŞİSEL ÇALIŞMA ANALİZ RAPORU
+📅 Tarih | 🎯 O üniversite kazanılacak!
+altına 3. resimdeki gibi 📚 ÇÖZÜLEN SORU ve 🎯 ÇÖZÜLEN DENEME kutuları fakat yan yana olacak alt alta değil,biraz daha şık,modern görünümlü yapabilirsin:
+altına 4. resimdeki gibi: 📊 Çözülen Tüm Sorular kısmı eklenen soruların verileri doğru yanlış boş ve toplam başarı oranı yazacak.
+altına 5. resimdeki gibi: 📈 TOPLAM AKTİVİTE ✅ TAMAMLANAN GÖREVLER ve 📊 ÖZEL İSTATİSTİKLER kısmı; toplam aktivite kısmında yapılan aktiviteye göre altındaki yorum yazısı değişecek 1-3,3-6,6-9,9-13 aktivitelere özel yorumlar olacak fakat kullanıcıyı motive ederek.✅ TAMAMLANAN GÖREVLER kısmında yapılacaklar kısmından toplam eklenen/tamamlanan görev yazılacak 📊 ÖZEL İSTATİSTİKLER kısmında ise 🔥 En Uzun Çalışma Serisi ❌ Bu Ay Hatalı Sorular ✅ Düzeltilen Konular kutuları yer alacak fakat resimdeki gibi yan yana olmasına ve kutu renklerine dikkat et.❌ Bu Ay Hatalı Sorular kısmı uygulamadaki raporlarım sayfasında olan Eksik Olduğum Konular kısmında tamamlanmamış checkboxuna basılmamış halabekelyen hatalı konuların sayısını gösterecek.
+altına 6. resimdeki gibi: 🏆 BU AYIN REKOR GENEL DENEME NETLERİ ve 🏆 BU AYIN REKOR BRANŞ DENEME NETLERİ(hangi dersin branş denemesi olduğu belirtilecek)  ve 🗓️ EN ÇOK SORU ÇÖZÜLEN TARİH verileri girilecek.
+altına 7. resimdeki gibi: 📉 EN ÇOK HATA YAPILAN DERSLER 📚 EN ÇOK SORU ÇÖZÜLEN DERSLER 🏆 EN ÇOK DOĞRU YAPILAN DERSLER verileri girilecek eklenen verilere göre doğru bir şekilde.
+altına da resmi yok ama örnek foto atıyorum : 📋 DENEME DETAYLARI hem genel denemeler için hem de branş denemeler için ayrı ayrı yanlış yapılan konuları dahil(varsa) eğer yoksa ✅ Bu derste yanlış konu kaydı yok yazsın zaten fotoğrafta belli oluyodur.
+en altta da 9. resimdeki gibi: 🚀 Bu rapor tarih(burası o an hangi tarihde gönderildiyse o yazacak) tarihinde otomatik olarak oluşturulmuştur.
+🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷
+🎓 BERAT CANKIR
+KİŞİSEL ÇALIŞMA ANALİZ RAPORU
+📅 1 Kasım 2025 | 🎯 Üniversite Kazanılacak ! kısmının arkasına bir renkli kutu eklemene gerek yok o başlık olarak olcak orda ayrıca atatürk kısmını altla ayıran rgb yerine kırmızı kalın kenarlık olacak ona dikkat et.son fotoda örneği var atatürk kısmının yazı fontu ve stili kalınlığına dikkat et.

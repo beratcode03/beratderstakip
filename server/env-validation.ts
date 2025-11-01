@@ -41,9 +41,6 @@ export function validateEnvironmentVariables() {
 
 export function safeGetEnv(key: string, fallback: string = ''): string {
   const value = process.env[key];
-  if (!value && !fallback) {
-    console.warn(`⚠️  Ortam değişkeni ${key} ayarlanmamış ve varsayılan değeri yok.`);
-  }
   return value || fallback;
 }
 
