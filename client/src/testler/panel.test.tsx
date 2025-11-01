@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ThemeProvider } from '../bilesenler/tema-saglayici'
 import Panel from '../sayfalar/panel'
 
 // Mock the recharts library to avoid rendering issues in tests
@@ -35,9 +36,11 @@ function createTestQueryClient() {
 function renderWithQueryClient(ui: React.ReactElement) {
   const queryClient = createTestQueryClient()
   return render(
-    <QueryClientProvider client={queryClient}>
-      {ui}
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        {ui}
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }
 
