@@ -96,26 +96,120 @@ npm run electron:dev
 
 ## 🧪 Test Çalıştırma
 
-### Tüm Testleri Çalıştırma
+### Tüm Testleri Çalıştırma (Vitest)
 ```bash
 npm test
+```
+**Açıklama:** Tüm unit ve integration testlerini tek seferde çalıştırır. Test sonuçlarını konsola yazdırır ve başarısız testleri raporlar.
+
+**Ne zaman kullanılır:**
+- Kod değişikliklerinden sonra tüm testlerin hala geçtiğini doğrulamak için
+- CI/CD pipeline'da otomatik test çalıştırma için
+- Production build öncesi final kontrol için
+
+**Çıktı:**
+```
+✓ client/src/bilesenler/__testler__/example.test.tsx (3)
+✓ server/__testler__/api.test.ts (5)
+Test Files  2 passed (2)
+     Tests  8 passed (8)
 ```
 
 ### Watch Mode'da Test
 ```bash
 npm run test:watch
 ```
+**Açıklama:** Dosya değişikliklerini izler ve otomatik olarak ilgili testleri yeniden çalıştırır. Geliştirme sırasında sürekli açık tutulabilir.
+
+**Ne zaman kullanılır:**
+- Aktif geliştirme sırasında (TDD - Test Driven Development)
+- Hızlı geri bildirim döngüsü için
+- Bug fix çalışmaları sırasında
+
+**Özellikler:**
+- ✅ Dosya değişikliklerinde otomatik yeniden çalışma
+- ✅ Sadece değişen dosyalarla ilgili testleri çalıştırma
+- ✅ Interaktif test filtreleme
+- ✅ Hızlı iterasyon
+
+**Kullanım:**
+```
+Watch Usage
+ › Press a to run all tests
+ › Press f to run only failed tests
+ › Press q to quit watch mode
+```
 
 ### Test Kapsamı (Coverage)
 ```bash
 npm run test:coverage
+```
+**Açıklama:** Kodun ne kadarının testlerle kapsandığını raporlar. HTML rapor oluşturur.
+
+**Ne zaman kullanılır:**
+- Hangi kodların test edilmediğini görmek için
+- Test coverage metriklerini takip etmek için
+- Eksik test olan alanları belirlemek için
+
+**Çıktı Metrikleri:**
+- **Statements:** Kod satırlarının yüzdesi
+- **Branches:** if/else dallarının yüzdesi
+- **Functions:** Fonksiyonların yüzdesi
+- **Lines:** Satırların yüzdesi
+
+**Hedef Coverage:**
+- Critical paths: %90+
+- Business logic: %80+
+- UI components: %70+
+- Utilities: %95+
+
+**HTML Rapor:**
+```bash
+# Rapor klasörünü aç (Windows)
+start coverage/index.html
 ```
 
 ### UI Test Arayüzü
 ```bash
 npm run test:ui
 ```
-Tarayıcınızda test sonuçlarını görsel olarak inceleyin.
+**Açıklama:** Vitest'in görsel test arayüzünü tarayıcıda açar. Test sonuçlarını grafik olarak gösterir.
+
+**Ne zaman kullanılır:**
+- Test sonuçlarını görsel olarak incelemek için
+- Test loglarını detaylı görmek için
+- Test execution time'ları analiz etmek için
+- Failed testlerin stack trace'ini kolayca görmek için
+
+**Özellikler:**
+- ✅ Grafik arayüz
+- ✅ Test filtreleme ve arama
+- ✅ Console log görüntüleme
+- ✅ Component snapshot preview
+- ✅ Real-time test sonuçları
+
+**Adres:** http://localhost:51204/__vitest__/
+
+### TypeScript Type Kontrolü
+```bash
+npm run check
+```
+**Açıklama:** TypeScript derleyicisini (tsc) çalıştırarak tüm projedeki tip hatalarını kontrol eder. Build yapmadan sadece tip kontrolü yapar.
+
+**Ne zaman kullanılır:**
+- Kod yazdıktan sonra tip güvenliğini doğrulamak için
+- CI/CD pipeline'da tip kontrolü için
+- Refactoring sonrası tüm dosyaların hala tip-safe olduğunu kontrol etmek için
+
+**Beklenen Çıktı:**
+```
+✓ Type checking completed successfully
+```
+
+**Hata örneği:**
+```
+client/src/sayfalar/panel.tsx:42:5 - error TS2322: Type 'string' is not assignable to type 'number'.
+```
 
 ### End-to-End (E2E) Testler (Playwright)
 
@@ -123,21 +217,81 @@ Tarayıcınızda test sonuçlarını görsel olarak inceleyin.
 ```bash
 npx playwright install
 ```
+**Açıklama:** Playwright'ın browser binaries'lerini indirir (Chromium, Firefox, WebKit). İlk kez E2E test çalıştıracaksanız gereklidir.
 
 **E2E testleri çalıştırma:**
 ```bash
 npx playwright test
+```
+**Açıklama:** Tüm end-to-end testleri headless modda çalıştırır. Gerçek tarayıcı ortamında uygulama akışlarını test eder.
+
+**Ne test edilir:**
+- Kullanıcı akışları (görev ekleme, düzenleme, silme)
+- Sayfa navigasyonu
+- Form validasyonları
+- API entegrasyonu
+- Responsive tasarım
+- Tema değiştirme
+- Veri kalıcılığı
+
+**Çıktı:**
+```
+Running 15 tests using 3 workers
+  15 passed (1.2m)
 ```
 
 **Playwright UI mode:**
 ```bash
 npx playwright test --ui
 ```
+**Açıklama:** Playwright'ın interaktif test arayüzünü açar. Test adımlarını görsel olarak takip edebilirsiniz.
+
+**Özellikler:**
+- ✅ Test execution'ı izleme
+- ✅ Adım adım debugging
+- ✅ Screenshot ve video görüntüleme
+- ✅ Network request inceleme
+- ✅ Console log görüntüleme
+
+**Headed mode (tarayıcıyı görerek):**
+```bash
+npx playwright test --headed
+```
+
+**Debug mode:**
+```bash
+npx playwright test --debug
+```
 
 **Tek bir test dosyası çalıştırma:**
 ```bash
 npx playwright test testler/tam-kapsamli-sistem-testi.spec.ts
 ```
+
+**Belirli bir teste odaklanma:**
+```bash
+npx playwright test --grep "görev ekleme"
+```
+
+**Accessibility (Erişilebilirlik) Testleri:**
+```bash
+npx playwright test --grep "accessibility"
+```
+**Açıklama:** WCAG 2.1 standartlarına uygunluğu test eder. axe-core library kullanır.
+
+**Test edilen kriterler:**
+- Color contrast (renk kontrast oranı)
+- Keyboard navigation
+- Screen reader uyumluluğu
+- ARIA labels
+- Form labels
+- Alt text (resimlerde)
+
+**Rapor görüntüleme:**
+```bash
+npx playwright show-report
+```
+HTML rapor tarayıcıda açılır ve detaylı test sonuçlarını gösterir.
 
 ---
 
@@ -516,7 +670,7 @@ Görev başlığına HTML/script tag girmeyi deneyin:
 
 ## 📝 Veritabanı Test
 
-### JSON File Storage (Varsayılan)
+### JSON File Storage (Varsayılan - Offline Mode)
 ```bash
 # Veri dosyasını kontrol et
 type data\kayitlar.json
@@ -525,17 +679,93 @@ type data\kayitlar.json
 type data\kayitlar.json.backup
 ```
 
-### PostgreSQL Database (Opsiyonel)
+**Manuel Test Senaryoları:**
 
-**Bağlantı string'i `.env` dosyasına ekle:**
+1. **Veri Yazma Testi:**
+   - Yeni görev ekle
+   - `data/kayitlar.json` dosyasını kontrol et
+   - Görevin kaydedildiğini doğrula
+
+2. **Veri Okuma Testi:**
+   - Uygulamayı kapat
+   - `data/kayitlar.json` dosyasını düzenle (manuel olarak bir görev ekle)
+   - Uygulamayı aç
+   - Yeni görevin göründüğünü doğrula
+
+3. **Backup Testi:**
+   - Birkaç görev ekle
+   - `data/kayitlar.json.backup` dosyasının oluşturulduğunu kontrol et
+   - Backup dosyasının geçerli JSON formatında olduğunu doğrula
+
+4. **Corrupt File Recovery Testi:**
+   ```bash
+   # JSON dosyasını boz
+   echo "invalid json" > data\kayitlar.json
+   
+   # Uygulamayı başlat
+   npm run dev
+   
+   # Beklenen: Uygulama backup'tan restore etmeli veya yeni boş dosya oluşturmalı
+   ```
+
+### PostgreSQL Database (Opsiyonel - Online Mode)
+
+**Ortam değişkeni ayarlama:**
 ```env
+# .env dosyasına ekle
 DATABASE_URL=postgresql://user:password@localhost:5432/beratcankir
 ```
 
-**Migration çalıştır:**
+**Database Schema Push (Drizzle ORM):**
 ```bash
 npm run db:push
 ```
+**Açıklama:** Drizzle ORM schema'yı PostgreSQL veritabanına uygular. Tabloları oluşturur veya günceller.
+
+**Database Schema Kontrolü:**
+```bash
+npm run db:studio
+```
+**Açıklama:** Drizzle Studio'yu açar - veritabanını görsel olarak inceleme ve düzenleme aracı.
+
+**Manuel Database Test:**
+```sql
+-- PostgreSQL'e bağlan
+psql -U user -d beratcankir
+
+-- Tabloları listele
+\dt
+
+-- Görevleri sorgula
+SELECT * FROM tasks;
+
+-- Sınav sonuçlarını sorgula
+SELECT * FROM exam_results ORDER BY exam_date DESC LIMIT 10;
+
+-- Soru loglarını sorgula
+SELECT * FROM question_logs WHERE study_date >= CURRENT_DATE - INTERVAL '7 days';
+
+-- Çalışma saatlerini sorgula
+SELECT * FROM study_hours WHERE study_date >= CURRENT_DATE - INTERVAL '30 days';
+```
+
+**Migration Testi:**
+```bash
+# Schema değişikliklerini oluştur
+npm run db:generate
+
+# Migration'ları uygula
+npm run db:migrate
+```
+
+**Database Switching Test (JSON ↔ PostgreSQL):**
+1. JSON mode'da veri ekle
+2. `.env` dosyasına `DATABASE_URL` ekle
+3. Server'ı restart et
+4. Verilerin PostgreSQL'e migrate edildiğini doğrula
+5. `DATABASE_URL`'i kaldır
+6. Server'ı restart et
+7. Verilerin JSON'a geri döndüğünü doğrula
 
 ---
 
@@ -619,5 +849,345 @@ npm install
 
 ---
 
-**Son Güncelleme:** 31 Ekim 2025  
-**Versiyon:** 0.0.3
+---
+
+## 🧩 Component Testing (Birim Testler)
+
+### Test Dosyası Oluşturma
+Test dosyalarını `__testler__` klasörüne yerleştirin:
+```
+client/src/bilesenler/__testler__/gorev-ekle-modal.test.tsx
+server/__testler__/api.test.ts
+```
+
+### React Component Test Örneği
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { GorevEkleModal } from '../gorev-ekle-modal';
+
+describe('GorevEkleModal', () => {
+  it('modal açıldığında form görünür', () => {
+    render(<GorevEkleModal isOpen={true} onClose={() => {}} />);
+    expect(screen.getByText('Yeni Görev Ekle')).toBeInTheDocument();
+  });
+
+  it('form submit edildiğinde API çağrısı yapılır', async () => {
+    const mockOnClose = vi.fn();
+    render(<GorevEkleModal isOpen={true} onClose={mockOnClose} />);
+    
+    // Form alanlarını doldur
+    fireEvent.change(screen.getByLabelText('Başlık'), {
+      target: { value: 'Test Görevi' }
+    });
+    
+    // Submit butonuna tıkla
+    fireEvent.click(screen.getByText('Kaydet'));
+    
+    // Modal kapanmalı
+    await waitFor(() => {
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+### API Route Test Örneği
+```typescript
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import request from 'supertest';
+import { app } from '../index';
+
+describe('API Routes', () => {
+  describe('GET /api/tasks', () => {
+    it('tüm görevleri döndürür', async () => {
+      const response = await request(app).get('/api/tasks');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+    });
+  });
+
+  describe('POST /api/tasks', () => {
+    it('yeni görev oluşturur', async () => {
+      const newTask = {
+        title: 'Test Görevi',
+        priority: 'high',
+        dueDate: '2025-12-31'
+      };
+      
+      const response = await request(app)
+        .post('/api/tasks')
+        .send(newTask);
+      
+      expect(response.status).toBe(201);
+      expect(response.body.title).toBe('Test Görevi');
+    });
+    
+    it('geçersiz veriyle hata döndürür', async () => {
+      const invalidTask = { title: '' }; // Boş başlık
+      
+      const response = await request(app)
+        .post('/api/tasks')
+        .send(invalidTask);
+      
+      expect(response.status).toBe(400);
+    });
+  });
+});
+```
+
+### Test Coverage İyileştirme
+
+**Düşük coverage'li dosyaları bulma:**
+```bash
+npm run test:coverage
+# Coverage raporunda %50'nin altındaki dosyalara odaklan
+```
+
+**Spesifik dosya için test yazma:**
+```bash
+# Tek dosyayı test et
+npm run test:watch client/src/bilesenler/panel-ozet-kartlar.tsx
+```
+
+**Test yazma öncelikleri:**
+1. **Critical paths** (görev CRUD, sınav girişi, net hesaplama)
+2. **Business logic** (net hesaplama formülleri, istatistik hesaplamaları)
+3. **Error handling** (API hataları, form validasyonları)
+4. **Edge cases** (boş veri, maksimum değerler, tarih sınırları)
+
+---
+
+## 🔌 API Testing (Detaylı)
+
+### REST API Test Stratejisi
+
+**1. CRUD Operations Test:**
+```bash
+# CREATE - Yeni kayıt oluştur
+curl -X POST http://localhost:5000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"API Test","priority":"high"}'
+
+# READ - Kaydı getir
+curl http://localhost:5000/api/tasks/{id}
+
+# UPDATE - Kaydı güncelle
+curl -X PUT http://localhost:5000/api/tasks/{id} \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Güncellendi"}'
+
+# DELETE - Kaydı sil
+curl -X DELETE http://localhost:5000/api/tasks/{id}
+```
+
+**2. Validation Test:**
+```bash
+# Geçersiz tarih formatı
+curl -X POST http://localhost:5000/api/question-logs \
+  -H "Content-Type: application/json" \
+  -d '{"study_date":"invalid-date"}'
+# Beklenen: 400 Bad Request
+
+# Eksik required field
+curl -X POST http://localhost:5000/api/exam-results \
+  -H "Content-Type: application/json" \
+  -d '{"exam_type":"TYT"}'
+# Beklenen: 400 Bad Request (exam_date eksik)
+
+# Geçersiz enum değeri
+curl -X POST http://localhost:5000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test","priority":"invalid"}'
+# Beklenen: 400 Bad Request (priority: low/medium/high olmalı)
+```
+
+**3. Business Logic Test:**
+```bash
+# Net hesaplama doğruluğu
+curl http://localhost:5000/api/question-logs
+# Net = Doğru - (Yanlış / 4) formülünün doğru uygulandığını kontrol et
+
+# İstatistik hesaplama
+curl http://localhost:5000/api/topic-stats
+# Toplam soru sayısının doğru hesaplandığını doğrula
+```
+
+**4. Performance Test:**
+```bash
+# Çok sayıda kayıt döndürme
+time curl http://localhost:5000/api/question-logs
+# Beklenen: < 500ms
+
+# Filtreleme performansı
+time curl "http://localhost:5000/api/exam-results?exam_type=TYT&limit=100"
+# Beklenen: < 300ms
+```
+
+**5. Error Handling Test:**
+```bash
+# Olmayan kayıt
+curl http://localhost:5000/api/tasks/999999
+# Beklenen: 404 Not Found
+
+# Server hatası simülasyonu (boş database)
+# DATABASE_URL'i geçersiz yap ve server'ı restart et
+# Beklenen: Graceful fallback to JSON storage
+```
+
+---
+
+## 📋 Test Yazma Best Practices
+
+### Test Organizasyonu
+```typescript
+describe('FeatureName', () => {
+  describe('SubFeature', () => {
+    it('should do something specific', () => {
+      // Test code
+    });
+  });
+});
+```
+
+### AAA Pattern (Arrange-Act-Assert)
+```typescript
+it('görev tamamlandığında checkbox işaretlenir', () => {
+  // Arrange - Test verilerini hazırla
+  const task = { id: 1, title: 'Test', completed: false };
+  render(<TaskItem task={task} />);
+  
+  // Act - Aksiyonu gerçekleştir
+  fireEvent.click(screen.getByRole('checkbox'));
+  
+  // Assert - Sonucu kontrol et
+  expect(screen.getByRole('checkbox')).toBeChecked();
+});
+```
+
+### Test Isolation
+```typescript
+beforeEach(() => {
+  // Her test öncesi temiz state
+  localStorage.clear();
+  vi.clearAllMocks();
+});
+
+afterEach(() => {
+  // Her test sonrası cleanup
+  cleanup();
+});
+```
+
+### Mocking
+```typescript
+// API mock
+vi.mock('../api', () => ({
+  fetchTasks: vi.fn().mockResolvedValue([
+    { id: 1, title: 'Test Task' }
+  ])
+}));
+
+// localStorage mock
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  clear: vi.fn()
+};
+global.localStorage = localStorageMock as any;
+```
+
+### Snapshot Testing
+```typescript
+it('dashboard kartları doğru render edilir', () => {
+  const { container } = render(<DashboardSummaryCards />);
+  expect(container).toMatchSnapshot();
+});
+```
+
+---
+
+## ✅ CI/CD Test Pipeline
+
+### GitHub Actions Workflow Örneği
+```yaml
+name: Test Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: TypeScript check
+        run: npm run check
+      
+      - name: Run unit tests
+        run: npm test
+      
+      - name: Run E2E tests
+        run: npx playwright test
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage-final.json
+```
+
+---
+
+## 🎯 Test Checklist (Her Release Öncesi)
+
+### ✅ Kod Kalitesi
+- [ ] `npm run check` - TypeScript hatası yok
+- [ ] `npm test` - Tüm unit testler geçiyor
+- [ ] `npm run test:coverage` - Coverage %80+ 
+- [ ] `npx playwright test` - E2E testler geçiyor
+
+### ✅ Fonksiyonalite
+- [ ] Görev CRUD işlemleri çalışıyor
+- [ ] Soru logu ekleme/düzenleme/silme çalışıyor
+- [ ] Sınav sonucu ekleme/düzenleme/silme çalışıyor
+- [ ] Net hesaplayıcı doğru hesaplıyor
+- [ ] İstatistikler doğru görünüyor
+- [ ] Grafik ve tablolar çalışıyor
+- [ ] Email raporu gönderiliyor (eğer API key varsa)
+
+### ✅ UI/UX
+- [ ] Responsive tasarım mobil/tablet/desktop'ta çalışıyor
+- [ ] Tema değiştirme çalışıyor
+- [ ] Animasyonlar akıcı
+- [ ] Loading states görünüyor
+- [ ] Error messages kullanıcı dostu
+
+### ✅ Veri
+- [ ] JSON storage çalışıyor
+- [ ] PostgreSQL'e geçiş sorunsuz (eğer kullanılıyorsa)
+- [ ] Backup oluşturuluyor
+- [ ] Veri kaybı olmuyor
+
+### ✅ Performance
+- [ ] İlk yükleme < 3 saniye
+- [ ] Sayfa geçişleri < 500ms
+- [ ] RAM kullanımı < 200MB (Electron)
+- [ ] CPU kullanımı normal
+
+### ✅ Güvenlik
+- [ ] XSS koruması aktif
+- [ ] SQL injection koruması aktif
+- [ ] Hassas veriler console'a yazılmıyor
+- [ ] API keys güvenli şekilde saklanıyor
+
+---
+
+**Son Güncelleme:** 01 Kasım 2025  
+**Versiyon:** 0.0.3  
+**Test Coverage:** Unit %85+, E2E %70+

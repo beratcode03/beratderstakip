@@ -606,7 +606,7 @@ export default function Homepage() {
                       data-testid={`calendar-day-${date.getDate()}`}
                     >
                       <span>{date.getDate()}</span>
-                      {dayHasActivities && isCurrentMonth && (
+                      {dayHasActivities && (
                         <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-0.5"></div>
                       )}
                       {isToday && (

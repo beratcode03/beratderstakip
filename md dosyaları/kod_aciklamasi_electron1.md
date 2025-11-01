@@ -698,18 +698,434 @@ try {
 
 ---
 
-## DEVAM EDECEK...
+---
 
-Bu dosya electron/main.cjs'in ilk bölümünü detaylı olarak açıkladı. Toplam 400+ satır açıklama yapıldı.
+## BÖLÜM 3: SERVER BAŞLATMA VE YÖNETİMİ
 
-**Sonraki Bölümler:**
-- Bölüm 2: Server başlatma ve yönetimi (startServer, restartServer)
-- Bölüm 3: Window oluşturma (createMainWindow, createLogsWindow, createActivitiesWindow)
-- Bölüm 4: IPC handlers ve event listeners
-- Bölüm 5: Tray icon ve menu sistemi
-- Bölüm 6: App lifecycle ve cleanup
+### 3.1 startServer() Fonksiyonu
 
-**Dosya Boyutu:**
-- Bu dosya: ~400 satır
-- Toplam electron/main.cjs açıklaması: ~1200-1500 satır olacak (3 dosyaya bölünecek)
+**Amaç:** Express Node.js server'ı child process olarak başlatır.
+
+**İşleyiş:**
+1. `serverProcess` null ise yeni process oluşturulur
+2. `spawn('node', ['server/index.js'])` ile Node.js çalıştırılır
+3. stdout/stderr logları yakalanır ve `serverLogs` array'ine eklenir
+4. Server çökmesi (error, exit) durumlarında otomatik restart
+5. `checkServerReady()` ile port 5000'in hazır olması beklenir
+
+**Kritik Detaylar:**
+- `detached: false` → Parent process kapanınca child da kapanır
+- `stdio: ['ignore', 'pipe', 'pipe']` → stdout ve stderr pipe'lanır
+- Log buffer 500 ile sınırlı (memory leak önlemi)
+- Auto-restart mekanizması ile crash recovery
+
+### 3.2 restartServer() Fonksiyonu
+
+**Amaç:** Server'ı güvenli şekilde yeniden başlatır.
+
+**İşleyiş:**
+1. Mevcut server process varsa `serverProcess.kill()` ile durdurulur
+2. 1 saniye timeout ile process'in tamamen durması beklenir
+3. `startServer()` ile yeni process başlatılır
+4. mainWindow varsa yeniden yüklenir (`reload()`)
+
+**Kullanım Senaryoları:**
+- Kullanıcı "Restart Server" menü seçeneğine tıklarsa
+- Server çöktüyse (auto-restart)
+- Environment değişkenleri değiştiyse
+
+---
+
+## BÖLÜM 4: WINDOW OLUŞTURMA VE YÖNETİMİ
+
+### 4.1 createMainWindow() Fonksiyonu
+
+**Amaç:** Ana uygulama penceresini oluşturur.
+
+**Pencere Özellikleri:**
+```javascript
+{
+  width: 1280,
+  height: 800,
+  minWidth: 800,
+  minHeight: 600,
+  webPreferences: {
+    nodeIntegration: false,    // Güvenlik
+    contextIsolation: true,    // Güvenlik
+    preload: path.join(__dirname, 'preload.js')
+  },
+  icon: path.join(__dirname, 'build', 'icon.png'),
+  title: 'Berat Cankır - YKS Analiz Takip',
+  show: false  // İçerik yüklenince göster
+}
+```
+
+**Güvenlik Önlemleri:**
+- `nodeIntegration: false` → Renderer'da Node.js API'leri devre dışı
+- `contextIsolation: true` → Renderer ve preload ayrı context'ler
+- `webSecurity: true` → CORS ve güvenlik kontrolleri aktif
+
+**Event Handlers:**
+- `ready-to-show` → Pencere hazır olunca göster (flash önleme)
+- `close` → Pencere kapatılınca tray'e minimize et
+- `closed` → Window referansını null yap
+
+### 4.2 createLogsWindow() Fonksiyonu
+
+**Amaç:** Server loglarını gösteren debug penceresi oluşturur.
+
+**Özellikler:**
+- 800x600 boyutunda modal pencere
+- `parent: mainWindow` → Ana pencerenin child'ı
+- Real-time log streaming (IPC ile)
+- Auto-scroll (en yeni loglar görünür)
+
+### 4.3 createActivitiesWindow() Fonksiyonu
+
+**Amaç:** Kullanıcı aktivitelerini listeleyen pencere oluşturur.
+
+**Özellikler:**
+- Activity logger'dan veri çeker
+- Tarih bazlı filtreleme
+- Export to CSV özelliği
+
+---
+
+## BÖLÜM 5: IPC HANDLERS VE EVENT LISTENERS
+
+### 5.1 IPC (Inter-Process Communication)
+
+**IPC Nedir?**
+Main process ve renderer process arasında güvenli veri alışverişi.
+
+**İletişim Yöntemleri:**
+1. **ipcMain.handle()** → Async request-response
+2. **ipcMain.on()** → Event listener
+3. **mainWindow.webContents.send()** → Main → Renderer mesaj
+
+**Örnek Handlers:**
+
+```javascript
+// 1. Server log'larını getir
+ipcMain.handle('get-server-logs', async () => {
+  return serverLogs;
+});
+
+// 2. Activity log'larını getir  
+ipcMain.handle('get-activities', async () => {
+  return activityLogger.getActivities();
+});
+
+// 3. Server'ı restart et
+ipcMain.handle('restart-server', async () => {
+  await restartServer();
+  return { success: true };
+});
+
+// 4. Dosya seç dialog'u
+ipcMain.handle('select-file', async (event, options) => {
+  const result = await dialog.showOpenDialog(options);
+  return result.filePaths;
+});
+```
+
+### 5.2 Preload Script
+
+**Amaç:** Renderer'a sınırlı Node.js API'leri sunmak.
+
+```javascript
+// electron/preload.js
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  getLogs: () => ipcRenderer.invoke('get-server-logs'),
+  getActivities: () => ipcRenderer.invoke('get-activities'),
+  restartServer: () => ipcRenderer.invoke('restart-server'),
+  selectFile: (options) => ipcRenderer.invoke('select-file', options)
+});
+```
+
+**Renderer'da kullanım:**
+```typescript
+// client/src/hooks/useElectron.ts
+const logs = await window.electronAPI.getLogs();
+```
+
+---
+
+## BÖLÜM 6: TRAY ICON VE MENU SİSTEMİ
+
+### 6.1 Tray Icon Oluşturma
+
+```javascript
+function createTray() {
+  const iconPath = path.join(__dirname, 'build', 'tray-icon.png');
+  tray = new Tray(iconPath);
+  
+  tray.setToolTip('Berat Cankır - YKS Analiz Takip');
+  tray.setContextMenu(createTrayMenu());
+  
+  // Double-click event
+  tray.on('click', () => {
+    const now = Date.now();
+    if (now - lastClickTime < DOUBLE_CLICK_THRESHOLD) {
+      // Double click
+      if (mainWindow) {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    }
+    lastClickTime = now;
+  });
+}
+```
+
+### 6.2 Tray Menu
+
+```javascript
+function createTrayMenu() {
+  return Menu.buildFromTemplate([
+    {
+      label: 'Aç',
+      click: () => mainWindow?.show()
+    },
+    {
+      label: 'Server Logları',
+      click: () => createLogsWindow()
+    },
+    {
+      label: 'Aktiviteler',
+      click: () => createActivitiesWindow()
+    },
+    { type: 'separator' },
+    {
+      label: 'Server Restart',
+      click: () => restartServer()
+    },
+    { type: 'separator' },
+    {
+      label: 'Çıkış',
+      click: () => app.quit()
+    }
+  ]);
+}
+```
+
+---
+
+## BÖLÜM 7: APP LIFECYCLE VE CLEANUP
+
+### 7.1 App Ready Event
+
+```javascript
+app.whenReady().then(async () => {
+  // 1. Environment variables yükle
+  const envVars = loadEnvFile();
+  Object.assign(process.env, envVars);
+  
+  // 2. Activity logger'ı başlat
+  activityLogger.init();
+  
+  // 3. Server'ı başlat
+  await startServer();
+  
+  // 4. Server hazır olunca window oluştur
+  await checkServerReady();
+  createMainWindow();
+  
+  // 5. Tray icon oluştur
+  createTray();
+  
+  // 6. Otomatik arşivleme zamanlayıcısı
+  scheduleAutoArchive();
+});
+```
+
+### 7.2 Cleanup ve Shutdown
+
+```javascript
+app.on('before-quit', (event) => {
+  // Server'ı durdur
+  if (serverProcess) {
+    serverProcess.kill();
+    serverProcess = null;
+  }
+  
+  // Activity logger'ı flush et
+  activityLogger.flush();
+  
+  // Tray icon'u temizle
+  if (tray) {
+    tray.destroy();
+    tray = null;
+  }
+});
+
+app.on('window-all-closed', () => {
+  // macOS'ta CMD+Q ile çıkılmadıysa app açık kalır
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  // macOS'ta dock icon'a tıklandığında
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createMainWindow();
+  }
+});
+```
+
+### 7.3 Auto-Archive Zamanlayıcı
+
+```javascript
+function scheduleAutoArchive() {
+  // Her Pazar 23:59'da çalışır
+  const schedule = require('node-schedule');
+  
+  schedule.scheduleJob('59 23 * * 0', async () => {
+    console.log('📦 Otomatik arşivleme başlatılıyor...');
+    
+    try {
+      // API'ye POST /api/auto-archive çağrısı
+      const response = await fetch(`http://localhost:${PORT}/api/auto-archive`, {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        console.log('✅ Otomatik arşivleme tamamlandı');
+        activityLogger.logActivity('Otomatik Arşivleme', 'Haftalık arşivleme yapıldı');
+      }
+    } catch (err) {
+      console.error('❌ Arşivleme hatası:', err);
+    }
+  });
+}
+```
+
+---
+
+## ÖZET VE TEKNİK DETAYLAR
+
+### Electron Main Process Sorumlulukları
+
+**1. Process Yönetimi:**
+- Express server'ı child process olarak başlatma
+- Crash detection ve auto-restart
+- Graceful shutdown
+
+**2. Window Yönetimi:**
+- Main window (1280x800)
+- Logs window (800x600)
+- Activities window (900x700)
+- Minimize to tray
+
+**3. IPC İletişimi:**
+- Server log'ları streaming
+- Activity log'ları fetching
+- File system operations
+- Dialog'lar
+
+**4. Sistem Entegrasyonu:**
+- System tray icon ve menu
+- Klavye kısayolları
+- Bildirimler
+- Auto-launch (optional)
+
+**5. Veri Yönetimi:**
+- Environment variables loading
+- Activity logging
+- Auto-archive scheduling
+
+### Güvenlik Best Practices
+
+**1. Context Isolation:**
+```javascript
+webPreferences: {
+  contextIsolation: true,  // ✅ Renderer ve preload ayrı
+  nodeIntegration: false   // ✅ Node.js API'leri kapalı
+}
+```
+
+**2. Preload Script:**
+```javascript
+// ✅ contextBridge ile sınırlı API expose
+contextBridge.exposeInMainWorld('api', {
+  safeFunction: () => { /* safe */ }
+});
+
+// ❌ window.require exposed (vulnerable)
+```
+
+**3. Content Security Policy:**
+```javascript
+mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+  callback({
+    responseHeaders: {
+      ...details.responseHeaders,
+      'Content-Security-Policy': ["default-src 'self'"]
+    }
+  });
+});
+```
+
+### Performance Optimizations
+
+**1. Log Buffer Limit:**
+```javascript
+if (serverLogs.length > 500) {
+  serverLogs.shift(); // Remove oldest
+}
+```
+
+**2. Lazy Window Creation:**
+```javascript
+// Logs window sadece gerektiğinde oluştur
+if (!logsWindow) {
+  logsWindow = new BrowserWindow({...});
+}
+```
+
+**3. Auto-Archive Scheduling:**
+```javascript
+// Haftalık arşivleme (her Pazar gece)
+// Memory kullanımını optimize eder
+```
+
+---
+
+## KAYNAKLAR VE ÖĞRENME REFERANSLARI
+
+**Electron Dokümantasyonu:**
+- [Electron Main Process](https://www.electronjs.org/docs/latest/tutorial/process-model#the-main-process)
+- [IPC Communication](https://www.electronjs.org/docs/latest/tutorial/ipc)
+- [Context Isolation](https://www.electronjs.org/docs/latest/tutorial/context-isolation)
+- [Security Best Practices](https://www.electronjs.org/docs/latest/tutorial/security)
+
+**Node.js Child Process:**
+- [child_process.spawn()](https://nodejs.org/api/child_process.html#child_processspawncommand-args-options)
+- [Process Events](https://nodejs.org/api/process.html#process-events)
+
+**Best Practices:**
+- [Electron Forge](https://www.electronforge.io/) - Build ve package tool
+- [electron-builder](https://www.electron.build/) - Installer oluşturma
+- [Spectron](https://www.electronjs.org/spectron) - E2E testing
+
+---
+
+**DOKÜMANTASYON TAMAMLANDI**
+
+Bu dosya electron/main.cjs'in tüm kritik bölümlerini detaylı olarak açıkladı:
+- ✅ Import ve global değişkenler
+- ✅ Environment variable loading
+- ✅ Server başlatma ve yönetimi
+- ✅ Window oluşturma ve lifecycle
+- ✅ IPC handlers ve preload script
+- ✅ Tray icon ve menu sistemi
+- ✅ App lifecycle ve cleanup
+- ✅ Güvenlik ve performance best practices
+
+**Toplam Açıklama:** ~1100 satır detaylı dokümantasyon
+
+**Son Güncelleme:** 01 Kasım 2025
 

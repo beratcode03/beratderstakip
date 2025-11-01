@@ -1943,6 +1943,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Decide if we need to split emails (>10 general exams OR >10 branch exams OR >10 questions)
       const shouldSplitEmails = generalExams.length > 10 || branchExams.length > 10 || recentQuestions.length > 10;
       
+      // Calculate longest study evaluation message
+      const longestStudyHours = longestStudy ? (longestStudy.hours || 0) + (longestStudy.minutes || 0) / 60 : 0;
+      let studyEvaluation = '';
+      let studyColor = '';
+      
+      if (longestStudyHours < 3) {
+        studyEvaluation = '⚠️ Çalışma süresi düşük! Hedeflerinize ulaşmak için daha fazla çaba göstermelisiniz.';
+        studyColor = '#ef5350';
+      } else if (longestStudyHours < 6) {
+        studyEvaluation = '💪 Orta seviye çalışma! Biraz daha artırarak rekor kırabilirsiniz!';
+        studyColor = '#ffa726';
+      } else {
+        studyEvaluation = '🔥 Harika çalışma! Bu tempoyu koruyarak hedefinize ulaşabilirsiniz!';
+        studyColor = '#66bb6a';
+      }
+      
       // Create email HTML content with beautiful design
       const htmlContent = `
         <!DOCTYPE html>
@@ -1961,16 +1977,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .gradient-wrapper {
               max-width: 700px;
               margin: 0 auto;
-              padding: 8px;
+              padding: 15px;
               background: linear-gradient(135deg, 
                 #ef5350 0%, 
-                #e91e63 12%, 
-                #ab47bc 24%, 
-                #9c27b0 36%, 
-                #7e57c2 48%, 
+                #ef5350 10%, 
+                #e91e63 20%, 
+                #ab47bc 30%, 
+                #9c27b0 40%, 
+                #7e57c2 50%, 
                 #66bb6a 60%, 
-                #26a69a 72%, 
-                #29b6f6 84%, 
+                #26a69a 70%, 
+                #29b6f6 80%, 
+                #42a5f5 90%,
                 #42a5f5 100%
               );
               border-radius: 28px;
@@ -2006,23 +2024,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             .quote { 
               font-style: italic; 
-              font-size: 18px; 
+              font-size: 19px; 
               margin: 30px auto; 
               line-height: 2; 
               max-width: 580px; 
               color: #1a1a1a; 
-              font-weight: 600;
-              letter-spacing: 0.4px;
+              font-weight: 700;
+              letter-spacing: 0.5px;
             }
             
             .ataturk-name { 
               color: #d32f2f; 
               font-weight: 900; 
-              font-size: 16px; 
+              font-size: 18px; 
               margin-top: 25px; 
-              letter-spacing: 1.5px; 
+              letter-spacing: 2px; 
               text-transform: uppercase;
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
             }
             
             .title-section { 
@@ -2333,6 +2351,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               font-size: 13px; 
               margin: 8px 0;
               font-weight: 500;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              max-width: 100%;
             }
             
             .footer-note { 
@@ -2388,15 +2409,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             </div>
             
             <div class="stats-middle">
-              <div class="stat-card stat-blue">
+              <div class="stat-card stat-blue" style="grid-column: span 3;">
                 <div class="stat-label">📈 TOPLAM AKTİVİTE</div>
                 <div class="stat-value-small">${tasks.length}</div>
               </div>
-              <div class="stat-card stat-teal">
+            </div>
+            
+            <div class="stats-middle">
+              <div class="stat-card stat-teal" style="grid-column: span 3;">
                 <div class="stat-label">✅ TAMAMLANAN GÖREVLER</div>
                 <div class="stat-value-small">${completedTasks}</div>
               </div>
-              <div class="stat-card stat-amber">
+            </div>
+            
+            <div class="stats-middle">
+              <div class="stat-card stat-amber" style="grid-column: span 3;">
                 <div class="stat-label">⏱️ BU AY ÇALIŞMA SÜRESİ</div>
                 <div class="stat-value-small" style="font-size: 18px;">${Math.floor(totalStudyMinutes / 60)}:${String(totalStudyMinutes % 60).padStart(2, '0')}</div>
               </div>
@@ -2407,13 +2434,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               <div class="longest-study-title">⏰ ÇALIŞILAN EN UZUN GÜN</div>
               <div class="longest-study-date">📅 ${longestStudyDate}</div>
               <div class="longest-study-time">${longestStudyTime}</div>
-              <div class="longest-study-note">🔥 Rekor çalışma günü! Bu tempoyu koruyarak hedefinize ulaşabilirsiniz!</div>
+              <div class="longest-study-note" style="color: ${studyColor}; font-weight: 800; font-size: 14px;">${studyEvaluation}</div>
             </div>
             ` : ''}
             
             <div class="section">
               <div class="section-title">📊 ÖZEL İSTATİSTİKLER</div>
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
                 <div class="special-stat-card special-stat-purple">
                   <div class="special-stat-title">📦 Arşivlenen Veriler</div>
                   <div class="special-stat-value">${archivedTasksCount + archivedQuestionsCount + archivedExamsCount}</div>
@@ -2424,8 +2451,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   <div class="special-stat-value">${longestStreak}</div>
                   <div class="special-stat-label">ardışık gün</div>
                 </div>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                 <div class="special-stat-card special-stat-red">
                   <div class="special-stat-title">❌ Bu Ay Hatalı Sorular</div>
                   <div class="special-stat-value">${wrongTopicsCount}</div>
@@ -2544,8 +2569,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ` : ''}
             
             <div class="footer-note">
-              🎯 Bu rapor ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde otomatik olarak oluşturulmuştur.<br/>
-              🏆 Berat Cankır Kişisel Analiz Sistemi 🏆
+              🎯 Bu rapor ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde otomatik olarak oluşturulmuştur.
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); border: 4px solid #9c27b0; border-radius: 20px; padding: 25px; margin: 25px; text-align: center; box-shadow: 0 6px 20px rgba(156,39,176,0.25);">
+              <div style="color: #7b1fa2; font-size: 24px; font-weight: 900; letter-spacing: 1.5px;">🏆 BERAT CANKIR KİŞİSEL ANALİZ SİSTEMİ 🏆</div>
             </div>
             
             <div class="footer">
