@@ -4,6 +4,55 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [MİMARİ GENEL BAKIŞ](#mimari-genel-bakis)
+  - [Katmanlı Mimari (Layered Architecture)](#katmanli-mimari-layered-architecture)
+- [TEKNOLOJİ SEÇİMLERİ VE GEREKÇELERİ](#teknoloji-secimleri-ve-gerekceleri)
+  - [1. Electron - Desktop Application Framework](#1-electron-desktop-application-framework)
+  - [2. React 18 - UI Library](#2-react-18-ui-library)
+  - [3. TypeScript - Typed JavaScript](#3-typescript-typed-javascript)
+  - [4. Vite - Build Tool](#4-vite-build-tool)
+  - [5. Express.js - Web Framework](#5-expressjs-web-framework)
+  - [6. Drizzle ORM - Type-Safe ORM](#6-drizzle-orm-type-safe-orm)
+  - [7. TanStack React Query v5 - Data Fetching](#7-tanstack-react-query-v5-data-fetching)
+  - [8. Tailwind CSS - Utility-First CSS](#8-tailwind-css-utility-first-css)
+  - [9. shadcn/ui - Component Library](#9-shadcnui-component-library)
+- [PACKAGE.JSON DETAYLI AÇIKLAMA](#packagejson-detayli-aciklama)
+  - [Dependencies (Production - Canlı Ortamda Gerekli)](#dependencies-production-canli-ortamda-gerekli)
+    - [Core Dependencies (Temel Bağımlılıklar)](#core-dependencies-temel-bagimliliklar)
+    - [React Ecosystem (React Ekosistemi)](#react-ecosystem-react-ekosistemi)
+    - [UI & Styling (Arayüz ve Stillendirme)](#ui-styling-arayuz-ve-stillendirme)
+    - [Form & Validation (Form ve Doğrulama)](#form-validation-form-ve-dogrulama)
+    - [Database & ORM (Veritabanı ve ORM)](#database-orm-veritabani-ve-orm)
+    - [Utilities (Yardımcı Araçlar)](#utilities-yardimci-araclar)
+- [BÖLÜM 12: EMAIL & COMMUNICATION PAKETLERİ](#bolum-12-email-communication-paketleri)
+  - [12.1 @sendgrid/mail](#121-sendgridmail)
+  - [12.2 nodemailer](#122-nodemailer)
+- [BÖLÜM 13: CHARTS & VISUALIZATION](#bolum-13-charts-visualization)
+  - [13.1 Recharts](#131-recharts)
+  - [13.2 embla-carousel-react](#132-embla-carousel-react)
+- [BÖLÜM 14: TESTING KÜTÜPHANELERİ](#bolum-14-testing-kutuphaneleri)
+  - [14.1 Vitest](#141-vitest)
+  - [14.2 @playwright/test](#142-playwrighttest)
+  - [14.3 @axe-core/playwright](#143-axe-coreplaywright)
+- [BÖLÜM 15: ELECTRON-SPECIFIC PAKETLER](#bolum-15-electron-specific-paketler)
+  - [15.1 electron](#151-electron)
+  - [15.2 electron-builder](#152-electron-builder)
+  - [15.3 electron-updater](#153-electron-updater)
+- [BÖLÜM 16: DEPLOYMENT STRATEJİSİ](#bolum-16-deployment-stratejisi)
+  - [16.1 Development (Geliştirme) Ortamı](#161-development-gelistirme-ortami)
+  - [16.2 Production (Canlı) Build](#162-production-canli-build)
+  - [16.3 Electron Packaging](#163-electron-packaging)
+  - [16.4 Release Stratejisi](#164-release-stratejisi)
+- [Yeni Özellikler](#yeni-ozellikler)
+- [Bug Fixes](#bug-fixes)
+- [İyileştirmeler](#iyilestirmeler)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Berat Cankır YKS Analiz Takip Sistemi'nin teknik mimarisini, teknoloji seçimlerini ve proje yapısını en detaylı şekilde açıklar. Her terim somutlaştırılarak, İngilizce kavramlar Türkçe karşılıklarıyla birlikte açıklanmıştır.

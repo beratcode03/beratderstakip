@@ -4,6 +4,50 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GENEL BAKIŞ](#genel-bakis)
+- [BÖLÜM 1: İMPORTLAR VE GLOBAL DEĞİŞKENLER](#bolum-1-importlar-ve-global-degiskenler)
+  - [1.1 Electron Modülleri](#11-electron-modulleri)
+  - [1.2 Node.js Core Modülleri](#12-nodejs-core-modulleri)
+  - [1.3 Activity Logger](#13-activity-logger)
+  - [1.4 Global Değişkenler](#14-global-degiskenler)
+- [BÖLÜM 2: .ENV DOSYASI YÜKLEME SİSTEMİ](#bolum-2-env-dosyasi-yukleme-sistemi)
+  - [2.1 loadEnvFile() Fonksiyonu](#21-loadenvfile-fonksiyonu)
+- [BÖLÜM 3: TEK İNSTANCE KİLİDİ (Single Instance Lock)](#bolum-3-tek-instance-kilidi-single-instance-lock)
+  - [3.1 Single Instance Lock Implementasyonu](#31-single-instance-lock-implementasyonu)
+- [BÖLÜM 4: DİZİN VE DOSYA YÖNETİMİ](#bolum-4-dizin-ve-dosya-yonetimi)
+  - [4.1 ensureDirectoryExists() Fonksiyonu](#41-ensuredirectoryexists-fonksiyonu)
+  - [4.2 ensureFileExists() Fonksiyonu](#42-ensurefileexists-fonksiyonu)
+- [BÖLÜM 5: NODE ENVIRONMENT VALIDATION](#bolum-5-node-environment-validation)
+  - [5.1 validateNodeEnvironment() Fonksiyonu](#51-validatenodeenvironment-fonksiyonu)
+- [BÖLÜM 6: SERVER HAZIRLIK KONTROLÜ](#bolum-6-server-hazirlik-kontrolu)
+  - [6.1 checkServerReady() Fonksiyonu](#61-checkserverready-fonksiyonu)
+- [BÖLÜM 3: SERVER BAŞLATMA VE YÖNETİMİ](#bolum-3-server-baslatma-ve-yonetimi)
+  - [3.1 startServer() Fonksiyonu](#31-startserver-fonksiyonu)
+  - [3.2 restartServer() Fonksiyonu](#32-restartserver-fonksiyonu)
+- [BÖLÜM 4: WINDOW OLUŞTURMA VE YÖNETİMİ](#bolum-4-window-olusturma-ve-yonetimi)
+  - [4.1 createMainWindow() Fonksiyonu](#41-createmainwindow-fonksiyonu)
+  - [4.2 createLogsWindow() Fonksiyonu](#42-createlogswindow-fonksiyonu)
+  - [4.3 createActivitiesWindow() Fonksiyonu](#43-createactivitieswindow-fonksiyonu)
+- [BÖLÜM 5: IPC HANDLERS VE EVENT LISTENERS](#bolum-5-ipc-handlers-ve-event-listeners)
+  - [5.1 IPC (Inter-Process Communication)](#51-ipc-inter-process-communication)
+  - [5.2 Preload Script](#52-preload-script)
+- [BÖLÜM 6: TRAY ICON VE MENU SİSTEMİ](#bolum-6-tray-icon-ve-menu-sistemi)
+  - [6.1 Tray Icon Oluşturma](#61-tray-icon-olusturma)
+  - [6.2 Tray Menu](#62-tray-menu)
+- [BÖLÜM 7: APP LIFECYCLE VE CLEANUP](#bolum-7-app-lifecycle-ve-cleanup)
+  - [7.1 App Ready Event](#71-app-ready-event)
+  - [7.2 Cleanup ve Shutdown](#72-cleanup-ve-shutdown)
+  - [7.3 Auto-Archive Zamanlayıcı](#73-auto-archive-zamanlayici)
+- [ÖZET VE TEKNİK DETAYLAR](#ozet-ve-teknik-detaylar)
+  - [Electron Main Process Sorumlulukları](#electron-main-process-sorumluluklari)
+  - [Güvenlik Best Practices](#guvenlik-best-practices)
+  - [Performance Optimizations](#performance-optimizations)
+- [KAYNAKLAR VE ÖĞRENME REFERANSLARI](#kaynaklar-ve-ogrenme-referanslari)
+
+---
+
 ## GENEL BAKIŞ
 
 `electron/main.cjs` dosyası, Berat Cankır YKS Analiz Takip Sistemi'nin Electron desktop uygulamasının ana işlem (main process) dosyasıdır. Bu dosya 1237 satırdan oluşur ve uygulamanın en kritik bileşenidir.

@@ -4,6 +4,24 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: package.json](#bolum-1-packagejson)
+  - [1.1 Metadata](#11-metadata)
+  - [1.2 Scripts](#12-scripts)
+  - [1.3 Dependencies](#13-dependencies)
+  - [1.4 DevDependencies](#14-devdependencies)
+- [BÖLÜM 2: tsconfig.json](#bolum-2-tsconfigjson)
+- [BÖLÜM 3: vite.config.ts](#bolum-3-viteconfigts)
+- [BÖLÜM 4: tailwind.config.ts](#bolum-4-tailwindconfigts)
+- [BÖLÜM 5: playwright.config.ts](#bolum-5-playwrightconfigts)
+- [BÖLÜM 6: drizzle.config.ts](#bolum-6-drizzleconfigts)
+- [BÖLÜM 7: .gitignore](#bolum-7-gitignore)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, projenin kök dizinindeki tüm konfigürasyon dosyalarını detaylı açıklar.

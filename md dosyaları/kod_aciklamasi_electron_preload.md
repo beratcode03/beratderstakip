@@ -4,6 +4,34 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: PRELOAD SCRIPT NEDİR?](#bolum-1-preload-script-nedir)
+  - [1.1 Electron Security Model](#11-electron-security-model)
+  - [1.2 contextBridge Nedir?](#12-contextbridge-nedir)
+- [BÖLÜM 2: PRELOAD.CJS KOD ANALİZİ](#bolum-2-preloadcjs-kod-analizi)
+  - [2.1 Import ve Context Bridge](#21-import-ve-context-bridge)
+  - [2.2 Window Kontrolü API](#22-window-kontrolu-api)
+  - [2.3 Electron Store API](#23-electron-store-api)
+  - [2.4 Dialog API](#24-dialog-api)
+  - [2.5 File System API](#25-file-system-api)
+  - [2.6 App Info API](#26-app-info-api)
+  - [2.7 External Links API](#27-external-links-api)
+- [BÖLÜM 3: TÜRKİYE HAVA DURUMU API](#bolum-3-turkiye-hava-durumu-api)
+  - [3.1 Kod Analizi](#31-kod-analizi)
+- [BÖLÜM 4: ACTIVITY LISTENER](#bolum-4-activity-listener)
+  - [4.1 Kod Analizi](#41-kod-analizi)
+- [BÖLÜM 5: TYPESCRİPT TİP TANIMLARI](#bolum-5-typescript-tip-tanimlari)
+  - [5.1 ElectronAPI Interface](#51-electronapi-interface)
+- [BÖLÜM 6: GÜVENLİK EN İYİ UYGULAMALARI](#bolum-6-guvenlik-en-iyi-uygulamalari)
+  - [6.1 contextIsolation](#61-contextisolation)
+  - [6.2 API Filtering](#62-api-filtering)
+  - [6.3 Input Validation](#63-input-validation)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Electron preload script'inin (`electron/preload.cjs`) tüm kodunu satır satır açıklar.

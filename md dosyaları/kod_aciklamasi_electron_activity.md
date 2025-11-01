@@ -4,6 +4,34 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: ACTIVITY LOGGER MİMARİSİ](#bolum-1-activity-logger-mimarisi)
+  - [1.1 Genel Bakış](#11-genel-bakis)
+  - [1.2 Aktivite Türleri](#12-aktivite-turleri)
+- [BÖLÜM 2: DOSYA YAPISI VE STORAGE](#bolum-2-dosya-yapisi-ve-storage)
+  - [2.1 Activities Dosya Konumu](#21-activities-dosya-konumu)
+  - [2.2 Activities Array Structure](#22-activities-array-structure)
+- [BÖLÜM 3: CORE FONKSİYONLAR](#bolum-3-core-fonksiyonlar)
+  - [3.1 loadActivities()](#31-loadactivities)
+  - [3.2 saveActivities()](#32-saveactivities)
+  - [3.3 addActivity()](#33-addactivity)
+- [BÖLÜM 4: ACTIVITY WINDOW](#bolum-4-activity-window)
+  - [4.1 createActivityWindow()](#41-createactivitywindow)
+- [BÖLÜM 5: IPC HANDLERS](#bolum-5-ipc-handlers)
+  - [5.1 get-activities](#51-get-activities)
+  - [5.2 add-activity](#52-add-activity)
+  - [5.3 clear-activities](#53-clear-activities)
+  - [5.4 export-activities](#54-export-activities)
+- [BÖLÜM 6: OTOMATIK YEDEKLEME SİSTEMİ](#bolum-6-otomatik-yedekleme-sistemi)
+  - [6.1 Backup Schedule](#61-backup-schedule)
+  - [6.2 backupActivities()](#62-backupactivities)
+  - [6.3 cleanOldBackups()](#63-cleanoldbackups)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Electron activity logger'ın (`electron/activity-logger.cjs`) tüm kodunu detaylı açıklar.

@@ -4,6 +4,53 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: ENTRY POINT (main.tsx)](#bolum-1-entry-point-maintsx)
+  - [1.1 Dosya Amacı](#11-dosya-amaci)
+  - [1.2 Kod Analizi](#12-kod-analizi)
+  - [1.3 DOM Mount](#13-dom-mount)
+- [BÖLÜM 2: ROUTING (App.tsx)](#bolum-2-routing-apptsx)
+  - [2.1 Dosya Amacı](#21-dosya-amaci)
+  - [2.2 Kod Analizi](#22-kod-analizi)
+- [BÖLÜM 3: ANASAYFA (TASKS PAGE)](#bolum-3-anasayfa-tasks-page)
+  - [3.1 client/src/sayfalar/anasayfa.tsx](#31-clientsrcsayfalaranasayfatsx)
+  - [3.2 Kod Analizi (Simplified Version)](#32-kod-analizi-simplified-version)
+  - [3.3 State Management](#33-state-management)
+  - [3.4 TasksSection Component](#34-taskssection-component)
+  - [3.5 TaskCard Component](#35-taskcard-component)
+- [BÖLÜM 4: PANEL (DASHBOARD)](#bolum-4-panel-dashboard)
+  - [4.1 client/src/sayfalar/panel.tsx](#41-clientsrcsayfalarpaneltsx)
+  - [4.2 Component Yapısı](#42-component-yapisi)
+  - [4.3 Soru Kayıtları Sekmesi](#43-soru-kayitlari-sekmesi)
+- [BÖLÜM 5: SAYAÇ (TIMER)](#bolum-5-sayac-timer)
+  - [5.1 client/src/sayfalar/sayac.tsx](#51-clientsrcsayfalarsayactsx)
+  - [5.2 Kronometre Component](#52-kronometre-component)
+  - [5.3 Pomodoro Component](#53-pomodoro-component)
+- [BÖLÜM 6: NET HESAPLAYICI (/net-hesaplayici)](#bolum-6-net-hesaplayici-net-hesaplayici)
+  - [6.1 client/src/sayfalar/net-hesaplayici.tsx](#61-clientsrcsayfalarnet-hesaplayicitsx)
+  - [6.2 Net Hesaplama Formülü](#62-net-hesaplama-formulu)
+  - [6.3 TYT/AYT Ders Yapıları](#63-tytayt-ders-yapilari)
+  - [6.4 Net Hesaplayıcı Component](#64-net-hesaplayici-component)
+- [BÖLÜM 7: YKS KONULAR (/yks-konular)](#bolum-7-yks-konular-yks-konular)
+  - [7.1 client/src/sayfalar/yks-konular.tsx](#71-clientsrcsayfalaryks-konulartsx)
+  - [7.2 Konu Veri Yapısı](#72-konu-veri-yapisi)
+  - [7.3 Checkbox Konu Component](#73-checkbox-konu-component)
+  - [7.4 Arama ve Filtreleme](#74-arama-ve-filtreleme)
+- [BÖLÜM 8: SHADCN/UI COMPONENT'LERİ](#bolum-8-shadcnui-componentleri)
+  - [8.1 shadcn/ui Nedir?](#81-shadcnui-nedir)
+  - [8.2 En Çok Kullanılan Component'ler](#82-en-cok-kullanilan-componentler)
+- [BÖLÜM 9: REACT QUERY SETUP DETAYI](#bolum-9-react-query-setup-detayi)
+  - [9.1 client/src/kutuphane/queryClient.ts](#91-clientsrckutuphanequeryclientts)
+- [BÖLÜM 10: DARK MODE IMPLEMENTATION](#bolum-10-dark-mode-implementation)
+  - [10.1 Theme Provider](#101-theme-provider)
+  - [10.2 Dark Mode Toggle](#102-dark-mode-toggle)
+  - [10.3 CSS Variables (Tailwind Config)](#103-css-variables-tailwind-config)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, client (istemci) tarafındaki tüm React bileşenlerini, sayfalarını, hooks'ları ve utility fonksiyonlarını **satır satır** açıklar. Her İngilizce terim Türkçe karşılığıyla somutlaştırılmıştır.

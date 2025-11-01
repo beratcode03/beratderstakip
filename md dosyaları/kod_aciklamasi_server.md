@@ -4,6 +4,40 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: server/index.ts - ANA GİRİŞ NOKTASI](#bolum-1-serverindexts-ana-giris-noktasi)
+  - [1.1 Dosya Amacı](#11-dosya-amaci)
+  - [1.2 dotenv Konsol Log Filtreleme](#12-dotenv-konsol-log-filtreleme)
+  - [1.3 Express App Konfigürasyonu](#13-express-app-konfigurasyonu)
+  - [1.4 Request Logging Middleware](#14-request-logging-middleware)
+  - [1.5 Route Registration](#15-route-registration)
+  - [1.6 Error Handler Middleware](#16-error-handler-middleware)
+  - [1.7 Development vs Production Mode](#17-development-vs-production-mode)
+  - [1.8 Server Listening](#18-server-listening)
+  - [1.9 Otomatik Arşivleme Zamanlayıcısı](#19-otomatik-arsivleme-zamanlayicisi)
+- [BÖLÜM 2: server/rotalar.ts - API ENDPOINTS](#bolum-2-serverrotalarts-api-endpoints)
+  - [2.1 Dosya Yapısı](#21-dosya-yapisi)
+  - [2.2 Activity Logger Helper](#22-activity-logger-helper)
+  - [2.3 Görev (Task) Endpoints](#23-gorev-task-endpoints)
+    - [GET /api/tasks](#get-apitasks)
+    - [POST /api/tasks](#post-apitasks)
+    - [PATCH /api/tasks/:id/toggle](#patch-apitasksidtoggle)
+- [BÖLÜM 3: STORAGE IMPLEMENTATION (server/depolama.ts)](#bolum-3-storage-implementation-serverdepolamats)
+  - [3.1 Dosya Yapısı](#31-dosya-yapisi)
+  - [3.2 MemStorage Implementation](#32-memstorage-implementation)
+  - [3.3 File I/O Operations](#33-file-io-operations)
+  - [3.4 Auto Archive Implementation](#34-auto-archive-implementation)
+- [BÖLÜM 4: WEATHER API INTEGRATION](#bolum-4-weather-api-integration)
+  - [4.1 OpenWeather API](#41-openweather-api)
+- [BÖLÜM 5: POSTGRESQL VS MEMSTORAGE](#bolum-5-postgresql-vs-memstorage)
+  - [5.1 Karşılaştırma](#51-karsilastirma)
+  - [5.2 Ne Zaman Hangisini Kullanılır?](#52-ne-zaman-hangisini-kullanilir)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Berat Cankır YKS Analiz Takip Sistemi'nin server (sunucu) tarafındaki tüm kodları **satır satır** açıklar. Her İngilizce terim Türkçe karşılığıyla somutlaştırılmıştır.

@@ -4,6 +4,29 @@
 
 ---
 
+## 📚 İçindekiler
+
+- [GİRİŞ](#giris)
+- [BÖLÜM 1: NEDEN SHARED SCHEMA?](#bolum-1-neden-shared-schema)
+  - [1.1 Monorepo Pattern (Tek Repo, Birden Fazla Proje)](#11-monorepo-pattern-tek-repo-birden-fazla-proje)
+  - [1.2 Drizzle ORM + Zod Integration](#12-drizzle-orm-zod-integration)
+- [BÖLÜM 2: GÖREV (TASK) SCHEMA](#bolum-2-gorev-task-schema)
+  - [2.1 Drizzle Table Definition](#21-drizzle-table-definition)
+  - [2.2 Zod Insert Schema](#22-zod-insert-schema)
+  - [2.3 TypeScript Types](#23-typescript-types)
+- [BÖLÜM 3: DİĞER SCHEMA'LAR](#bolum-3-diger-schemalar)
+  - [3.1 Ruh Hali (Mood) Schema](#31-ruh-hali-mood-schema)
+  - [3.2 Hedef (Goal) Schema](#32-hedef-goal-schema)
+  - [3.3 Soru Günlüğü (Question Log) Schema](#33-soru-gunlugu-question-log-schema)
+  - [3.4 Sınav Sonucu (Exam Result) Schema](#34-sinav-sonucu-exam-result-schema)
+- [BÖLÜM 4: ZOD VALIDATION DETAYLARI](#bolum-4-zod-validation-detaylari)
+  - [4.1 Zod Schema Types](#41-zod-schema-types)
+  - [4.2 Validation Rules](#42-validation-rules)
+  - [4.3 Error Handling](#43-error-handling)
+- [ÖZET](#ozet)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, paylaşılan veri şemasının (`shared/sema.ts`) tüm kodunu **satır satır** açıklar. Her İngilizce terim Türkçe karşılığıyla somutlaştırılmıştır.
