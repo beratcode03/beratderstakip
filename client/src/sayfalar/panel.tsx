@@ -38,6 +38,15 @@ import { apiRequest, sorguIstemcisi } from "@/kutuphane/sorguIstemcisi";
 import { useToast } from "@/hooks/use-toast";
 import { tytTopics, aytTopics } from "@/data/yks-konular";
 
+// Türkiye saatine göre bugünün tarihini döndüren yardımcı fonksiyon (UTC sorununu çözer)
+const getTurkeyDate = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Başlık harflerinin dönüştürülmesi için yardımcı işlev
 const toTitleCase = (str: string): string => {
   return str.trim()
@@ -147,7 +156,7 @@ export default function Dashboard() {
     correct_count: "", 
     wrong_count: "", 
     blank_count: "", 
-    study_date: new Date().toISOString().split('T')[0],
+    study_date: getTurkeyDate(),
     wrong_topics: [] as Array<{
       topic: string;
       difficulty: 'kolay' | 'orta' | 'zor';
@@ -164,7 +173,7 @@ export default function Dashboard() {
   const [newExamResult, setNewExamResult] = useState({ 
     exam_name: "", 
     display_name: "",
-    exam_date: new Date().toISOString().split('T')[0], 
+    exam_date: getTurkeyDate(), 
     exam_type: "TYT" as "TYT" | "AYT",
     examScope: "full" as "full" | "branch",
     selectedSubject: "turkce" as string,
@@ -200,7 +209,7 @@ export default function Dashboard() {
   // Çalışma Saati Modal Durumu
   const [showStudyHoursModal, setShowStudyHoursModal] = useState(false);
   const [newStudyHours, setNewStudyHours] = useState({
-    study_date: new Date().toISOString().split('T')[0],
+    study_date: getTurkeyDate(),
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -666,7 +675,7 @@ export default function Dashboard() {
         correct_count: "", 
         wrong_count: "", 
         blank_count: "", 
-        study_date: new Date().toISOString().split('T')[0],
+        study_date: getTurkeyDate(),
         wrong_topics: [],
         time_spent_minutes: ""
       });
@@ -740,7 +749,7 @@ export default function Dashboard() {
       setNewExamResult({ 
         exam_name: "", 
         display_name: "",
-        exam_date: new Date().toISOString().split('T')[0], 
+        exam_date: getTurkeyDate(), 
         exam_type: "TYT" as "TYT" | "AYT",
         examScope: "full" as "full" | "branch",
         selectedSubject: "turkce" as string,
@@ -779,7 +788,7 @@ export default function Dashboard() {
       setNewExamResult({ 
         exam_name: "", 
         display_name: "",
-        exam_date: new Date().toISOString().split('T')[0], 
+        exam_date: getTurkeyDate(), 
         exam_type: "TYT" as "TYT" | "AYT",
         examScope: "full" as "full" | "branch",
         selectedSubject: "turkce" as string,
@@ -817,7 +826,7 @@ export default function Dashboard() {
       toast({ title: "⏱️ Çalışma saati eklendi", description: "Çalışma süreniz başarıyla kaydedildi!" });
       setShowStudyHoursModal(false);
       setNewStudyHours({
-        study_date: new Date().toISOString().split('T')[0],
+        study_date: getTurkeyDate(),
         hours: 0,
         minutes: 0,
         seconds: 0,
@@ -867,7 +876,7 @@ export default function Dashboard() {
       correct_count: "", 
       wrong_count: "", 
       blank_count: "", 
-      study_date: new Date().toISOString().split('T')[0],
+      study_date: getTurkeyDate(),
       wrong_topics: [],
       time_spent_minutes: ""
     });
@@ -903,7 +912,7 @@ export default function Dashboard() {
     // Diyalog penceresini açarken tarihi her zaman bugüne güncelle
     setNewQuestion(prev => ({
       ...prev,
-      study_date: new Date().toISOString().split('T')[0] // Bugünün tarihine ayarla
+      study_date: getTurkeyDate() // Bugünün tarihine ayarla
     }));
     setShowQuestionDialog(true);
   }, []);
@@ -2801,7 +2810,7 @@ export default function Dashboard() {
                     correct_count: "", 
                     wrong_count: "", 
                     blank_count: "", 
-                    study_date: new Date().toISOString().split('T')[0],
+                    study_date: getTurkeyDate(),
                     wrong_topics: [],
                     time_spent_minutes: ""
                   });
@@ -2823,7 +2832,7 @@ export default function Dashboard() {
           setNewExamResult({ 
             exam_name: "", 
             display_name: "",
-            exam_date: new Date().toISOString().split('T')[0], 
+            exam_date: getTurkeyDate(), 
             exam_type: "TYT" as "TYT" | "AYT",
             examScope: "full" as "full" | "branch",
             selectedSubject: "turkce" as string,
@@ -4738,7 +4747,7 @@ export default function Dashboard() {
                   setNewExamResult({ 
                     exam_name: "", 
                     display_name: "",
-                    exam_date: new Date().toISOString().split('T')[0], 
+                    exam_date: getTurkeyDate(), 
                     exam_type: "TYT" as "TYT" | "AYT",
                     examScope: "full" as "full" | "branch",
                     selectedSubject: "turkce" as string,
@@ -4890,7 +4899,7 @@ export default function Dashboard() {
               onClick={() => {
                 setShowStudyHoursModal(false);
                 setNewStudyHours({
-                  study_date: new Date().toISOString().split('T')[0],
+                  study_date: getTurkeyDate(),
                   hours: 0,
                   minutes: 0,
                   seconds: 0,

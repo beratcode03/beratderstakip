@@ -2087,9 +2087,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .stats-row-three {
               display: grid;
               grid-template-columns: repeat(3, 1fr);
-              gap: 18px;
+              gap: 22px;
               padding: 25px;
               background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+            }
+            
+            .stat-card-enhanced {
+              border-radius: 20px;
+              padding: 35px 28px;
+              text-align: center;
+              color: white;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+              border: none;
+              position: relative;
+              overflow: hidden;
+              transform: translateY(0);
+              transition: transform 0.3s ease;
+            }
+            
+            .stat-card-enhanced::before {
+              content: '';
+              position: absolute;
+              top: -50%;
+              left: -50%;
+              width: 200%;
+              height: 200%;
+              background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+              pointer-events: none;
+            }
+            
+            .stat-card-enhanced::after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              height: 4px;
+              background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.3) 100%);
             }
             
             .stat-card { 
@@ -2119,6 +2153,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .stat-blue { background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); }
             .stat-teal { background: linear-gradient(135deg, #26a69a 0%, #00897b 100%); }
             .stat-amber { background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%); }
+            
+            .enhanced-blue { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+            .enhanced-teal { background: linear-gradient(135deg, #00bcd4 0%, #00897b 100%); }
+            .enhanced-amber { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+            
+            .enhanced-stat-label {
+              font-size: 15px;
+              font-weight: 700;
+              margin-bottom: 18px;
+              text-transform: uppercase;
+              letter-spacing: 1.2px;
+              opacity: 0.95;
+              position: relative;
+              z-index: 1;
+            }
+            
+            .enhanced-stat-value {
+              font-size: 52px;
+              font-weight: 900;
+              line-height: 1;
+              margin-bottom: 8px;
+              text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+              position: relative;
+              z-index: 1;
+            }
             
             .stat-label { 
               font-size: 12px; 
@@ -2274,37 +2333,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
             
             .exam-card { 
-              background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); 
-              border: 3px solid #e0e0e0; 
-              border-radius: 16px; 
-              padding: 25px; 
-              margin-bottom: 22px; 
-              box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+              background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); 
+              border: 3px solid #e3e8ef; 
+              border-radius: 18px; 
+              padding: 30px; 
+              margin-bottom: 28px; 
+              box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+              position: relative;
+              overflow: hidden;
+            }
+            .exam-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 5px;
+              background: linear-gradient(90deg, #2196f3 0%, #1976d2 50%, #2196f3 100%);
             }
             .exam-name { 
-              color: #7b1fa2; 
-              font-weight: 800; 
-              font-size: 18px; 
-              margin-bottom: 10px;
-              letter-spacing: 0.5px;
+              color: #1565c0; 
+              font-weight: 900; 
+              font-size: 20px; 
+              margin-bottom: 12px;
+              letter-spacing: 0.6px;
+              padding-top: 8px;
             }
             .exam-date { 
-              color: #757575; 
+              color: #616161; 
               font-size: 14px; 
-              margin-bottom: 15px;
+              margin-bottom: 18px;
               font-weight: 600;
+              letter-spacing: 0.3px;
             }
             .net-badge { 
-              background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); 
+              background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%); 
               color: white; 
-              padding: 18px 28px; 
-              border-radius: 14px; 
-              font-size: 24px; 
+              padding: 20px 32px; 
+              border-radius: 16px; 
+              font-size: 26px; 
               font-weight: 900; 
               text-align: center; 
-              margin: 15px 0; 
-              box-shadow: 0 6px 20px rgba(142,36,170,0.3);
-              letter-spacing: 1px;
+              margin: 18px 0; 
+              box-shadow: 0 8px 24px rgba(123,31,162,0.35);
+              letter-spacing: 1.2px;
+              text-transform: uppercase;
             }
             
             .performance-grid { 
@@ -2361,30 +2434,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             .wrong-topics { 
               background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); 
-              border-left: 6px solid #e53935; 
-              padding: 18px; 
-              border-radius: 10px; 
-              margin-top: 15px;
-              box-shadow: 0 3px 10px rgba(229,57,53,0.1);
+              border: 3px solid #e53935; 
+              border-radius: 16px; 
+              padding: 22px 28px; 
+              margin-top: 20px;
+              box-shadow: 0 6px 20px rgba(229,57,53,0.2);
+              position: relative;
+              overflow: hidden;
+            }
+            .wrong-topics::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 8px;
+              height: 100%;
+              background: linear-gradient(180deg, #e53935 0%, #c62828 100%);
             }
             .wrong-topics h4 { 
-              color: #c62828; 
-              font-size: 15px; 
-              margin-bottom: 12px; 
-              font-weight: 800;
-              letter-spacing: 0.4px;
+              font-size: 16px; 
+              margin-bottom: 16px; 
+              color: #b71c1c; 
+              font-weight: 900;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              padding-left: 12px;
             }
             .wrong-topics ul { 
-              margin-left: 28px; 
+              list-style: none;
+              padding-left: 12px;
+              margin: 0;
             }
             .wrong-topics li { 
               color: #424242; 
-              font-size: 13px; 
-              margin: 8px 0;
-              font-weight: 500;
+              font-size: 14px; 
+              margin: 10px 0;
+              font-weight: 600;
+              padding: 10px 16px;
+              background: rgba(255,255,255,0.6);
+              border-radius: 10px;
+              border-left: 4px solid #f44336;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.08);
               word-wrap: break-word;
               overflow-wrap: break-word;
-              max-width: 100%;
+            }
+            .wrong-topics li::before {
+              content: '✗ ';
+              color: #e53935;
+              font-weight: 900;
+              margin-right: 8px;
+              font-size: 16px;
             }
             
             .footer-note { 
@@ -2440,17 +2539,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             </div>
             
             <div class="stats-row-three">
-              <div class="stat-card stat-blue">
-                <div class="stat-label">📈 TOPLAM AKTİVİTE</div>
-                <div class="stat-value">${tasks.length}</div>
+              <div class="stat-card-enhanced enhanced-blue">
+                <div class="enhanced-stat-label">📈 TOPLAM AKTİVİTE</div>
+                <div class="enhanced-stat-value">${tasks.length}</div>
+                <div style="font-size: 13px; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">kayıtlı aktivite</div>
               </div>
-              <div class="stat-card stat-teal">
-                <div class="stat-label">✅ TAMAMLANAN GÖREVLER</div>
-                <div class="stat-value">${completedTasks}</div>
+              <div class="stat-card-enhanced enhanced-teal">
+                <div class="enhanced-stat-label">✅ TAMAMLANAN GÖREVLER</div>
+                <div class="enhanced-stat-value">${completedTasks}</div>
+                <div style="font-size: 13px; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">görev tamamlandı</div>
               </div>
-              <div class="stat-card stat-amber">
-                <div class="stat-label">⏱️ BU AY ÇALIŞMA SÜRESİ</div>
-                <div class="stat-value" style="font-size: 28px;">${Math.floor(totalStudyMinutes / 60)}:${String(totalStudyMinutes % 60).padStart(2, '0')}</div>
+              <div class="stat-card-enhanced enhanced-amber">
+                <div class="enhanced-stat-label">⏱️ BU AY ÇALIŞMA SÜRESİ</div>
+                <div class="enhanced-stat-value" style="font-size: 42px;">${Math.floor(totalStudyMinutes / 60)}<span style="font-size: 24px;">:</span>${String(totalStudyMinutes % 60).padStart(2, '0')}</div>
+                <div style="font-size: 13px; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">saat:dakika</div>
               </div>
             </div>
             
