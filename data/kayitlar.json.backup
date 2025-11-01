@@ -262,8 +262,8 @@
       "ayt_net": "0.00",
       "subjects_data": "{\"turkce\":{\"correct\":\"5\",\"wrong\":\"2\",\"blank\":\"\",\"wrong_topics\":[\"Bhu\"]},\"matematik\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"sosyal\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"fen\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"fizik\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"kimya\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"biyoloji\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"geometri\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]}}",
       "time_spent_minutes": 0,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T15:58:45.944Z",
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-11-01T15:52:07.606Z"
@@ -421,6 +421,18 @@
       "blank_count": "0",
       "wrong_topics_json": "[{\"topic\":\"Bhu\"}]",
       "createdAt": "2025-11-01T15:52:07.608Z"
+    },
+    {
+      "id": "9757a5a6-7a2f-4396-8c60-f9057cc18f5b",
+      "exam_id": "f535b32b-0b64-4906-8dcd-8899f8f8c9cc",
+      "exam_type": "TYT",
+      "subject": "Matematik",
+      "net_score": "5.25",
+      "correct_count": "6",
+      "wrong_count": "3",
+      "blank_count": "21",
+      "wrong_topics_json": "[{\"topic\":\"Yrtuıjrtı\"}]",
+      "createdAt": "2025-11-01T15:52:20.710Z"
     }
   ],
   "calismaSaatleri": [
