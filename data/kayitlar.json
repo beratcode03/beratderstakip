@@ -643,6 +643,18 @@
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-10-31T20:18:56.861Z"
+    },
+    {
+      "id": "4fff4be9-d4b7-4627-a6b9-48ad42b9336f",
+      "study_date": "2025-11-01",
+      "hours": 6,
+      "minutes": 0,
+      "seconds": 0,
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-11-01T11:08:29.075Z"
     }
   ]
 }
