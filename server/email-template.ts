@@ -61,21 +61,20 @@ export function generateModernEmailTemplate(data: {
     </head>
     <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       
-      <!-- Ana Konteyner - Dış kenarda gradient -->
-      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); border: 8px solid transparent; background-clip: padding-box; position: relative;">
+      <!-- Ana Konteyner - Gradient dış border ile -->
+      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); border: 12px solid; border-image: linear-gradient(135deg, #e91e63 0%, #9c27b0 25%, #673ab7 50%, #4caf50 75%, #2196f3 100%) 1;">
         
-        <!-- Gradient Border Efekti -->
-        <div style="position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; background: linear-gradient(135deg, #e91e63 0%, #9c27b0 25%, #673ab7 50%, #4caf50 75%, #2196f3 100%); border-radius: 24px; z-index: -1;"></div>
-        
-        <!-- ATATÜRK SECTION -->
+        <!-- ATATÜRK SECTION - Tam çerçeve içinde -->
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="background: white; padding: 40px 30px; text-align: center; border-bottom: 5px solid #d32f2f;">
-              <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-              <div style="font-style: italic; font-size: 16px; line-height: 1.8; color: #2c3e50; margin: 20px auto; max-width: 650px; font-weight: 500;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-              <div style="color: #c62828; font-weight: 900; font-size: 14px; margin: 20px 0; letter-spacing: 1px; text-transform: none;">- Mustafa Kemal Atatürk -</div>
-              <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
-              <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 3px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+            <td style="background: linear-gradient(135deg, #dc143c 0%, #ff1493 100%); padding: 12px;">
+              <div style="background: white; border-radius: 16px; padding: 40px 30px; text-align: center;">
+                <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
+                <div style="font-style: italic; font-size: 16px; line-height: 1.8; color: #2c3e50; margin: 20px auto; max-width: 650px; font-weight: 500;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+                <div style="color: #c62828; font-weight: 900; font-size: 14px; margin: 20px 0; letter-spacing: 1px;">- Mustafa Kemal Atatürk -</div>
+                <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
+                <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 3px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+              </div>
             </td>
           </tr>
           
@@ -88,7 +87,30 @@ export function generateModernEmailTemplate(data: {
             </td>
           </tr>
           
-          <!-- TOPLAM AKTİVİTE VE GÖREVLER - ÜST SIRADA -->
+          <!-- ÇÖZÜLEN SORU VE DENEME - EN ÜSTTE -->
+          <tr>
+            <td style="padding: 30px; background: #fafafa;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="49%" style="vertical-align: top;">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);">
+                      <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">📚 ÇÖZÜLEN SORU</div>
+                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${totalQuestions}</div>
+                    </div>
+                  </td>
+                  <td width="2%"></td>
+                  <td width="49%" style="vertical-align: top;">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);">
+                      <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">🎯 ÇÖZÜLEN DENEME</div>
+                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${recentExams.length}</div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- TOPLAM AKTİVİTE VE GÖREVLER - ALTTA -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -116,30 +138,7 @@ export function generateModernEmailTemplate(data: {
             </td>
           </tr>
           
-          <!-- ÇÖZÜLEN SORU VE DENEME -->
-          <tr>
-            <td style="padding: 30px; background: #fafafa;">
-              <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);">
-                      <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">📚 ÇÖZÜLEN SORU</div>
-                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${totalQuestions}</div>
-                    </div>
-                  </td>
-                  <td width="2%"></td>
-                  <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);">
-                      <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">🎯 ÇÖZÜLEN DENEME</div>
-                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${recentExams.length}</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- ÇÖZÜLEN TÜM SORULAR -->
+          <!-- ÇÖZÜLEN TÜM SORULAR - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
               <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
@@ -176,7 +175,7 @@ export function generateModernEmailTemplate(data: {
             </td>
           </tr>
           
-          <!-- ÖZEL İSTATİSTİKLER -->
+          <!-- ÖZEL İSTATİSTİKLER - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
               <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
@@ -220,7 +219,7 @@ export function generateModernEmailTemplate(data: {
             </td>
           </tr>
           
-          <!-- BU AYIN REKOR NETLERİ -->
+          <!-- BU AYIN REKOR NETLERİ - Gerçek Veriler -->
           ${(generalExams.length > 0 || Object.keys(branchRecords).length > 0) ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
@@ -260,7 +259,7 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
-          <!-- DERS İSTATİSTİKLERİ -->
+          <!-- DERS İSTATİSTİKLERİ - Gerçek Veriler -->
           ${(mostWrongSubjects.length > 0 || mostSolvedSubjects.length > 0 || mostCorrectSubjects.length > 0) ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
@@ -298,7 +297,7 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
-          <!-- GENEL DENEME DETAYLARI -->
+          <!-- GENEL DENEME DETAYLARI - Gerçek Veriler -->
           ${generalExams.length > 0 ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
@@ -395,7 +394,7 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
-          <!-- BRANŞ DENEME DETAYLARI -->
+          <!-- BRANŞ DENEME DETAYLARI - Gerçek Veriler -->
           ${branchExams.length > 0 ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
@@ -468,11 +467,13 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
-          <!-- FOOTER - MİNİMAL -->
+          <!-- FOOTER - KUTU İÇİNDE -->
           <tr>
-            <td style="background: #f5f5f5; padding: 25px; text-align: center; border-top: 3px solid #e0e0e0;">
-              <div style="color: #c62828; font-size: 13px; font-weight: 600; margin-bottom: 8px;">🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - Otomatik Oluşturuldu</div>
-              <div style="color: #757575; font-size: 12px; font-weight: 500;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
+            <td style="background: #fafafa; padding: 30px;">
+              <div style="background: white; border: 3px solid #e0e0e0; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                <div style="color: #c62828; font-size: 13px; font-weight: 600; margin-bottom: 8px;">🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - Otomatik Oluşturuldu</div>
+                <div style="color: #757575; font-size: 12px; font-weight: 500;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
+              </div>
             </td>
           </tr>
           

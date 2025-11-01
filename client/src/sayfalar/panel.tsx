@@ -1075,12 +1075,13 @@ export default function Dashboard() {
     const archivedBranchExamsByDate = new Map<string, number>();
     
     allQuestionLogs.forEach(log => {
-      questionsByDate.set(log.study_date, (questionsByDate.get(log.study_date) || 0) + 1);
+      const questionCount = (parseInt(log.correct_count) || 0) + (parseInt(log.wrong_count) || 0) + (parseInt(log.blank_count || '0') || 0);
+      questionsByDate.set(log.study_date, (questionsByDate.get(log.study_date) || 0) + questionCount);
       if (log.deleted) {
-        deletedQuestionsByDate.set(log.study_date, (deletedQuestionsByDate.get(log.study_date) || 0) + 1);
+        deletedQuestionsByDate.set(log.study_date, (deletedQuestionsByDate.get(log.study_date) || 0) + questionCount);
       }
       if (log.archived) {
-        archivedQuestionsByDate.set(log.study_date, (archivedQuestionsByDate.get(log.study_date) || 0) + 1);
+        archivedQuestionsByDate.set(log.study_date, (archivedQuestionsByDate.get(log.study_date) || 0) + questionCount);
       }
     });
     
@@ -2216,7 +2217,7 @@ export default function Dashboard() {
                   <div className="text-sm text-muted-foreground">Tamamlanan Görev</div>
                 </div>
                 <div className="text-center p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl">
-                  <div className="text-2xl font-bold text-green-600">{selectedHeatmapDay.dayActivities.questions.reduce((sum: number, q: any) => sum + (q.question_count || 0), 0)}</div>
+                  <div className="text-2xl font-bold text-green-600">{selectedHeatmapDay.dayActivities.questions.reduce((sum: number, q: any) => sum + ((parseInt(q.correct_count) || 0) + (parseInt(q.wrong_count) || 0) + (parseInt(q.blank_count || '0') || 0)), 0)}</div>
                   <div className="text-sm text-muted-foreground">Çözülen Toplam Soru</div>
                 </div>
                 <div className="text-center p-4 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl">
