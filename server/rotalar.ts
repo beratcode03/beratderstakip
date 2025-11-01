@@ -2111,7 +2111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (generalExams.length > 0) {
           const generalOnlyHtml = htmlContent.replace(/📋 BRANŞ DENEME DETAYLARI[\s\S]*?(?=<div class="footer-note">)/g, '');
           await transporter.sendMail({
-            from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
+            from: `"Aylık Çalışma Raporum" <${emailFrom || emailUser}>`,
             to: toEmails,
             subject: `📊 Genel Deneme Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
             html: generalOnlyHtml,
@@ -2123,7 +2123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (branchExams.length > 0) {
           const branchOnlyHtml = htmlContent.replace(/📋 GENEL DENEME DETAYLARI[\s\S]*?(?=📋 BRANŞ DENEME DETAYLARI)/g, '').replace(/📋 BRANŞ DENEME DETAYLARI/, '📋 BRANŞ DENEME DETAYLARI');
           await transporter.sendMail({
-            from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
+            from: `"Aylık Çalışma Raporum" <${emailFrom || emailUser}>`,
             to: toEmails,
             subject: `📊 Branş Deneme Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
             html: branchOnlyHtml,
@@ -2135,7 +2135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (recentQuestions.length > 10) {
           const questionsOnlyHtml = htmlContent.replace(/📋 GENEL DENEME DETAYLARI[\s\S]*?(?=<div class="footer-note">)/g, '').replace(/📋 BRANŞ DENEME DETAYLARI[\s\S]*?(?=<div class="footer-note">)/g, '');
           await transporter.sendMail({
-            from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
+            from: `"Aylık Çalışma Raporum" <${emailFrom || emailUser}>`,
             to: toEmails,
             subject: `📊 Soru Çözüm Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
             html: questionsOnlyHtml,
@@ -2148,7 +2148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         // Send single combined email
         await transporter.sendMail({
-          from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
+          from: `"Aylık Çalışma Raporum" <${emailFrom || emailUser}>`,
           to: toEmails,
           subject: "Aylık Çalışma Raporum",
           html: htmlContent,
