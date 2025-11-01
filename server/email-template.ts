@@ -65,25 +65,44 @@ export function generateModernEmailTemplate(data: {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Aylık Çalışma Raporum</title>
     </head>
-    <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: white;">
       
-      <!-- Ana Konteyner - Hafif gradient border -->
-      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); padding: 14px; background: linear-gradient(135deg, rgba(233, 30, 99, 0.6) 0%, rgba(156, 39, 176, 0.6) 25%, rgba(103, 58, 183, 0.6) 50%, rgba(33, 150, 243, 0.6) 75%, rgba(76, 175, 80, 0.6) 100%);">
+      <!-- Ana Konteyner - Kalın gradient border -->
+      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); padding: 24px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 12%, #9333ea 25%, #7c3aed 37%, #2563eb 50%, #10b981 62%, #ec4899 75%, #c084fc 87%, #a855f7 100%);">
         <div style="background: white; border-radius: 12px; overflow: hidden;">
         
-        <!-- ATATÜRK SECTION - Ayrı çerçeve -->
+        <!-- ATATÜRK SECTION - Dış kenarlıkla bitişik çerçeve (email-safe) -->
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="padding: 30px; background: white;">
-              <div style="background: linear-gradient(135deg, rgba(233, 30, 99, 0.6) 0%, rgba(156, 39, 176, 0.6) 25%, rgba(103, 58, 183, 0.6) 50%, rgba(33, 150, 243, 0.6) 75%, rgba(76, 175, 80, 0.6) 100%); padding: 14px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
-                <div style="background: white; border-radius: 12px; padding: 40px 30px; text-align: center;">
-                  <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-                  <div style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-style: italic; font-size: 22px; line-height: 1.8; color: #1a1a1a; margin: 20px auto; max-width: 650px; font-weight: 900;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-                  <div style="color: #b71c1c; font-weight: 900; font-size: 18px; margin: 20px 0; letter-spacing: 2px; font-family: Impact, 'Arial Black', sans-serif;">- Mustafa Kemal Atatürk -</div>
-                  <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
-                  <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 5px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
-                </div>
-              </div>
+            <td style="padding: 0; background: white;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 40px 30px; text-align: center; background: white;">
+                    <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
+                    <div style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-style: italic; font-size: 22px; line-height: 1.8; color: #1a1a1a; margin: 20px auto; max-width: 650px; font-weight: 900;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+                    <div style="color: #b71c1c; font-weight: 900; font-size: 18px; margin: 20px 0; letter-spacing: 2px; font-family: Impact, 'Arial Black', sans-serif;">- Mustafa Kemal Atatürk -</div>
+                    <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
+                    <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 5px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0; height: 8px;">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
+                      <tr>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #dc2626;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #b91c1c;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #9333ea;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #7c3aed;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #2563eb;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #10b981;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #ec4899;"></td>
+                        <td style="width: 11.11%; height: 8px; padding: 0; background-color: #c084fc;"></td>
+                        <td style="width: 11.12%; height: 8px; padding: 0; background-color: #a855f7;"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           
@@ -93,15 +112,6 @@ export function generateModernEmailTemplate(data: {
               <h1 style="font-size: 32px; margin: 0 0 10px 0; font-weight: 900; letter-spacing: 0.5px; color: #8e24aa;">🎓 BERAT CANKIR</h1>
               <div style="font-size: 20px; font-weight: 700; margin: 0 0 15px 0; letter-spacing: 0.3px; color: #424242;">KİŞİSEL ÇALIŞMA ANALİZ RAPORU</div>
               <div style="font-size: 16px; font-weight: 600; color: #666; margin: 0;">📅 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 🎯 Üniversite Kazanılacak !</div>
-            </td>
-          </tr>
-          
-          <!-- Otomatik/Manuel Oluşturulma Bilgisi -->
-          <tr>
-            <td style="background: white; padding: 0 30px 20px; text-align: center;">
-              <div style="background: linear-gradient(135deg, #8e24aa 0%, #ab47bc 100%); color: white; padding: 15px 25px; border-radius: 16px; font-size: 14px; font-weight: 700; display: inline-block; box-shadow: 0 6px 20px rgba(142, 36, 170, 0.4);">
-                🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}
-              </div>
             </td>
           </tr>
           
@@ -212,22 +222,22 @@ export function generateModernEmailTemplate(data: {
                       <div style="border: 4px solid #ef5350; border-radius: 16px; padding: 25px 15px; text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);">
                         <div style="font-size: 11px; color: #c62828; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; line-height: 1.3;">❌ Bu Ay Hatalı Konular</div>
                         <div style="font-size: 42px; font-weight: 900; margin: 12px 0; color: #e53935;">${wrongTopicsCount}</div>
-                        <div style="font-size: 11px; color: #9e9e9e; font-weight: 500;">konu</div>
+                        <div style="font-size: 11px; color: #9e9e9e; font-weight: 500;">toplam hata</div>
                       </div>
                     </td>
                     <td width="1%"></td>
                     <td width="24%" style="vertical-align: top;">
                       <div style="border: 4px solid #66bb6a; border-radius: 16px; padding: 25px 15px; text-align: center; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
                         <div style="font-size: 11px; color: #2e7d32; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; line-height: 1.3;">✅ Düzeltilen Konular</div>
-                        <div style="font-size: 42px; font-weight: 900; margin: 12px 0; color: #43a047;">${completedTopics}</div>
-                        <div style="font-size: 11px; color: #9e9e9e; font-weight: 500;">konu</div>
+                        <div style="font-size: 42px; font-weight: 900; margin: 12px 0; color: #43a047;">${completedTopicsHistory.length}</div>
+                        <div style="font-size: 11px; color: #9e9e9e; font-weight: 500;">konu tamamlandı</div>
                       </div>
                     </td>
                     <td width="1%"></td>
                     <td width="24%" style="vertical-align: top;">
                       <div style="border: 4px solid #42a5f5; border-radius: 16px; padding: 25px 15px; text-align: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
-                        <div style="font-size: 11px; color: #1565c0; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; line-height: 1.3;">✅ Tamamlanan Sorular</div>
-                        <div style="font-size: 42px; font-weight: 900; margin: 12px 0; color: #1976d2;">${totalCorrect}</div>
+                        <div style="font-size: 11px; color: #1565c0; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; line-height: 1.3;">✅ Tamamlanan Hatalı Sorular</div>
+                        <div style="font-size: 42px; font-weight: 900; margin: 12px 0; color: #1976d2;">${completedQuestionsHistory.length}</div>
                         <div style="font-size: 11px; color: #9e9e9e; font-weight: 500;">soru</div>
                       </div>
                     </td>
