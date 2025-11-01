@@ -6,19 +6,9 @@
 
 
 import dotenv from "dotenv";
+import path from "path";
 
-const originalConsoleLog = console.log;
-console.log = (...args: any[]) => {
-  const message = args.join(' ');
-  if (message.includes('[dotenv') || message.includes('injecting env') || message.includes('dotenvx.com') || message.includes('prevent building')) {
-    return;
-  }
-  originalConsoleLog.apply(console, args);
-};
-
-dotenv.config({ debug: false });
-
-console.log = originalConsoleLog;
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 import express from "express";
 import { registerRoutes } from "./rotalar";

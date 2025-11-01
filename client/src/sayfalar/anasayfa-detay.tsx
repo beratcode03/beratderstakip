@@ -334,7 +334,7 @@ export default function Homepage() {
     // Planlanmış görevleri kontrol et (due date'i olan görevler) (aktif + arşivlenmiş)
     const hasScheduledTasks = allTasks.some(task => {
       if (!task.dueDate) return false;
-      const taskDate = task.dueDate.split('T')[0];
+      const taskDate = dateToTurkeyString(task.dueDate);
       return taskDate === dateStr;
     });
     
@@ -369,7 +369,7 @@ export default function Homepage() {
     
     const scheduledTasks = allTasks.filter(task => {
       if (!task.dueDate || task.completedAt || task.archived) return false;
-      const taskDate = task.dueDate.split('T')[0];
+      const taskDate = dateToTurkeyString(task.dueDate);
       return taskDate === dateStr;
     });
     

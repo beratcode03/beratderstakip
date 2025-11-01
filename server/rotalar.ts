@@ -37,12 +37,10 @@ import {
   insertSetupCompletedSchema,
 } from "@shared/sema";
 import { z } from "zod";
-import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import fs from "fs";
 import path from "path";
 import { generateModernEmailTemplate } from "./email-template";
-dotenv.config();
 
 interface WeatherData {
   main: {
