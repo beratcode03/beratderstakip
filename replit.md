@@ -78,7 +78,16 @@ The application runs fine without these variables; features simply show warnings
 - Auto-archiving scheduled for Sundays at 23:59 (Turkey timezone)
 
 ## Recent Changes
-- **2025-11-01**: Configured for Replit environment
+- **2025-11-01**: Email Template Improvements
+  - Added distinct 2px purple border around ÖZEL İSTATİSTİKLER section for better visual separation
+  - Verified data calculations for Bu Ay Hatalı Konular, Düzeltilen Konular, and Tamamlanan Hatalı Sorular
+  - Implemented email-safe content management for long exam reports
+    - First 3 exams show full details (all subjects with doğru/yanlış/boş/net stats)
+    - Exams 4-5 show summary only (name, date, total net) with note "Detaylar için tam raporu inceleyin"
+    - Avoids email client compatibility issues while keeping emails concise
+  - Verified calendar activity question count calculations are accurate (sums actual questions, not log entries)
+
+- **2025-11-01**: Initial Replit Configuration
   - Set up development workflow on port 5000
   - Configured deployment for autoscale
   - Verified Vite config has `allowedHosts: true` for Replit proxy

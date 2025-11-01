@@ -269,6 +269,24 @@
       "recurrenceType": "monthly",
       "recurrenceEndDate": null,
       "createdAt": "2025-11-01T17:20:28.059Z"
+    },
+    {
+      "id": "b0b9e38c-71bd-4ce1-95f6-7008060fa024",
+      "title": "b",
+      "description": null,
+      "priority": "medium",
+      "category": "genel",
+      "color": "#8B5CF6",
+      "completed": false,
+      "completedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "deleted": false,
+      "deletedAt": null,
+      "dueDate": "2025-11-02",
+      "recurrenceType": "none",
+      "recurrenceEndDate": null,
+      "createdAt": "2025-11-01T21:07:32.756Z"
     }
   ],
   "ruhHalleri": [],
@@ -670,8 +688,8 @@
       "hours": 3,
       "minutes": 0,
       "seconds": 0,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T18:53:42.876Z",
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-11-01T18:53:39.339Z"
