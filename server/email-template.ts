@@ -578,17 +578,22 @@ export function generateModernEmailTemplate(data: {
           <!-- TAMAMLANAN HATALI KONULAR GEÇMİŞİ -->
           ${completedTopicsHistory.length > 0 ? `
           <tr>
-            <td style="padding: 30px; background: #fafafa;">
-              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-                <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Konular Geçmişi</div>
-                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 4px solid #66bb6a; border-radius: 16px; padding: 20px;">
-                  ${completedTopicsHistory.map((topic: any, index: number) => `
-                    <div style="background: white; border-left: 5px solid #43a047; border-radius: 12px; padding: 18px 20px; margin-bottom: ${index < completedTopicsHistory.length - 1 ? '15px' : '0'}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                      <div style="color: #2e7d32; font-size: 16px; font-weight: 800; margin-bottom: 8px;">✓ ${topic.title}</div>
-                      <div style="color: #666; font-size: 13px; font-weight: 600; margin-bottom: 5px;">📚 ${topic.subject} ${topic.source ? `| 📋 ${topic.source}` : ''}</div>
-                      <div style="color: #9e9e9e; font-size: 12px; font-weight: 500;">📅 Tamamlandı: ${new Date(topic.completedAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+            <td style="padding: 25px; background: #fafafa;">
+              <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <div style="font-size: 17px; font-weight: 800; margin-bottom: 18px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Konular Geçmişi</div>
+                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 2px solid #66bb6a; border-radius: 12px; padding: 14px;">
+                  ${completedTopicsHistory.map((topic: any, index: number) => {
+                    const topicDate = topic.completedAt ? new Date(topic.completedAt) : null;
+                    const formattedDate = topicDate && !isNaN(topicDate.getTime()) 
+                      ? topicDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                      : 'Tarih bilinmiyor';
+                    return `
+                    <div style="background: white; border-left: 4px solid #43a047; border-radius: 8px; padding: 10px 14px; margin-bottom: ${index < completedTopicsHistory.length - 1 ? '10px' : '0'}; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                      <div style="color: #2e7d32; font-size: 13px; font-weight: 700; margin-bottom: 4px;">✓ ${topic.title}</div>
+                      <div style="color: #666; font-size: 11px; font-weight: 600; margin-bottom: 3px;">📚 ${topic.subject} ${topic.source ? `| 📋 ${topic.source}` : ''}</div>
+                      <div style="color: #9e9e9e; font-size: 10px; font-weight: 500;">📅 ${formattedDate}</div>
                     </div>
-                  `).join('')}
+                  `}).join('')}
                 </div>
               </div>
             </td>
@@ -598,48 +603,54 @@ export function generateModernEmailTemplate(data: {
           <!-- TAMAMLANAN HATALI SORULAR GEÇMİŞİ -->
           ${completedQuestionsHistory.length > 0 ? `
           <tr>
-            <td style="padding: 30px; background: #fafafa;">
-              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-                <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Sorular Geçmişi</div>
-                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 4px solid #2196f3; border-radius: 16px; padding: 20px;">
-                  ${completedQuestionsHistory.map((question: any, index: number) => `
-                    <div style="background: white; border-left: 5px solid #1976d2; border-radius: 12px; padding: 18px 20px; margin-bottom: ${index < completedQuestionsHistory.length - 1 ? '15px' : '0'}; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                      <div style="color: #1565c0; font-size: 16px; font-weight: 800; margin-bottom: 10px;">📖 ${question.subject}</div>
+            <td style="padding: 25px; background: #fafafa;">
+              <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <div style="font-size: 17px; font-weight: 800; margin-bottom: 18px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Sorular Geçmişi</div>
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 2px solid #2196f3; border-radius: 12px; padding: 14px;">
+                  ${completedQuestionsHistory.map((question: any, index: number) => {
+                    const questionDate = question.completedAt || question.logDate;
+                    const qDate = questionDate ? new Date(questionDate) : null;
+                    const formattedDate = qDate && !isNaN(qDate.getTime()) 
+                      ? qDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
+                      : 'Tarih bilinmiyor';
+                    return `
+                    <div style="background: white; border-left: 4px solid #1976d2; border-radius: 8px; padding: 10px 14px; margin-bottom: ${index < completedQuestionsHistory.length - 1 ? '10px' : '0'}; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                      <div style="color: #1565c0; font-size: 13px; font-weight: 700; margin-bottom: 8px;">📖 ${question.subject}</div>
                       <table cellpadding="0" cellspacing="0" border="0" width="100%">
                         <tr>
-                          <td width="32%" style="text-align: center; padding: 8px;">
-                            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%); border: 2px solid #66bb6a; border-radius: 10px; padding: 12px;">
-                              <div style="font-size: 11px; color: #2e7d32; font-weight: 700;">✓ Doğru</div>
-                              <div style="font-size: 20px; color: #43a047; font-weight: 900;">${question.correctCount || 0}</div>
+                          <td width="32%" style="text-align: center; padding: 4px;">
+                            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%); border: 1px solid #66bb6a; border-radius: 6px; padding: 6px;">
+                              <div style="font-size: 9px; color: #2e7d32; font-weight: 700;">✓ Doğru</div>
+                              <div style="font-size: 14px; color: #43a047; font-weight: 900;">${question.correctCount || 0}</div>
                             </div>
                           </td>
                           <td width="2%"></td>
-                          <td width="32%" style="text-align: center; padding: 8px;">
-                            <div style="background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%); border: 2px solid #ef5350; border-radius: 10px; padding: 12px;">
-                              <div style="font-size: 11px; color: #c62828; font-weight: 700;">✗ Yanlış</div>
-                              <div style="font-size: 20px; color: #e53935; font-weight: 900;">${question.wrongCount || 0}</div>
+                          <td width="32%" style="text-align: center; padding: 4px;">
+                            <div style="background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%); border: 1px solid #ef5350; border-radius: 6px; padding: 6px;">
+                              <div style="font-size: 9px; color: #c62828; font-weight: 700;">✗ Yanlış</div>
+                              <div style="font-size: 14px; color: #e53935; font-weight: 900;">${question.wrongCount || 0}</div>
                             </div>
                           </td>
                           <td width="2%"></td>
-                          <td width="32%" style="text-align: center; padding: 8px;">
-                            <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%); border: 2px solid #ffa726; border-radius: 10px; padding: 12px;">
-                              <div style="font-size: 11px; color: #e65100; font-weight: 700;">○ Boş</div>
-                              <div style="font-size: 20px; color: #fb8c00; font-weight: 900;">${question.emptyCount || 0}</div>
+                          <td width="32%" style="text-align: center; padding: 4px;">
+                            <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%); border: 1px solid #ffa726; border-radius: 6px; padding: 6px;">
+                              <div style="font-size: 9px; color: #e65100; font-weight: 700;">○ Boş</div>
+                              <div style="font-size: 14px; color: #fb8c00; font-weight: 900;">${question.emptyCount || 0}</div>
                             </div>
                           </td>
                         </tr>
                       </table>
                       ${question.wrongTopics && question.wrongTopics.length > 0 ? `
-                        <div style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border: 2px solid #e53935; border-radius: 10px; padding: 12px; margin-top: 12px;">
-                          <div style="font-size: 12px; color: #b71c1c; font-weight: 700; margin-bottom: 8px;">❌ Yanlış Konular:</div>
+                        <div style="background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%); border: 1px solid #ff6b6b; border-radius: 6px; padding: 8px; margin-top: 8px;">
+                          <div style="font-size: 10px; color: #c62828; font-weight: 700; margin-bottom: 4px;">❌ Yanlış Konular:</div>
                           ${question.wrongTopics.map((topic: string) => `
-                            <div style="color: #424242; font-size: 13px; margin: 6px 0; font-weight: 600;">• ${topic}</div>
+                            <div style="color: #424242; font-size: 10px; margin: 3px 0; font-weight: 600;">• ${topic}</div>
                           `).join('')}
                         </div>
                       ` : ''}
-                      <div style="color: #9e9e9e; font-size: 12px; font-weight: 500; margin-top: 10px;">📅 ${new Date(question.logDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                      <div style="color: #9e9e9e; font-size: 10px; font-weight: 500; margin-top: 6px;">📅 ${formattedDate}</div>
                     </div>
-                  `).join('')}
+                  `}).join('')}
                 </div>
               </div>
             </td>
