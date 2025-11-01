@@ -322,7 +322,7 @@ export default function Homepage() {
 
   // Yeniden hesaplamayı önlemek için belleğe alınmış etkinlik kontrolü
   const hasActivities = useCallback((date: Date) => {
-    const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const dateStr = dateToTurkeyString(date);
     
     // Tamamlanan görevleri kontrol edin (aktif + arşivlenmiş)
     const hasCompletedTasks = allTasks.some(task => {
@@ -359,7 +359,7 @@ export default function Homepage() {
 
   // Belirli bir tarih için etkinlikleri al (aktif + arşivlenmiş)
   const getActivitiesForDate = useCallback((date: Date) => {
-    const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const dateStr = dateToTurkeyString(date);
     
     const completedTasks = allTasks.filter(task => {
       if (!task.completedAt || task.archived) return false;

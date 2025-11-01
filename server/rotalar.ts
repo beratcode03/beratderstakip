@@ -1835,12 +1835,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if this is a manual request
       const isManualRequest = req.body.isManualRequest || false;
       
-      // .env dosyasından email adreslerini al
+      // .env dosyasından email ayarlarını al
       const emailUser = process.env.EMAIL_USER;
+      const emailPass = process.env.EMAIL_PASS;
       const emailFrom = process.env.EMAIL_FROM;
       
-      if (!emailUser && !emailFrom) {
-        return res.status(400).json({ message: ".env dosyasında EMAIL_FROM veya EMAIL_USER tanımlı değil" });
+      if (!emailUser || !emailPass || !emailFrom) {
+        return res.status(400).json({ message: "Email ayarları yapılandırılmamış. .env dosyasında EMAIL_USER, EMAIL_PASS ve EMAIL_FROM tanımlanmalı" });
       }
       
       // Her iki email adresini de alıcı olarak ekle (farklıysa)
