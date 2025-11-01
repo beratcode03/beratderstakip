@@ -359,18 +359,35 @@ export function generateModernEmailTemplate(data: {
               <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
                 <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📋 DENEME DETAYLARI - Genel Denemeler</div>
                 ${generalExams.slice(0, 5).map((exam: any) => {
-                  const net = ((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25) +
-                             ((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25) +
-                             ((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25) +
-                             ((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25);
-                  
                   const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+                  
+                  // Calculate total net from examSubjectNets or fallback to tyt_net
+                  let totalNet = 0;
+                  if (examNets.length > 0) {
+                    totalNet = examNets.reduce((sum: number, n: any) => sum + parseFloat(n.net_score || 0), 0);
+                  } else {
+                    totalNet = parseFloat(exam.tyt_net || 0);
+                  }
+                  
+                  const getSubjectData = (subjectName: string) => {
+                    const subjectNet = examNets.find((n: any) => n.subject === subjectName);
+                    if (subjectNet) {
+                      return {
+                        dogru: parseInt(subjectNet.correct_count || 0),
+                        yanlis: parseInt(subjectNet.wrong_count || 0),
+                        bos: parseInt(subjectNet.blank_count || 0),
+                        net: parseFloat(subjectNet.net_score || 0)
+                      };
+                    }
+                    return null;
+                  };
+                  
                   const getWrongTopics = (subject: string) => {
                     const subjectNet = examNets.find((n: any) => n.subject === subject);
                     if (subjectNet && subjectNet.wrong_topics_json) {
                       try {
                         const topics = JSON.parse(subjectNet.wrong_topics_json);
-                        return topics.map((t: any) => t.topic);
+                        return topics.map((t: any) => typeof t === 'string' ? t : (t.topic || t));
                       } catch(e) {
                         return [];
                       }
@@ -378,23 +395,36 @@ export function generateModernEmailTemplate(data: {
                     return [];
                   };
                   
-                  const subjects = [
-                    { name: 'Türkçe', emoji: '📖', dogru: exam.turkce_dogru, yanlis: exam.turkce_yanlis, bos: exam.turkce_bos },
-                    { name: 'Sosyal Bilimler', emoji: '🌍', dogru: exam.sosyal_dogru, yanlis: exam.sosyal_yanlis, bos: exam.sosyal_bos },
-                    { name: 'Matematik', emoji: '🔢', dogru: exam.mat_dogru, yanlis: exam.mat_yanlis, bos: exam.mat_bos },
-                    { name: 'Fen Bilimleri', emoji: '🔬', dogru: exam.fen_dogru, yanlis: exam.fen_yanlis, bos: exam.fen_bos }
-                  ];
+                  const subjectNames = ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'];
+                  const subjectEmojis: any = {
+                    'Türkçe': '📖',
+                    'Sosyal Bilimler': '🌍', 
+                    'Matematik': '🔢',
+                    'Fen Bilimleri': '🔬'
+                  };
+                  
+                  const subjects = subjectNames.map(name => {
+                    const data = getSubjectData(name);
+                    return {
+                      name,
+                      emoji: subjectEmojis[name] || '📚',
+                      dogru: data?.dogru,
+                      yanlis: data?.yanlis,
+                      bos: data?.bos,
+                      net: data?.net
+                    };
+                  }).filter(s => s.dogru !== undefined);
                   
                   return `
                     <div style="background: white; border: 4px solid #e0e0e0; border-radius: 18px; padding: 28px; margin-bottom: 25px; border-top: 6px solid #2196f3; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
                       <div style="color: #1565c0; font-size: 20px; font-weight: 900; margin-bottom: 10px;">${exam.exam_name}</div>
-                      <div style="color: #666; font-size: 14px; margin-bottom: 20px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${exam.exam_type}</div>
-                      <div style="background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%); color: white; padding: 20px 30px; border-radius: 16px; font-size: 26px; font-weight: 900; text-align: center; margin: 20px 0; box-shadow: 0 8px 20px rgba(124,77,255,0.4);">TYT Net: ${net.toFixed(2)}</div>
+                      <div style="color: #666; font-size: 14px; margin-bottom: 20px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${exam.exam_type || 'TYT'}</div>
+                      <div style="background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%); color: white; padding: 20px 30px; border-radius: 16px; font-size: 26px; font-weight: 900; text-align: center; margin: 20px 0; box-shadow: 0 8px 20px rgba(124,77,255,0.4);">Toplam Net: ${totalNet.toFixed(2)}</div>
                       
                       ${subjects.map(sub => {
                         if (sub.dogru === undefined) return '';
                         const wrongTopics = getWrongTopics(sub.name);
-                        const subNet = ((sub.dogru || 0) - (sub.yanlis || 0) * 0.25).toFixed(2);
+                        const subNet = (sub.net !== undefined ? sub.net : ((sub.dogru || 0) - (sub.yanlis || 0) * 0.25)).toFixed(2);
                         
                         return `
                         <div style="margin: 20px 0;">
@@ -456,16 +486,35 @@ export function generateModernEmailTemplate(data: {
               <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
                 <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📋 DENEME DETAYLARI - Branş Denemeler</div>
                 ${branchExams.slice(0, 5).map((exam: any) => {
-                  const subject = exam.subject || exam.exam_type;
-                  const net = (exam.correct_count || 0) - (exam.wrong_count || 0) * 0.25;
-                  
                   const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+                  
+                  // Get data from examSubjectNets if available
+                  let subject, dogru, yanlis, bos, net;
+                  if (examNets.length > 0) {
+                    const subjectNet = examNets[0];
+                    subject = subjectNet.subject || exam.selected_subject || exam.exam_type;
+                    dogru = parseInt(subjectNet.correct_count || 0);
+                    yanlis = parseInt(subjectNet.wrong_count || 0);
+                    bos = parseInt(subjectNet.blank_count || 0);
+                    net = parseFloat(subjectNet.net_score || 0);
+                  } else {
+                    // Fallback if no examSubjectNets data
+                    subject = exam.selected_subject || exam.subject || exam.exam_type;
+                    dogru = 0;
+                    yanlis = 0;
+                    bos = 0;
+                    net = 0;
+                  }
+                  
                   const wrongTopicsArr: string[] = [];
                   examNets.forEach((n: any) => {
                     if (n.wrong_topics_json) {
                       try {
                         const topics = JSON.parse(n.wrong_topics_json);
-                        topics.forEach((t: any) => wrongTopicsArr.push(t.topic));
+                        topics.forEach((t: any) => {
+                          const topicStr = typeof t === 'string' ? t : (t.topic || String(t));
+                          if (topicStr) wrongTopicsArr.push(topicStr);
+                        });
                       } catch(e) {}
                     }
                   });
@@ -480,21 +529,21 @@ export function generateModernEmailTemplate(data: {
                           <td width="23%" style="vertical-align: top;">
                             <div style="border: 3px solid #66bb6a; border-radius: 14px; padding: 18px 12px; text-align: center; background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);">
                               <div style="font-size: 11px; margin-bottom: 10px; font-weight: 700; color: #2e7d32;">✓ Doğru</div>
-                              <div style="font-size: 24px; font-weight: 900; color: #43a047;">${exam.correct_count || 0}</div>
+                              <div style="font-size: 24px; font-weight: 900; color: #43a047;">${dogru}</div>
                             </div>
                           </td>
                           <td width="2%"></td>
                           <td width="23%" style="vertical-align: top;">
                             <div style="border: 3px solid #ef5350; border-radius: 14px; padding: 18px 12px; text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%);">
                               <div style="font-size: 11px; margin-bottom: 10px; font-weight: 700; color: #c62828;">✗ Yanlış</div>
-                              <div style="font-size: 24px; font-weight: 900; color: #e53935;">${exam.wrong_count || 0}</div>
+                              <div style="font-size: 24px; font-weight: 900; color: #e53935;">${yanlis}</div>
                             </div>
                           </td>
                           <td width="2%"></td>
                           <td width="23%" style="vertical-align: top;">
                             <div style="border: 3px solid #ffa726; border-radius: 14px; padding: 18px 12px; text-align: center; background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);">
                               <div style="font-size: 11px; margin-bottom: 10px; font-weight: 700; color: #e65100;">○ Boş</div>
-                              <div style="font-size: 24px; font-weight: 900; color: #fb8c00;">${exam.empty_count || 0}</div>
+                              <div style="font-size: 24px; font-weight: 900; color: #fb8c00;">${bos}</div>
                             </div>
                           </td>
                           <td width="2%"></td>
