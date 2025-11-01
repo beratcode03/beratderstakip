@@ -1845,12 +1845,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (emailFrom && emailFrom !== emailUser) recipients.push(emailFrom);
       const toEmails = recipients.join(', ');
 
-      // Get all data for report
-      const [tasks, questionLogs, examResults, studyHours] = await Promise.all([
+      // Get all data for report including archived data
+      const [tasks, questionLogs, examResults, studyHours, archivedTasks, archivedQuestions, archivedExams, archivedStudyHours] = await Promise.all([
         storage.getTasks(),
         storage.getQuestionLogs(),
         storage.getExamResults(),
-        storage.getStudyHours()
+        storage.getStudyHours(),
+        storage.getArchivedTasks(),
+        storage.getArchivedQuestionLogs(),
+        storage.getArchivedExamResults(),
+        storage.getArchivedStudyHours()
       ]);
 
       // Calculate report statistics
@@ -1903,8 +1907,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const generalExams = recentExams.filter((e: any) => e.exam_scope !== 'branch');
       const branchExams = recentExams.filter((e: any) => e.exam_scope === 'branch');
       
-      // Calculate max TYT net
+      // Calculate max TYT net and branch records
       const maxTytNet = tytNets.length > 0 ? Math.max(...tytNets).toFixed(2) : '0.00';
+      
+      // Calculate streak (En Uzun Çalışma Serisi)
+      const allStudyDates = [...studyHours, ...archivedStudyHours]
+        .map(sh => sh.study_date)
+        .sort();
+      let longestStreak = 0;
+      let currentStreak = 0;
+      let lastDate: Date | null = null;
+      
+      for (const dateStr of allStudyDates) {
+        const currentDate = new Date(dateStr);
+        if (lastDate) {
+          const dayDiff = Math.floor((currentDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+          if (dayDiff === 1) {
+            currentStreak++;
+          } else if (dayDiff > 1) {
+            longestStreak = Math.max(longestStreak, currentStreak);
+            currentStreak = 1;
+          }
+        } else {
+          currentStreak = 1;
+        }
+        lastDate = currentDate;
+      }
+      longestStreak = Math.max(longestStreak, currentStreak);
+      
+      // Calculate archived counts
+      const archivedTasksCount = archivedTasks.length;
+      const archivedQuestionsCount = archivedQuestions.length;
+      const archivedExamsCount = archivedExams.length;
+      
+      // Decide if we need to split emails (>10 general exams OR >10 branch exams OR >10 questions)
+      const shouldSplitEmails = generalExams.length > 10 || branchExams.length > 10 || recentQuestions.length > 10;
       
       // Create email HTML content with beautiful design
       const htmlContent = `
@@ -2002,11 +2039,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         <body>
           <div class="container">
             <div class="header-red">
-              <span class="flag-emoji">🇹🇷</span>
+              <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 200px; height: auto; margin: 0 auto 20px; display: block; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />
               <div class="quote">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
               <div class="ataturk-name">- Mustafa Kemal Atatürk -</div>
-              <div class="signature-text">M. Kemal</div>
-              <span class="ataturk-emoji">👤</span>
+              <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 180px; height: auto; margin: 20px auto 15px; display: block; filter: brightness(0) invert(1);" />
+              <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 200px; height: auto; margin: 20px auto 0; display: block; border-radius: 15px; border: 4px solid white; box-shadow: 0 6px 20px rgba(0,0,0,0.4);" />
             </div>
             
             <div class="title-section">
@@ -2052,12 +2089,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             <div class="section">
               <div class="section-title">📊 ÖZEL İSTATİSTİKLER</div>
-              <div class="special-stats">
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+                <div class="special-stat-card special-stat-purple">
+                  <div class="special-stat-title">📦 Arşivlenen Veriler</div>
+                  <div class="special-stat-value">${archivedTasksCount + archivedQuestionsCount + archivedExamsCount}</div>
+                  <div class="special-stat-label">toplam arşivlenen</div>
+                </div>
                 <div class="special-stat-card special-stat-purple">
                   <div class="special-stat-title">🔥 En Uzun Çalışma Serisi</div>
-                  <div class="special-stat-value">${Math.min(recentStudy.length, 30)}</div>
+                  <div class="special-stat-value">${longestStreak}</div>
                   <div class="special-stat-label">ardışık gün</div>
                 </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                 <div class="special-stat-card special-stat-red">
                   <div class="special-stat-title">❌ Bu Ay Hatalı Sorular</div>
                   <div class="special-stat-value">${wrongTopicsCount}</div>

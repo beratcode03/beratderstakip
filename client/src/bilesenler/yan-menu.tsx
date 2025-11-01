@@ -260,7 +260,7 @@ export function Sidebar() {
                 }`}
               >
                 {date.getDate()}
-                {activityType !== 'none' && isCurrentMonth && !isToday && (
+                {activityType !== 'none' && !isToday && (
                   <div className="absolute top-0 right-0 flex flex-col gap-0.5">
                     {activityType === 'created' && (
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
