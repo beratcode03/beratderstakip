@@ -41,10 +41,18 @@ import { tytTopics, aytTopics } from "@/data/yks-konular";
 // Türkiye saatine göre bugünün tarihini döndüren yardımcı fonksiyon (UTC sorununu çözer)
 const getTurkeyDate = (): string => {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  // Türkiye saatinde YYYY-MM-DD formatını al (UTC+3 kaymadan)
+  return new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Europe/Istanbul' 
+  }).format(now);
+};
+
+// Herhangi bir tarihi Türkiye saatinde YYYY-MM-DD formatına çevirir (UTC sorununu çözer)
+const dateToTurkeyString = (date: Date | string): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Europe/Istanbul' 
+  }).format(dateObj);
 };
 
 // Başlık harflerinin dönüştürülmesi için yardımcı işlev
@@ -1108,15 +1116,15 @@ export default function Dashboard() {
       let taskDate: string | null = null;
       
       if (task.archived && task.archivedAt) {
-        taskDate = new Date(task.archivedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.archivedAt);
       } else if (task.deleted && task.deletedAt) {
-        taskDate = new Date(task.deletedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.deletedAt);
       } else if (task.completed && task.completedAt) {
-        taskDate = new Date(task.completedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.completedAt);
       } else if (task.dueDate) {
         taskDate = task.dueDate.split('T')[0];
       } else if (task.createdAt) {
-        taskDate = new Date(task.createdAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.createdAt);
       }
       
       if (taskDate) {
@@ -1146,7 +1154,7 @@ export default function Dashboard() {
     // Tüm günleri oluştur - bugünkü tarihe ulaşana kadar
     for (let i = 0; ; i++) {
       const currentDate = new Date(currentYear, 0, 1 + i, 12, 0, 0); // Öğlen saati = timezone safe
-      const dateStr = currentDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+      const dateStr = dateToTurkeyString(currentDate); // YYYY-MM-DD format (Türkiye saati)
       
       // Bugünü geçtikse dur
       if (dateStr > todayDateStr) break;
@@ -1231,7 +1239,7 @@ export default function Dashboard() {
       
       // Her hafta 7 gün (Pzt-Paz)
       for (let i = 0; i < 7; i++) {
-        const dateStr = currentDate.toISOString().split('T')[0];
+        const dateStr = dateToTurkeyString(currentDate);
         const dayData = dateMap.get(dateStr);
         
         // Sadece bugüne kadar olan günleri ekle
@@ -1285,15 +1293,15 @@ export default function Dashboard() {
       let taskDate: string | null = null;
       
       if (task.archived && task.archivedAt) {
-        taskDate = new Date(task.archivedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.archivedAt);
       } else if (task.deleted && task.deletedAt) {
-        taskDate = new Date(task.deletedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.deletedAt);
       } else if (task.completed && task.completedAt) {
-        taskDate = new Date(task.completedAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.completedAt);
       } else if (task.dueDate) {
         taskDate = task.dueDate.split('T')[0];
       } else if (task.createdAt) {
-        taskDate = new Date(task.createdAt).toISOString().split('T')[0];
+        taskDate = dateToTurkeyString(task.createdAt);
       }
       
       return taskDate === day.date;
@@ -6510,10 +6518,10 @@ export default function Dashboard() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               <FileText className="h-6 w-6" />
-              📊 Aylık İlerleme Raporu
+              📊 Aylık Aktivite Raporu
             </DialogTitle>
             <DialogDescription>
-              Tüm aktivitelerinizin özet raporu
+              {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} ayı başından bugüne kadar yapılan tüm aktiviteler
             </DialogDescription>
           </DialogHeader>
           

@@ -24,6 +24,22 @@ import { Badge } from "@/bilesenler/arayuz/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/kutuphane/sorguIstemcisi";
 
+// Türkiye saatine göre bugünün tarihini döndüren yardımcı fonksiyon (UTC sorununu çözer)
+const getTurkeyDate = (): string => {
+  const now = new Date();
+  return new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Europe/Istanbul' 
+  }).format(now);
+};
+
+// Herhangi bir tarihi Türkiye saatinde YYYY-MM-DD formatına çevirir (UTC sorununu çözer)
+const dateToTurkeyString = (date: Date | string): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Europe/Istanbul' 
+  }).format(dateObj);
+};
+
 // Saatli Ortalanmış Karşılama Bölümü Bileşeni - memo ile optimize edildi
 const CenteredWelcomeSection = memo(function CenteredWelcomeSection() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -311,7 +327,7 @@ export default function Homepage() {
     // Tamamlanan görevleri kontrol edin (aktif + arşivlenmiş)
     const hasCompletedTasks = allTasks.some(task => {
       if (!task.completedAt) return false;
-      const completedDate = new Date(task.completedAt).toISOString().split('T')[0];
+      const completedDate = dateToTurkeyString(task.completedAt);
       return completedDate === dateStr;
     });
     
@@ -325,7 +341,7 @@ export default function Homepage() {
     // Arşivlenen görevleri kontrol et
     const hasArchivedTasks = allTasks.some(task => {
       if (!task.archived || !task.archivedAt) return false;
-      const archivedDate = new Date(task.archivedAt).toISOString().split('T')[0];
+      const archivedDate = dateToTurkeyString(task.archivedAt);
       return archivedDate === dateStr;
     });
     
@@ -347,7 +363,7 @@ export default function Homepage() {
     
     const completedTasks = allTasks.filter(task => {
       if (!task.completedAt || task.archived) return false;
-      const completedDate = new Date(task.completedAt).toISOString().split('T')[0];
+      const completedDate = dateToTurkeyString(task.completedAt);
       return completedDate === dateStr;
     });
     
@@ -359,7 +375,7 @@ export default function Homepage() {
     
     const archivedTasksOnThisDay = allTasks.filter(task => {
       if (!task.archived || !task.archivedAt) return false;
-      const archivedDate = new Date(task.archivedAt).toISOString().split('T')[0];
+      const archivedDate = dateToTurkeyString(task.archivedAt);
       return archivedDate === dateStr;
     });
     
@@ -625,8 +641,7 @@ export default function Homepage() {
                   
                   {(() => {
                     const selectedDateObj = new Date(selectedDate + 'T12:00:00');
-                    const today = new Date();
-                    const todayDateStr = today.toISOString().split('T')[0];
+                    const todayDateStr = getTurkeyDate();
                     
                     const isPast = selectedDate < todayDateStr;
                     const isToday = selectedDate === todayDateStr;
@@ -1657,10 +1672,10 @@ export default function Homepage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              📊 Aylık İlerleme Raporu
+              📊 Aylık Aktivite Raporu
             </DialogTitle>
             <DialogDescription>
-              Tüm aktivitelerinizin özet raporu
+              {new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })} ayı başından bugüne kadar yapılan tüm aktiviteler
             </DialogDescription>
           </DialogHeader>
           
@@ -1705,7 +1720,7 @@ export default function Homepage() {
             
             {/* Email Bilgisi */}
             <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border">
-              <Label className="text-sm font-medium mb-2 block">E-posta Adresi</Label>
+              <Label className="text-sm font-medium mb-2 block">Rapor Gönderilecek E-Posta Adresi</Label>
               <Input 
                 type="email" 
                 value="Belirlediğiniz e-posta adresine rapor gönderilecektir"
