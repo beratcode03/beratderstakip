@@ -119,8 +119,8 @@
       "completedAt": null,
       "archived": false,
       "archivedAt": null,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T16:28:31.605Z",
       "dueDate": "2025-11-01",
       "recurrenceType": "none",
       "recurrenceEndDate": null,
@@ -137,8 +137,8 @@
       "completedAt": null,
       "archived": false,
       "archivedAt": null,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T16:28:31.032Z",
       "dueDate": "2025-11-01",
       "recurrenceType": "none",
       "recurrenceEndDate": null,
@@ -155,8 +155,8 @@
       "completedAt": "2025-11-01T15:51:03.897Z",
       "archived": false,
       "archivedAt": null,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T16:28:30.455Z",
       "dueDate": "2025-11-01",
       "recurrenceType": "none",
       "recurrenceEndDate": null,
@@ -167,52 +167,12 @@
   "hedefler": [],
   "soruGunlukleri": [
     {
-      "id": "161c3912-4b49-401f-a002-cf9e66b544f2",
+      "id": "89a6ca77-778c-44d1-9a49-cf8f38876ff9",
       "exam_type": "TYT",
       "subject": "Türkçe",
       "topic": null,
       "correct_count": "15",
-      "wrong_count": "5",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Bdfghdfr"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Bdfghdfr\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-11-01",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-11-01T15:51:09.670Z"
-    },
-    {
-      "id": "ca8e1507-3156-4784-966f-0f0ca58d445c",
-      "exam_type": "AYT",
-      "subject": "Matematik",
-      "topic": null,
-      "correct_count": "6",
-      "wrong_count": "6",
-      "blank_count": "0",
-      "wrong_topics": [
-        "Ndfghjt"
-      ],
-      "wrong_topics_json": "[{\"topic\":\"Ndfghjt\",\"difficulty\":\"kolay\",\"category\":\"kavram\"}]",
-      "time_spent_minutes": null,
-      "study_date": "2025-11-01",
-      "deleted": false,
-      "deletedAt": null,
-      "archived": false,
-      "archivedAt": null,
-      "createdAt": "2025-11-01T15:51:15.618Z"
-    },
-    {
-      "id": "415ee611-80a9-41b6-9bdd-ba90e565f987",
-      "exam_type": "TYT",
-      "subject": "Türkçe",
-      "topic": null,
-      "correct_count": "15",
-      "wrong_count": "15",
+      "wrong_count": "1",
       "blank_count": "0",
       "wrong_topics": [],
       "wrong_topics_json": null,
@@ -222,7 +182,7 @@
       "deletedAt": null,
       "archived": false,
       "archivedAt": null,
-      "createdAt": "2025-11-01T16:18:14.839Z"
+      "createdAt": "2025-11-01T16:28:42.515Z"
     }
   ],
   "sinavSonuclari": [
