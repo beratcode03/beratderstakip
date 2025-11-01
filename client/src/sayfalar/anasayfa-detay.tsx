@@ -641,7 +641,7 @@ export default function Homepage() {
                   
                   {(() => {
                     const selectedDateObj = new Date(selectedDate + 'T12:00:00');
-                    const todayDateStr = getTurkeyDate();
+                    const todayDateStr = getTodayDateString();
                     
                     const isPast = selectedDate < todayDateStr;
                     const isToday = selectedDate === todayDateStr;
