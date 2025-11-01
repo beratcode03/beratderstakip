@@ -88,7 +88,7 @@ export function generateModernEmailTemplate(data: {
                 <tr>
                   <td style="padding: 40px 30px; text-align: center; background: white;">
                     <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 220px; height: auto; margin-bottom: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: block; margin-left: auto; margin-right: auto;" />
-                    <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px; line-height: 1.8; color: #1a1a1a; margin: 30px auto; max-width: 700px; font-weight: 700; font-style: italic; letter-spacing: 0.3px; border-left: 5px solid #b71c1c; padding-left: 25px; text-align: left;">
+                    <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px; line-height: 1.8; color: #1a1a1a; margin: 30px auto; max-width: 700px; font-weight: 700; font-style: italic; letter-spacing: 0.3px; text-align: center; padding: 0 25px;">
                       &ldquo;Biz her şeyi gençliğe bırakacağız. Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir.&rdquo;
                     </div>
                     <div style="color: #b71c1c; font-weight: 900; font-size: 18px; margin: 25px 0; letter-spacing: 1.2px; font-family: 'Segoe UI', Arial, sans-serif;">&mdash; Mustafa Kemal Atatürk &mdash;</div>
@@ -180,35 +180,35 @@ export function generateModernEmailTemplate(data: {
           <!-- ÇÖZÜLEN TÜM SORULAR - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 4px solid #9c27b0;">
-                <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📊 Çözülen Tüm Sorular</div>
+              <div style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); border-radius: 24px; padding: 35px; box-shadow: 0 15px 40px rgba(156, 39, 176, 0.3); border: 5px solid #9c27b0;">
+                <div style="font-size: 22px; font-weight: 900; margin-bottom: 30px; color: #6a1b9a; text-align: center; letter-spacing: 0.5px;">📊 Çözülen Tüm Sorular</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 4px solid #66bb6a; border-radius: 16px; padding: 25px 18px; text-align: center; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
-                        <div style="font-size: 13px; color: #2e7d32; margin-bottom: 12px; font-weight: 700;">✓ Doğru</div>
-                        <div style="font-size: 40px; font-weight: 900; color: #43a047;">${totalCorrect}</div>
+                      <div style="border: 5px solid #66bb6a; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%); box-shadow: 0 8px 20px rgba(102, 187, 106, 0.4);">
+                        <div style="font-size: 14px; color: #1b5e20; margin-bottom: 14px; font-weight: 800;">✓ Doğru</div>
+                        <div style="font-size: 44px; font-weight: 900; color: #2e7d32; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalCorrect}</div>
                       </div>
                     </td>
                     <td width="2%"></td>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 4px solid #ef5350; border-radius: 16px; padding: 25px 18px; text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);">
-                        <div style="font-size: 13px; color: #c62828; margin-bottom: 12px; font-weight: 700;">✗ Yanlış</div>
-                        <div style="font-size: 40px; font-weight: 900; color: #e53935;">${totalWrong}</div>
+                      <div style="border: 5px solid #ef5350; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%); box-shadow: 0 8px 20px rgba(239, 83, 80, 0.4);">
+                        <div style="font-size: 14px; color: #b71c1c; margin-bottom: 14px; font-weight: 800;">✗ Yanlış</div>
+                        <div style="font-size: 44px; font-weight: 900; color: #c62828; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalWrong}</div>
                       </div>
                     </td>
                     <td width="2%"></td>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 4px solid #ffa726; border-radius: 16px; padding: 25px 18px; text-align: center; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);">
-                        <div style="font-size: 13px; color: #e65100; margin-bottom: 12px; font-weight: 700;">○ Boş</div>
-                        <div style="font-size: 40px; font-weight: 900; color: #fb8c00;">${totalEmpty}</div>
+                      <div style="border: 5px solid #ffa726; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%); box-shadow: 0 8px 20px rgba(255, 167, 38, 0.4);">
+                        <div style="font-size: 14px; color: #e65100; margin-bottom: 14px; font-weight: 800;">○ Boş</div>
+                        <div style="font-size: 44px; font-weight: 900; color: #ef6c00; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalEmpty}</div>
                       </div>
                     </td>
                   </tr>
                 </table>
-                <div style="border: 4px solid #7c4dff; border-radius: 18px; padding: 28px; text-align: center; background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%); margin-top: 25px;">
-                  <div style="font-size: 48px; font-weight: 900; color: #6a1b9a; margin-bottom: 10px;">${successRate}%</div>
-                  <div style="font-size: 15px; color: #424242; font-weight: 700;">Başarı Oranım</div>
+                <div style="border: 5px solid #7c4dff; border-radius: 20px; padding: 32px; text-align: center; background: linear-gradient(135deg, #ede7f6 0%, #b39ddb 100%); margin-top: 28px; box-shadow: 0 10px 30px rgba(124, 77, 255, 0.4);">
+                  <div style="font-size: 52px; font-weight: 900; color: #4a148c; margin-bottom: 12px; text-shadow: 0 3px 10px rgba(0,0,0,0.2);">${successRate}%</div>
+                  <div style="font-size: 16px; color: #4a148c; font-weight: 800;">Başarı Oranım</div>
                 </div>
               </div>
             </td>
@@ -298,8 +298,8 @@ export function generateModernEmailTemplate(data: {
           ${Object.keys(branchRecords).length > 0 ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 20px; padding: 35px; border: 5px solid #ff9800; box-shadow: 0 10px 30px rgba(255, 152, 0, 0.3);">
-                <div style="font-size: 22px; font-weight: 900; color: #e65100; margin-bottom: 30px; text-align: center; letter-spacing: 0.5px;">🏆 BU AYIN REKOR BRANŞ DENEME NETLERİ</div>
+              <div style="background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%); border-radius: 20px; padding: 35px; border: 5px solid #f57c00; box-shadow: 0 10px 30px rgba(255, 152, 0, 0.4);">
+                <div style="font-size: 22px; font-weight: 900; color: #ffffff; margin-bottom: 30px; text-align: center; letter-spacing: 0.5px;">🏆 BU AYIN REKOR BRANŞ DENEME NETLERİ</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
                     ${Object.entries(branchRecords).map(([subject, record]: any, index: number) => `
@@ -390,7 +390,7 @@ export function generateModernEmailTemplate(data: {
                   }
                   
                   const getSubjectData = (subjectName: string) => {
-                    const subjectNet = examNets.find((n: any) => n.subject === subjectName);
+                    const subjectNet = examNets.find((n: any) => n.subject_name === subjectName);
                     if (subjectNet) {
                       return {
                         dogru: parseInt(subjectNet.correct_count || 0),
@@ -403,7 +403,7 @@ export function generateModernEmailTemplate(data: {
                   };
                   
                   const getWrongTopics = (subject: string) => {
-                    const subjectNet = examNets.find((n: any) => n.subject === subject);
+                    const subjectNet = examNets.find((n: any) => n.subject_name === subject);
                     if (subjectNet && subjectNet.wrong_topics_json) {
                       try {
                         const topics = JSON.parse(subjectNet.wrong_topics_json);
@@ -415,12 +415,19 @@ export function generateModernEmailTemplate(data: {
                     return [];
                   };
                   
-                  const subjectNames = ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'];
+                  // SORUN 5 ÇÖZÜMÜ: TYT için 4 ders, AYT için 4 ders (Matematik, Fizik, Kimya, Biyoloji)
+                  const examType = exam.exam_type || 'TYT';
+                  const subjectNames = examType.toUpperCase() === 'TYT' 
+                    ? ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri']
+                    : ['Matematik', 'Fizik', 'Kimya', 'Biyoloji'];
                   const subjectEmojis: any = {
                     'Türkçe': '📖',
                     'Sosyal Bilimler': '🌍', 
                     'Matematik': '🔢',
-                    'Fen Bilimleri': '🔬'
+                    'Fen Bilimleri': '🔬',
+                    'Fizik': '⚛️',
+                    'Kimya': '🧪',
+                    'Biyoloji': '🧬'
                   };
                   
                   const subjects = subjectNames.map(name => {
@@ -436,14 +443,13 @@ export function generateModernEmailTemplate(data: {
                   }).filter(s => s.dogru !== undefined);
                   
                   // Determine border color based on exam type: TYT = blue, AYT = orange
-                  const examType = exam.exam_type || 'TYT';
                   const borderColor = examType.toUpperCase() === 'TYT' ? '#2196f3' : '#ff9800';
                   
                   return `
                     <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 4px solid ${borderColor}; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
                       <div style="color: #1565c0; font-size: 22px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.3px;">${exam.exam_name}</div>
-                      <div style="color: #6c757d; font-size: 14px; margin-bottom: 24px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${examType}</div>
-                      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 32px; border-radius: 18px; font-size: 28px; font-weight: 900; text-align: center; margin: 24px 0; box-shadow: 0 10px 28px rgba(102,126,234,0.35); letter-spacing: 0.5px;">Toplam Net: ${totalNet.toFixed(2)}</div>
+                      <div style="color: #6c757d; font-size: 14px; margin-bottom: 20px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${examType}</div>
+                      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 24px; border-radius: 14px; font-size: 22px; font-weight: 800; text-align: center; margin: 20px 0; box-shadow: 0 8px 20px rgba(102,126,234,0.3); letter-spacing: 0.3px;">Toplam Net: ${totalNet.toFixed(2)}</div>
                       
                       ${subjects.map(sub => {
                         if (sub.dogru === undefined) return '';

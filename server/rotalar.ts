@@ -1868,7 +1868,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const recentExams = examResults.filter((e: any) => new Date(e.exam_date) >= last30Days);
       const recentStudy = studyHours.filter((s: any) => new Date(s.study_date) >= last30Days);
       
-      const totalQuestions = recentQuestions.reduce((sum: number, q: any) => 
+      // SORUN 1 ÇÖZÜMÜ: Tüm soru loglarını kullan (arşivlenmiş + mevcut)
+      const allQuestionLogs = [...questionLogs, ...archivedQuestions];
+      const totalQuestions = allQuestionLogs.reduce((sum: number, q: any) => 
         sum + (q.correct_count || 0) + (q.wrong_count || 0) + (q.empty_count || 0), 0
       );
       const totalStudyMinutes = recentStudy.reduce((sum: number, s: any) => 
@@ -1878,15 +1880,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate detailed statistics
       const completedTasks = tasks.filter((t: any) => t.completed).length;
       const activeTasks = tasks.filter((t: any) => !t.completed).length;
-      const totalCorrect = recentQuestions.reduce((sum: number, q: any) => sum + (q.correct_count || 0), 0);
-      const totalWrong = recentQuestions.reduce((sum: number, q: any) => sum + (q.wrong_count || 0), 0);
-      const totalEmpty = recentQuestions.reduce((sum: number, q: any) => sum + (q.empty_count || 0), 0);
       
-      // Get wrong topics and completed topics count
-      const allWrongTopics = recentQuestions.filter((q: any) => q.wrong_topics && q.wrong_topics.length > 0);
-      const wrongTopicsCount = allWrongTopics.reduce((sum: number, q: any) => sum + (q.wrong_topics?.length || 0), 0);
+      // SORUN 2 ÇÖZÜMÜ: Tüm soru loglarından doğru/yanlış/boş hesapla
+      const totalCorrect = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.correct_count || 0), 0);
+      const totalWrong = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.wrong_count || 0), 0);
+      const totalEmpty = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.empty_count || 0), 0);
       
-      const completedTopics = tasks.filter((t: any) => t.completed && t.title?.includes('konu')).length;
+      // SORUN 3 ÇÖZÜMÜ: "Eksik Olduğum Konular" - tamamlanmamış wrong_topic kategorisindeki tasklar
+      const wrongTopicsCount = tasks.filter((t: any) => t.category === 'wrong_topic' && !t.completed).length;
+      
+      // SORUN 3 ÇÖZÜMÜ: "Düzeltilen Konular" - tamamlanmış wrong_topic kategorisindeki tasklar
+      const completedTopics = tasks.filter((t: any) => t.category === 'wrong_topic' && t.completed).length;
       
       // Get longest study day
       const longestStudy = recentStudy.reduce((max: any, curr: any) => {
@@ -1901,6 +1905,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Separate general and branch exams
       const generalExams = recentExams.filter((e: any) => e.exam_scope !== 'branch');
       const branchExams = recentExams.filter((e: any) => e.exam_scope === 'branch');
+      
+      // SORUN 5 ÇÖZÜMÜ: TYT ve AYT genel denemelerini ayır ve sırala
+      const tytGeneralExams = generalExams.filter((e: any) => e.exam_type === 'TYT');
+      const aytGeneralExams = generalExams.filter((e: any) => e.exam_type === 'AYT');
+      // TYT önce, sonra AYT gelecek şekilde sırala
+      const sortedGeneralExams = [...tytGeneralExams, ...aytGeneralExams];
       
       // Calculate TYT and AYT record nets from examSubjectNets data
       let maxTytNet = { net: 0, exam_name: '', exam_date: '' };
@@ -2111,7 +2121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalEmpty,
         successRate,
         recentExams,
-        generalExams,
+        generalExams: sortedGeneralExams,  // SORUN 5 ÇÖZÜMÜ: Sıralanmış TYT+AYT denemelerini gönder
         branchExams,
         tasks,
         completedTasks,
