@@ -65,21 +65,24 @@ export function generateModernEmailTemplate(data: {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Aylık Çalışma Raporum</title>
     </head>
-    <body style="margin: 0; padding: 40px 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5;">
+    <body style="margin: 0; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       
-      <!-- Ana Konteyner - Gradient dış border ile -->
-      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.3); border: 20px solid; border-image: linear-gradient(135deg, #e91e63 0%, #9c27b0 20%, #673ab7 40%, #2196f3 60%, #4caf50 80%, #ab47bc 100%) 1;">
+      <!-- Ana Konteyner - Hafif gradient border -->
+      <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,0.4); padding: 14px; background: linear-gradient(135deg, rgba(233, 30, 99, 0.6) 0%, rgba(156, 39, 176, 0.6) 25%, rgba(103, 58, 183, 0.6) 50%, rgba(33, 150, 243, 0.6) 75%, rgba(76, 175, 80, 0.6) 100%);">
+        <div style="background: white; border-radius: 12px; overflow: hidden;">
         
-        <!-- ATATÜRK SECTION - Gradient çerçeve ile -->
+        <!-- ATATÜRK SECTION - Ayrı çerçeve -->
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="background: linear-gradient(135deg, #e91e63 0%, #9c27b0 20%, #673ab7 40%, #2196f3 60%, #4caf50 80%, #ab47bc 100%); padding: 16px;">
-              <div style="background: white; border-radius: 16px; padding: 40px 30px; text-align: center;">
-                <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-                <div style="font-family: 'Georgia', serif; font-style: italic; font-size: 17px; line-height: 1.8; color: #2c3e50; margin: 20px auto; max-width: 650px; font-weight: 700;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
-                <div style="color: #c62828; font-weight: 900; font-size: 16px; margin: 20px 0; letter-spacing: 1.5px; font-family: 'Arial Black', sans-serif;">- Mustafa Kemal Atatürk -</div>
-                <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
-                <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 4px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+            <td style="padding: 30px; background: white;">
+              <div style="background: linear-gradient(135deg, rgba(233, 30, 99, 0.6) 0%, rgba(156, 39, 176, 0.6) 25%, rgba(103, 58, 183, 0.6) 50%, rgba(33, 150, 243, 0.6) 75%, rgba(76, 175, 80, 0.6) 100%); padding: 14px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                <div style="background: white; border-radius: 12px; padding: 40px 30px; text-align: center;">
+                  <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
+                  <div style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-style: italic; font-size: 22px; line-height: 1.8; color: #1a1a1a; margin: 20px auto; max-width: 650px; font-weight: 900;">"Biz her şeyi gençliğe bırakacağız... Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."</div>
+                  <div style="color: #b71c1c; font-weight: 900; font-size: 18px; margin: 20px 0; letter-spacing: 2px; font-family: Impact, 'Arial Black', sans-serif;">- Mustafa Kemal Atatürk -</div>
+                  <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
+                  <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 5px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+                </div>
               </div>
             </td>
           </tr>
@@ -96,10 +99,8 @@ export function generateModernEmailTemplate(data: {
           <!-- Otomatik/Manuel Oluşturulma Bilgisi -->
           <tr>
             <td style="background: white; padding: 0 30px 20px; text-align: center;">
-              <div style="background: linear-gradient(135deg, #9c27b0 0%, #ab47bc 100%); color: white; padding: 15px 25px; border-radius: 12px; font-size: 14px; font-weight: 600; display: inline-block; box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">
+              <div style="background: linear-gradient(135deg, #8e24aa 0%, #ab47bc 100%); color: white; padding: 15px 25px; border-radius: 16px; font-size: 14px; font-weight: 700; display: inline-block; box-shadow: 0 6px 20px rgba(142, 36, 170, 0.4);">
                 🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}
-                <br/>
-                🇹🇷 Berat Cankır Kişisel Analiz Sistemi
               </div>
             </td>
           </tr>
@@ -236,41 +237,68 @@ export function generateModernEmailTemplate(data: {
             </td>
           </tr>
           
-          <!-- BU AYIN REKOR NETLERİ - Gerçek Veriler -->
-          ${(generalExams.length > 0 || Object.keys(branchRecords).length > 0) ? `
+          <!-- BU AYIN REKOR GENEL DENEME NETLERİ -->
+          ${generalExams.length > 0 ? `
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 20px; padding: 30px; border: 4px solid #2196f3; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
-                <div style="font-size: 20px; font-weight: 800; color: #1565c0; margin-bottom: 25px; text-align: center;">🏆 BU AYIN REKOR DENEME NETLERİ</div>
+              <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 20px; padding: 35px; border: 5px solid #2196f3; box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);">
+                <div style="font-size: 22px; font-weight: 900; color: #1565c0; margin-bottom: 30px; text-align: center; letter-spacing: 0.5px;">🏆 BU AYIN REKOR GENEL DENEME NETLERİ</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
-                    ${generalExams.length > 0 ? `
                     <td width="49%" style="vertical-align: top;">
-                      <div style="border: 4px solid #ab47bc; border-radius: 16px; padding: 25px; text-align: center; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        <div style="font-size: 14px; color: #6a1b9a; margin-bottom: 12px; font-weight: 700;">🏆 TYT Rekor Net</div>
-                        <div style="font-size: 44px; font-weight: 900; color: #8e24aa;">${maxTytNet}</div>
+                      <div style="border: 5px solid #ab47bc; border-radius: 18px; padding: 30px 25px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(171, 71, 188, 0.3);">
+                        <div style="font-size: 15px; color: #6a1b9a; margin-bottom: 15px; font-weight: 800;">🏆 TYT Rekor Net</div>
+                        <div style="font-size: 56px; font-weight: 900; color: #8e24aa;">${maxTytNet}</div>
                       </div>
                     </td>
-                    ` : ''}
-                    ${Object.keys(branchRecords).length > 0 && generalExams.length > 0 ? '<td width="2%"></td>' : ''}
-                    ${Object.keys(branchRecords).length > 0 ? Object.entries(branchRecords).slice(0, 1).map(([subject, record]: any) => `
-                    <td width="${generalExams.length > 0 ? '49%' : '100%'}" style="vertical-align: top;">
-                      <div style="border: 4px solid #ef5350; border-radius: 16px; padding: 25px; text-align: center; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        <div style="font-size: 14px; color: #c62828; margin-bottom: 12px; font-weight: 700;">🏆 ${subject} Rekor Net</div>
-                        <div style="font-size: 44px; font-weight: 900; color: #e53935;">${record.net}</div>
+                    <td width="2%"></td>
+                    <td width="49%" style="vertical-align: top;">
+                      <div style="border: 5px solid #ef5350; border-radius: 18px; padding: 30px 25px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(239, 83, 80, 0.3);">
+                        <div style="font-size: 15px; color: #c62828; margin-bottom: 15px; font-weight: 800;">🏆 AYT Rekor Net</div>
+                        <div style="font-size: 56px; font-weight: 900; color: #e53935;">${Object.keys(branchRecords).length > 0 ? (Object.values(branchRecords)[0] as any).net : '0.00'}</div>
                       </div>
                     </td>
-                    `).join('') : ''}
                   </tr>
                 </table>
-                ${mostQuestionsDate ? `
-                <div style="background: white; border: 4px solid #ffa726; border-radius: 16px; padding: 25px; text-align: center; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                  <div style="font-size: 14px; color: #e65100; margin-bottom: 12px; font-weight: 700;">🗓️ EN ÇOK SORU ÇÖZÜLEN TARİH</div>
-                  <div style="font-size: 16px; color: #424242; font-weight: 600; margin-bottom: 10px;">${mostQuestionsDate}</div>
-                  <div style="font-size: 40px; color: #f57c00; font-weight: 900; margin-bottom: 5px;">${mostQuestionsCount}</div>
-                  <div style="font-size: 13px; color: #666; font-weight: 500;">soru çözdüm</div>
-                </div>
-                ` : ''}
+              </div>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- BU AYIN REKOR BRANŞ DENEME NETLERİ -->
+          ${Object.keys(branchRecords).length > 0 ? `
+          <tr>
+            <td style="padding: 30px; background: #fafafa;">
+              <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 20px; padding: 35px; border: 5px solid #ff9800; box-shadow: 0 10px 30px rgba(255, 152, 0, 0.3);">
+                <div style="font-size: 22px; font-weight: 900; color: #e65100; margin-bottom: 30px; text-align: center; letter-spacing: 0.5px;">🏆 BU AYIN REKOR BRANŞ DENEME NETLERİ</div>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    ${Object.entries(branchRecords).map(([subject, record]: any, index: number) => `
+                      ${index > 0 ? '<td width="2%"></td>' : ''}
+                      <td width="${Math.floor(98 / Object.keys(branchRecords).length)}%" style="vertical-align: top;">
+                        <div style="border: 5px solid ${index % 3 === 0 ? '#7c4dff' : index % 3 === 1 ? '#26a69a' : '#ec407a'}; border-radius: 18px; padding: 30px 20px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+                          <div style="font-size: 14px; color: #424242; margin-bottom: 12px; font-weight: 800;">🏆 ${subject}</div>
+                          <div style="font-size: 48px; font-weight: 900; color: ${index % 3 === 0 ? '#6a1b9a' : index % 3 === 1 ? '#00897b' : '#d81b60'};">${record.net}</div>
+                          <div style="font-size: 11px; color: #9e9e9e; margin-top: 8px; font-weight: 600;">${new Date(record.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</div>
+                        </div>
+                      </td>
+                    `).join('')}
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- EN ÇOK SORU ÇÖZÜLEN TARİH -->
+          ${mostQuestionsDate ? `
+          <tr>
+            <td style="padding: 30px; background: #fafafa;">
+              <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 5px solid #ffc107; border-radius: 20px; padding: 35px; text-align: center; box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);">
+                <div style="font-size: 16px; color: #e65100; margin-bottom: 15px; font-weight: 800; letter-spacing: 0.5px;">🗓️ EN ÇOK SORU ÇÖZÜLEN TARİH</div>
+                <div style="font-size: 18px; color: #424242; font-weight: 700; margin-bottom: 15px;">${mostQuestionsDate}</div>
+                <div style="font-size: 64px; color: #f57c00; font-weight: 900; margin: 15px 0;">${mostQuestionsCount}</div>
+                <div style="font-size: 15px; color: #666; font-weight: 600;">soru çözdüm</div>
               </div>
             </td>
           </tr>
@@ -557,15 +585,16 @@ export function generateModernEmailTemplate(data: {
           
           <!-- FOOTER - KUTU İÇİNDE -->
           <tr>
-            <td style="background: #fafafa; padding: 30px;">
-              <div style="background: linear-gradient(135deg, #9c27b0 0%, #ab47bc 100%); border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 8px 25px rgba(156, 39, 176, 0.3);">
-                <div style="color: white; font-size: 14px; font-weight: 700; margin-bottom: 8px;">🚀 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} - ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}</div>
-                <div style="color: rgba(255,255,255,0.95); font-size: 13px; font-weight: 600;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
+            <td style="background: white; padding: 30px;">
+              <div style="background: linear-gradient(135deg, #8e24aa 0%, #ab47bc 100%); border-radius: 18px; padding: 28px; text-align: center; box-shadow: 0 10px 30px rgba(142, 36, 170, 0.4);">
+                <div style="color: white; font-size: 15px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;">🚀 ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}</div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 600;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
               </div>
             </td>
           </tr>
           
         </table>
+        </div>
       </div>
     </body>
     </html>
