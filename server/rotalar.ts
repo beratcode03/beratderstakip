@@ -1964,23 +1964,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate success rate for all questions
       const successRate = totalQuestions > 0 ? ((totalCorrect / totalQuestions) * 100).toFixed(1) : '0.0';
       
-      // Activity-based motivation messages (1-3, 3-6, 6-9, 9-13+)
+      // Activity-based motivation messages (1-3, 4-6, 7-9, 10-13+)
       const totalActivities = tasks.length;
       let activityMotivation = '';
       let activityColor = '';
       
       if (totalActivities >= 1 && totalActivities <= 3) {
-        activityMotivation = '🌱 Başlangıç seviyesi! Daha fazla aktivite ekleyerek hedefinize daha hızlı ulaşabilirsiniz!';
+        activityMotivation = '🌱 Harika bir başlangıç! Her adım seni hedefe yaklaştırıyor. Daha fazla aktivite ile momentumunu arttır!';
         activityColor = '#ff9800';
       } else if (totalActivities >= 4 && totalActivities <= 6) {
-        activityMotivation = '💪 İyi gidiyorsunuz! Bu momentum devam ederse harika sonuçlar alacaksınız!';
+        activityMotivation = '💪 Çok iyi gidiyorsun! Düzenli çalışman başarının temelidir. Bu temponu koru ve hedefe odaklan!';
         activityColor = '#ffa726';
       } else if (totalActivities >= 7 && totalActivities <= 9) {
-        activityMotivation = '🔥 Çok disiplinli çalışıyorsunuz! Hedefinize yaklaşıyorsunuz!';
+        activityMotivation = '🔥 Muhteşem bir performans sergiliyorsun! Disiplinin ve çalışma azminn takdire şayan. Başarı çok yakın!';
         activityColor = '#66bb6a';
-      } else if (totalActivities >= 10) {
-        activityMotivation = '🏆 Mükemmel! Bu çalışma temposu ile başarı kaçınılmaz!';
+      } else if (totalActivities >= 10 && totalActivities <= 13) {
+        activityMotivation = '🏆 Olağanüstü! Bu efsane çalışma temposu ile hayallerindeki üniversite seninle gurur duyacak!';
         activityColor = '#43a047';
+      } else if (totalActivities > 13) {
+        activityMotivation = '⚡ İnanılmaz! Sen bir çalışma makinesinin! Bu azminle hiçbir hedef sana uzak değil. Tebrikler şampiyon!';
+        activityColor = '#2e7d32';
       } else {
         activityMotivation = '📚 Aktivite ekleyerek başlayın!';
         activityColor = '#9e9e9e';
@@ -2147,7 +2150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await transporter.sendMail({
           from: `"YKS Çalışma Takip" <${emailFrom || emailUser}>`,
           to: toEmails,
-          subject: `📊 Aylık İlerleme Raporu - ${new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
+          subject: "Aylık Çalışma Raporum",
           html: htmlContent,
           attachments
         });
