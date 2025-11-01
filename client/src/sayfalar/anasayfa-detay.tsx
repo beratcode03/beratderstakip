@@ -397,37 +397,17 @@ export default function Homepage() {
     setSelectedDate(dateStr);
   };
 
-  // Pazar 23:59 geri sayım (Turkey timezone)
+  // Ayın sonu geri sayım (Turkey timezone)
   useEffect(() => {
-    let hasTriggeredEmail = false;
-    
     const updateCountdown = () => {
       const now = new Date();
       const turkeyTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
       
-      const currentDay = turkeyTime.getDay();
-      let daysUntilSunday: number;
+      // Ayın son günü 23:59:59
+      const endOfMonth = new Date(turkeyTime.getFullYear(), turkeyTime.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
       
-      if (currentDay === 0) {
-        const targetTime = new Date(turkeyTime);
-        targetTime.setHours(23, 59, 0, 0);
-        daysUntilSunday = turkeyTime < targetTime ? 0 : 7;
-      } else {
-        daysUntilSunday = 7 - currentDay;
-      }
-      
-      const nextSunday = new Date(turkeyTime);
-      nextSunday.setDate(nextSunday.getDate() + daysUntilSunday);
-      nextSunday.setHours(23, 59, 0, 0);
-      
-      const diff = nextSunday.getTime() - turkeyTime.getTime();
-      
-      if (diff <= 0 && !hasTriggeredEmail) {
-        hasTriggeredEmail = true;
-        if (isReportButtonUnlocked) {
-          sendReportMutation.mutate();
-        }
-      }
+      const diff = endOfMonth.getTime() - turkeyTime.getTime();
       
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -444,7 +424,7 @@ export default function Homepage() {
     const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, [isReportButtonUnlocked, sendReportMutation]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">

@@ -27,6 +27,13 @@ export function generateModernEmailTemplate(data: {
   completedQuestionsHistory: any[];
   isManualRequest: boolean;
 }) {
+  // Calculate days until end of month
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+  const daysUntilEndOfMonth = Math.ceil((lastDayOfMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
   const {
     totalQuestions,
     totalCorrect,
