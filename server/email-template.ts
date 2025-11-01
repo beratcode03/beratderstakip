@@ -217,7 +217,7 @@ export function generateModernEmailTemplate(data: {
           <!-- ÖZEL İSTATİSTİKLER - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 2px solid #9c27b0;">
                 <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📊 ÖZEL İSTATİSTİKLER</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
@@ -378,7 +378,7 @@ export function generateModernEmailTemplate(data: {
             <td style="padding: 30px; background: #fafafa;">
               <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
                 <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📋 DENEME DETAYLARI - Genel Denemeler</div>
-                ${generalExams.slice(0, 5).map((exam: any) => {
+                ${generalExams.slice(0, 5).map((exam: any, examIndex: number) => {
                   const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
                   
                   // Calculate total net from examSubjectNets or fallback to tyt_net
@@ -444,6 +444,21 @@ export function generateModernEmailTemplate(data: {
                   
                   // Determine border color based on exam type: TYT = blue, AYT = orange
                   const borderColor = examType.toUpperCase() === 'TYT' ? '#2196f3' : '#ff9800';
+                  
+                  // Show full details for first 3 exams, summary only for exams 4-5
+                  const showFullDetails = examIndex < 3;
+                  
+                  // For summary view: just show exam name, date, and total net
+                  if (!showFullDetails) {
+                    return `
+                      <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 3px solid ${borderColor}; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                        <div style="color: #1565c0; font-size: 18px; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.3px;">${exam.exam_name}</div>
+                        <div style="color: #6c757d; font-size: 13px; margin-bottom: 12px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${examType}</div>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 16px; border-radius: 10px; font-size: 17px; font-weight: 800; text-align: center; box-shadow: 0 4px 12px rgba(102,126,234,0.25);">Toplam Net: ${totalNet.toFixed(2)}</div>
+                        <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #9e9e9e; font-style: italic;">Detaylar için tam raporu inceleyin</div>
+                      </div>
+                    `;
+                  }
                   
                   return `
                     <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 4px solid ${borderColor}; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
