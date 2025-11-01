@@ -1,5 +1,9 @@
 # BERAT CANKIR YKS ANALİZ TAKİP SİSTEMİ - TEKNİK MİMARİ VE DOKÜMANTASYON
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron](./kod_aciklamasi_electron1.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Berat Cankır YKS Analiz Takip Sistemi'nin teknik mimarisini, teknoloji seçimlerini ve proje yapısını en detaylı şekilde açıklar. Her terim somutlaştırılarak, İngilizce kavramlar Türkçe karşılıklarıyla birlikte açıklanmıştır.

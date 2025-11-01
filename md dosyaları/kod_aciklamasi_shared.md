@@ -1,5 +1,9 @@
 # SHARED/SEMA.TS - EN DETAYLI KOD AÇIKLAMASI
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Teknik Mimari](./teknik_mimari.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Electron](./kod_aciklamasi_electron1.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, paylaşılan veri şemasının (`shared/sema.ts`) tüm kodunu **satır satır** açıklar. Her İngilizce terim Türkçe karşılığıyla somutlaştırılmıştır.

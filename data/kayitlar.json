@@ -89,6 +89,24 @@
       "recurrenceType": "none",
       "recurrenceEndDate": null,
       "createdAt": "2025-11-01T10:10:01.133Z"
+    },
+    {
+      "id": "09febe88-3d2b-4fae-a0bf-fa581111a1d0",
+      "title": "b",
+      "description": "bbb",
+      "priority": "medium",
+      "category": "genel",
+      "color": "#8B5CF6",
+      "completed": false,
+      "completedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T12:03:15.403Z",
+      "dueDate": "2025-10-30",
+      "recurrenceType": "none",
+      "recurrenceEndDate": null,
+      "createdAt": "2025-11-01T12:03:04.604Z"
     }
   ],
   "ruhHalleri": [],
@@ -638,8 +656,8 @@
       "hours": 3,
       "minutes": 66,
       "seconds": 0,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T11:59:31.325Z",
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-10-31T20:18:56.861Z"
@@ -655,6 +673,18 @@
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-11-01T11:08:29.075Z"
+    },
+    {
+      "id": "f42ecfed-3ef8-48f9-b993-8a75a2ff8f36",
+      "study_date": "2025-10-30",
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0,
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-11-01T11:59:36.511Z"
     }
   ]
 }

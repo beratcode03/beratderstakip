@@ -1,5 +1,23 @@
 # Berat Cankır YKS Analiz Takip Sistemi
 
+**📑 Hızlı Navigasyon:** [Proje Özeti](#proje-özeti) | [Temel Özellikler](#temel-özellikler) | [Teknik Yapı](#teknik-yapı) | [Veritabanı](#veritabanı) | [Geliştirme](#geliştirme) | [Deployment](#deployment-replit) | [Son Değişiklikler](#son-değişiklikler)
+
+**📚 Detaylı Dokümantasyon:**
+- [Test ve Kullanım Talimatları](./TESTING.md)
+- [Talimatlar ve Teknik Rehber](./md%20dosyaları/talimatlar.md)
+- [Teknik Mimari ve Dokümantasyon](./md%20dosyaları/teknik_mimari.md)
+- **Kod Açıklamaları:**
+  - [Client Tarafı Kod Açıklaması](./md%20dosyaları/kod_aciklamasi_client.md)
+  - [Server Tarafı Kod Açıklaması](./md%20dosyaları/kod_aciklamasi_server.md)
+  - [Shared/Schema Kod Açıklaması](./md%20dosyaları/kod_aciklamasi_shared.md)
+  - [Electron Main Kod Açıklaması](./md%20dosyaları/kod_aciklamasi_electron1.md)
+  - [Electron Activity Logger](./md%20dosyaları/kod_aciklamasi_electron_activity.md)
+  - [Electron Preload](./md%20dosyaları/kod_aciklamasi_electron_preload.md)
+  - [Kök Dizin Dosyaları](./md%20dosyaları/kod_aciklamasi_kok_dizin.md)
+  - [Test Dosyaları](./md%20dosyaları/kod_aciklamasi_testler.md)
+
+---
+
 ## Proje Özeti
 YKS (Yükseköğretim Kurumları Sınavı) hazırlanan öğrenciler için geliştirilmiş kapsamlı bir takip ve analiz sistemi. Web tabanlı uygulama olarak çalışır ve isteğe bağlı olarak Electron ile masaüstü uygulaması olarak da paketlenebilir.
 

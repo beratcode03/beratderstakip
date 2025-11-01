@@ -40,6 +40,10 @@ export function Sidebar() {
   const { data: examResults = [] } = useQuery<any[]>({
     queryKey: ["/api/exam-results"],
   });
+  
+  const { data: studyHours = [] } = useQuery<any[]>({
+    queryKey: ["/api/study-hours"],
+  });
 
   // Real-time clock state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -69,69 +73,114 @@ export function Sidebar() {
   // Heatmap için aktif ve arşivlenmiş tüm görevleri birleştir
   const allTasksForHeatmap = React.useMemo(() => [...tasks, ...archivedTasks], [tasks, archivedTasks]);
 
+  // Yerel saat dilimine göre tarih formatla (UTC sorununu çöz)
+  const formatLocalDate = (dateStr: string | Date) => {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Zaman dilimi sorunlarını önlemek ve performansı artırmak için yerel tarihleri kullanarak özet ön hesaplama etkinlik haritasını geliştir, İstatistikler - 2x2 Izgara Düzeni
   const activityMap = React.useMemo(() => {
-    const map = new Map<string, { hasCreated: boolean; hasCompleted: boolean }>();
+    const map = new Map<string, { hasCreated: boolean; hasCompleted: boolean; hasActivity: boolean }>();
     
     allTasksForHeatmap.forEach(task => {
       // Yerel tarih biçimini kullanarak görev oluşturma tarihini işleyin
       if (task.createdAt) {
-        const createdDate = new Date(task.createdAt).toLocaleDateString('en-CA'); // YYYY-AA-GG format
-        const existing = map.get(createdDate) || { hasCreated: false, hasCompleted: false };
-        map.set(createdDate, { ...existing, hasCreated: true });
+        const createdDate = formatLocalDate(task.createdAt);
+        const existing = map.get(createdDate) || { hasCreated: false, hasCompleted: false, hasActivity: false };
+        map.set(createdDate, { ...existing, hasCreated: true, hasActivity: true });
       }
       
       // Yerel tarih biçimini kullanarak görev tamamlama tarihini işleyin
       if (task.completed && task.completedAt) {
-        const completedDate = new Date(task.completedAt).toLocaleDateString('en-CA'); // YYYY-AA-GG format
-        const existing = map.get(completedDate) || { hasCreated: false, hasCompleted: false };
-        map.set(completedDate, { ...existing, hasCompleted: true });
+        const completedDate = formatLocalDate(task.completedAt);
+        const existing = map.get(completedDate) || { hasCreated: false, hasCompleted: false, hasActivity: false };
+        map.set(completedDate, { ...existing, hasCompleted: true, hasActivity: true });
+      }
+    });
+    
+    // Soru loglarını ekle
+    questionLogs.forEach((log: any) => {
+      if (log.study_date) {
+        const dateStr = formatLocalDate(log.study_date);
+        const existing = map.get(dateStr) || { hasCreated: false, hasCompleted: false, hasActivity: false };
+        map.set(dateStr, { ...existing, hasActivity: true });
+      }
+    });
+    
+    // Sınav sonuçlarını ekle
+    examResults.forEach((exam: any) => {
+      if (exam.exam_date) {
+        const dateStr = formatLocalDate(exam.exam_date);
+        const existing = map.get(dateStr) || { hasCreated: false, hasCompleted: false, hasActivity: false };
+        map.set(dateStr, { ...existing, hasActivity: true });
+      }
+    });
+    
+    // Çalışma saatlerini ekle
+    studyHours.forEach((sh: any) => {
+      if (sh.study_date) {
+        const dateStr = formatLocalDate(sh.study_date);
+        const existing = map.get(dateStr) || { hasCreated: false, hasCompleted: false, hasActivity: false };
+        map.set(dateStr, { ...existing, hasActivity: true });
       }
     });
     
     return map;
-  }, [allTasksForHeatmap]);
+  }, [allTasksForHeatmap, questionLogs, examResults, studyHours]);
 
   // Bir tarih için etkinlik türünü alma işlevi (O(1) arama)
-  const getActivityType = (date: Date): 'created' | 'completed' | 'both' | 'none' => {
-    const dateStr = date.toLocaleDateString('en-CA'); // YYYY-AA-GG format local
+  const getActivityType = (date: Date): 'created' | 'completed' | 'both' | 'activity' | 'none' => {
+    const dateStr = formatLocalDate(date);
     const activity = activityMap.get(dateStr);
     
-    if (!activity) return 'none';
+    if (!activity || !activity.hasActivity) return 'none';
     if (activity.hasCreated && activity.hasCompleted) return 'both';
     if (activity.hasCompleted) return 'completed';
     if (activity.hasCreated) return 'created';
-    return 'none';
+    return 'activity';
   };
   
   // Belirli bir tarihteki görevleri getir - Arşivlenmemiş görevleri göster
   const getTasksForDate = (date: Date) => {
-    const dateStr = date.toLocaleDateString('en-CA');
+    const dateStr = formatLocalDate(date);
     return allTasksForHeatmap.filter(task => {
       // Arşivlenmiş görevleri hariç tut
       if (task.archived) return false;
       
-      const createdDateStr = task.createdAt ? new Date(task.createdAt).toLocaleDateString('en-CA') : null;
-      const completedDateStr = task.completed && task.completedAt ? new Date(task.completedAt).toLocaleDateString('en-CA') : null;
+      const createdDateStr = task.createdAt ? formatLocalDate(task.createdAt) : null;
+      const completedDateStr = task.completed && task.completedAt ? formatLocalDate(task.completedAt) : null;
       return createdDateStr === dateStr || completedDateStr === dateStr;
     });
   };
   
   // Belirli bir tarihteki soru çözme bilgilerini getir
   const getQuestionLogsForDate = (date: Date) => {
-    const dateStr = date.toLocaleDateString('en-CA');
+    const dateStr = formatLocalDate(date);
     return questionLogs.filter((log: any) => {
-      const logDateStr = log.study_date ? new Date(log.study_date).toLocaleDateString('en-CA') : null;
+      const logDateStr = log.study_date ? formatLocalDate(log.study_date) : null;
       return logDateStr === dateStr;
     });
   };
   
   // Belirli bir tarihteki sınav sonuçlarını getir
   const getExamResultsForDate = (date: Date) => {
-    const dateStr = date.toLocaleDateString('en-CA');
+    const dateStr = formatLocalDate(date);
     return examResults.filter((exam: any) => {
-      const examDateStr = exam.exam_date ? new Date(exam.exam_date).toLocaleDateString('en-CA') : null;
+      const examDateStr = exam.exam_date ? formatLocalDate(exam.exam_date) : null;
       return examDateStr === dateStr;
+    });
+  };
+  
+  // Belirli bir tarihteki çalışma saatlerini getir
+  const getStudyHoursForDate = (date: Date) => {
+    const dateStr = formatLocalDate(date);
+    return studyHours.filter((sh: any) => {
+      const studyDateStr = sh.study_date ? formatLocalDate(sh.study_date) : null;
+      return studyDateStr === dateStr;
     });
   };
   
@@ -242,21 +291,21 @@ export function Sidebar() {
           <div className="text-center text-muted-foreground p-1">C</div>
           <div className="text-center text-muted-foreground p-1">C</div>
           <div className="text-center text-muted-foreground p-1">P</div>
-          {calendarDays.slice(0, 28).map((date, index) => {
+          {calendarDays.map((date, index) => {
             const isCurrentMonth = date.getMonth() === month;
-            const isToday = date.getDate() === currentDay && isCurrentMonth;
+            const isToday = date.getDate() === currentDay && isCurrentMonth && date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear();
             const activityType = getActivityType(date);
             
             return (
               <div
-                key={index}
+                key={`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}
                 onClick={() => handleDayClick(date, activityType)}
-                className={`text-center p-1 relative ${
+                className={`text-center p-1 relative bg-transparent ${
                   isToday
                     ? "bg-primary text-primary-foreground rounded"
                     : isCurrentMonth
                     ? `hover:bg-secondary rounded ${activityType !== 'none' ? 'cursor-pointer' : ''}`
-                    : "text-muted-foreground/50"
+                    : "text-muted-foreground/30 opacity-50"
                 }`}
               >
                 {date.getDate()}
@@ -273,6 +322,9 @@ export function Sidebar() {
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                       </>
+                    )}
+                    {activityType === 'activity' && (
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
                   </div>
                 )}
@@ -399,115 +451,156 @@ export function Sidebar() {
               </div>
             )}
             
-            {selectedDate && getTasksForDate(selectedDate).length > 0 ? (
-              <div className="space-y-3">
-                {getTasksForDate(selectedDate).map((task) => (
-                  <div
-                    key={task.id}
-                    className="p-4 bg-secondary/30 rounded-lg border border-border hover:bg-secondary/50 transition-colors"
-                    style={{ borderLeftColor: task.color, borderLeftWidth: '4px' }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-foreground mb-1">{task.title}</h4>
-                        {task.description && (
-                          <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span className="px-2 py-1 bg-primary/10 text-primary rounded-md font-medium">
-                            {getCategoryName(task.category)}
-                          </span>
-                          {task.completed && task.completedAt && (
-                            <span className="text-green-600 font-medium">✓ Tamamlandı</span>
-                          )}
-                        </div>
+            {/* Çalışma Saatleri Özeti */}
+            {selectedDate && getStudyHoursForDate(selectedDate).length > 0 && (
+              <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                <h4 className="font-semibold text-green-900 dark:text-green-100 mb-3 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Çalışma Saatleri
+                </h4>
+                <div className="space-y-2">
+                  {getStudyHoursForDate(selectedDate).map((sh: any, index: number) => (
+                    <div key={index} className="text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-700 dark:text-green-300">
+                          {sh.subject || 'Genel'}
+                        </span>
+                        <span className="text-green-600 dark:text-green-400 font-bold">
+                          {sh.hours || 0} saat
+                        </span>
                       </div>
-                      
-                      {/* + Butonu - Görev Detayları */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button 
-                            className="flex-shrink-0 p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
-                            data-testid={`button-calendar-task-details-${task.id}`}
-                          >
-                            <Plus className="h-5 w-5" />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80" align="end">
-                          <div className="space-y-3">
-                            <div>
-                              <h4 className="font-semibold text-foreground mb-1">{task.title}</h4>
-                              {task.description && (
-                                <p className="text-sm text-muted-foreground">{task.description}</p>
-                              )}
-                            </div>
-                            
-                            <div className="space-y-2 text-sm">
-                              <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Ders:</span>
-                                <span className="font-medium text-foreground">{getCategoryName(task.category)}</span>
-                              </div>
-                              
-                              <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Öncelik:</span>
-                                <span className={`font-medium ${
-                                  task.priority === 'high' 
-                                    ? 'text-red-600 dark:text-red-400'
-                                    : task.priority === 'medium'
-                                    ? 'text-yellow-600 dark:text-yellow-400'
-                                    : 'text-gray-600 dark:text-gray-400'
-                                }`}>
-                                  {task.priority === 'high' ? 'Yüksek' : task.priority === 'medium' ? 'Orta' : 'Düşük'}
-                                </span>
-                              </div>
-                              
-                              {task.dueDate && (
-                                <div className="flex items-center justify-between">
-                                  <span className="text-muted-foreground">Bitiş Tarihi:</span>
-                                  <span className="font-medium text-foreground">
-                                    {new Date(task.dueDate).toLocaleDateString('tr-TR', {
-                                      day: 'numeric',
-                                      month: 'long',
-                                      year: 'numeric'
-                                    })}
-                                  </span>
-                                </div>
-                              )}
-                              
-                              <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Oluşturulma:</span>
-                                <span className="font-medium text-foreground">
-                                  {new Date(task.createdAt).toLocaleDateString('tr-TR', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
-                                  })}
-                                </span>
-                              </div>
-                              
-                              {task.completed && task.completedAt && (
-                                <div className="flex items-center justify-between">
-                                  <span className="text-muted-foreground">Tamamlanma:</span>
-                                  <span className="font-medium text-green-600 dark:text-green-400">
-                                    {new Date(task.completedAt).toLocaleDateString('tr-TR', {
-                                      day: 'numeric',
-                                      month: 'long',
-                                      year: 'numeric'
-                                    })}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                    </div>
+                  ))}
+                  <div className="pt-2 border-t border-green-300 dark:border-green-700">
+                    <div className="flex justify-between font-bold text-green-900 dark:text-green-100">
+                      <span>Toplam:</span>
+                      <span>
+                        {getStudyHoursForDate(selectedDate).reduce((sum: number, sh: any) => {
+                          return sum + (parseFloat(sh.hours) || 0);
+                        }, 0).toFixed(1)} saat
+                      </span>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
+            )}
+            
+            {selectedDate && (
+              getTasksForDate(selectedDate).length > 0 ||
+              getQuestionLogsForDate(selectedDate).length > 0 ||
+              getExamResultsForDate(selectedDate).length > 0 ||
+              getStudyHoursForDate(selectedDate).length > 0
+            ) ? (
+              getTasksForDate(selectedDate).length > 0 && (
+                <div className="space-y-3">
+                  {getTasksForDate(selectedDate).map((task) => (
+                    <div
+                      key={task.id}
+                      className="p-4 bg-secondary/30 rounded-lg border border-border hover:bg-secondary/50 transition-colors"
+                      style={{ borderLeftColor: task.color, borderLeftWidth: '4px' }}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-foreground mb-1">{task.title}</h4>
+                          {task.description && (
+                            <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
+                          )}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span className="px-2 py-1 bg-primary/10 text-primary rounded-md font-medium">
+                              {getCategoryName(task.category)}
+                            </span>
+                            {task.completed && task.completedAt && (
+                              <span className="text-green-600 font-medium">✓ Tamamlandı</span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* + Butonu - Görev Detayları */}
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button 
+                              className="flex-shrink-0 p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
+                              data-testid={`button-calendar-task-details-${task.id}`}
+                            >
+                              <Plus className="h-5 w-5" />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80" align="end">
+                            <div className="space-y-3">
+                              <div>
+                                <h4 className="font-semibold text-foreground mb-1">{task.title}</h4>
+                                {task.description && (
+                                  <p className="text-sm text-muted-foreground">{task.description}</p>
+                                )}
+                              </div>
+                              
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-muted-foreground">Ders:</span>
+                                  <span className="font-medium text-foreground">{getCategoryName(task.category)}</span>
+                                </div>
+                                
+                                <div className="flex items-center justify-between">
+                                  <span className="text-muted-foreground">Öncelik:</span>
+                                  <span className={`font-medium ${
+                                    task.priority === 'high' 
+                                      ? 'text-red-600 dark:text-red-400'
+                                      : task.priority === 'medium'
+                                      ? 'text-yellow-600 dark:text-yellow-400'
+                                      : 'text-gray-600 dark:text-gray-400'
+                                  }`}>
+                                    {task.priority === 'high' ? 'Yüksek' : task.priority === 'medium' ? 'Orta' : 'Düşük'}
+                                  </span>
+                                </div>
+                                
+                                {task.dueDate && (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Bitiş Tarihi:</span>
+                                    <span className="font-medium text-foreground">
+                                      {new Date(task.dueDate).toLocaleDateString('tr-TR', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                      })}
+                                    </span>
+                                  </div>
+                                )}
+                                
+                                <div className="flex items-center justify-between">
+                                  <span className="text-muted-foreground">Oluşturulma:</span>
+                                  <span className="font-medium text-foreground">
+                                    {new Date(task.createdAt).toLocaleDateString('tr-TR', {
+                                      day: 'numeric',
+                                      month: 'long',
+                                      year: 'numeric'
+                                    })}
+                                  </span>
+                                </div>
+                                
+                                {task.completed && task.completedAt && (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Tamamlanma:</span>
+                                    <span className="font-medium text-green-600 dark:text-green-400">
+                                      {new Date(task.completedAt).toLocaleDateString('tr-TR', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                      })}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                <p>Bu tarihte görev bulunmuyor</p>
+                <p>Bugün hiçbir aktivite tamamlanmamış</p>
               </div>
             )}
           </div>

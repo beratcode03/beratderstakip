@@ -1,5 +1,9 @@
 # ELECTRON MAIN.CJS - DETAYLI KOD AÇIKLAMASI (BÖLÜM 1)
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Teknik Mimari](./teknik_mimari.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron Activity](./kod_aciklamasi_electron_activity.md) | [Electron Preload](./kod_aciklamasi_electron_preload.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 ## GENEL BAKIŞ
 
 `electron/main.cjs` dosyası, Berat Cankır YKS Analiz Takip Sistemi'nin Electron desktop uygulamasının ana işlem (main process) dosyasıdır. Bu dosya 1237 satırdan oluşur ve uygulamanın en kritik bileşenidir.

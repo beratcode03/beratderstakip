@@ -1,6 +1,10 @@
 # BERAT CANKIR - YKS ANALİZ TAKİP SİSTEMİ
 ## Test ve Kullanım Talimatları
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](./replit.md) | [Sistem Gereksinimleri](#sistem-gereksinimleri) | [Kurulum](#kurulum) | [Geliştirme](#geliştirme-modu) | [Test](#test-çalıştırma) | [Build](#üretim-derlemesi) | [API Test](#api-endpoints-test) | [Sorun Giderme](#yaygın-sorunlar-ve-çözümleri)
+
+**📚 Ek Dokümantasyon:** [Talimatlar](./md%20dosyaları/talimatlar.md) | [Teknik Mimari](./md%20dosyaları/teknik_mimari.md) | [Client Kodu](./md%20dosyaları/kod_aciklamasi_client.md) | [Server Kodu](./md%20dosyaları/kod_aciklamasi_server.md) | [Shared Kodu](./md%20dosyaları/kod_aciklamasi_shared.md) | [Electron](./md%20dosyaları/kod_aciklamasi_electron1.md)
+
 ### 📋 İçindekiler
 1. [Sistem Gereksinimleri](#sistem-gereksinimleri)
 2. [Kurulum](#kurulum)
@@ -11,6 +15,12 @@
 7. [API Endpoints Test](#api-endpoints-test)
 8. [UI/UX Test Senaryoları](#uiux-test-senaryoları)
 9. [Yaygın Sorunlar ve Çözümleri](#yaygın-sorunlar-ve-çözümleri)
+10. [Performans Test](#performans-test)
+11. [Güvenlik Testleri](#güvenlik-testleri)
+12. [Veritabanı Test](#veritabanı-test)
+13. [Component Testing](#component-testing-birim-testler)
+14. [API Testing Detaylı](#api-testing-detaylı)
+15. [Test Best Practices](#test-yazma-best-practices)
 
 ---
 

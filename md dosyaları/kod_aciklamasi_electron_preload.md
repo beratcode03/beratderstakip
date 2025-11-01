@@ -1,5 +1,9 @@
 # ELECTRON PRELOAD.CJS - DETAYLI KOD AÇIKLAMASI
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Teknik Mimari](./teknik_mimari.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron Main](./kod_aciklamasi_electron1.md) | [Electron Activity](./kod_aciklamasi_electron_activity.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Electron preload script'inin (`electron/preload.cjs`) tüm kodunu satır satır açıklar.

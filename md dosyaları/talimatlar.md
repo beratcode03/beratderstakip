@@ -1,5 +1,9 @@
 # YKS Deneme Analizi Uygulaması - Kapsamlı Talimatlar ve Teknik Rehber
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Teknik Mimari](./teknik_mimari.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron](./kod_aciklamasi_electron1.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 Bu dokümantasyon, YKS Deneme Analizi uygulamasını **sıfırdan başlayan birine** anlatır gibi, her teknik terimi Türkçe karşılıklarıyla açıklar, teknoloji seçimlerinin nedenlerini detaylandırır ve kapsamlı bir öğrenme kaynağı sunar.
 
 ---

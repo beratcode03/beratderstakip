@@ -1,5 +1,9 @@
 # TESTLER - DETAYLI KOD AÇIKLAMASI
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Teknik Mimari](./teknik_mimari.md) | [Client Kodu](./kod_aciklamasi_client.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron](./kod_aciklamasi_electron1.md)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, Playwright test dosyasının (`testler/tam-kapsamli-sistem-testi.spec.ts`) tüm kodunu detaylı açıklar.

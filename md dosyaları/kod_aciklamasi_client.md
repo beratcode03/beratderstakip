@@ -1,5 +1,9 @@
 # CLIENT TARAFLI KOD AÇIKLAMASI - EN DETAYLI DOKÜMANTASYON
 
+**📑 Hızlı Navigasyon:** [Ana Sayfa](../replit.md) | [Talimatlar](./talimatlar.md) | [Teknik Mimari](./teknik_mimari.md) | [Server Kodu](./kod_aciklamasi_server.md) | [Shared Kodu](./kod_aciklamasi_shared.md) | [Electron](./kod_aciklamasi_electron1.md) | [Testler](./kod_aciklamasi_testler.md)
+
+---
+
 ## GİRİŞ
 
 Bu doküman, client (istemci) tarafındaki tüm React bileşenlerini, sayfalarını, hooks'ları ve utility fonksiyonlarını **satır satır** açıklar. Her İngilizce terim Türkçe karşılığıyla somutlaştırılmıştır.
