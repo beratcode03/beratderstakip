@@ -9,6 +9,14 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./depolama";
 
+// Türkiye saatinde tarihi YYYY-MM-DD formatına çevirir (UTC sorununu çözer)
+function dateToTurkeyString(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('en-CA', { 
+    timeZone: 'Europe/Istanbul' 
+  }).format(dateObj);
+}
+
 // Activity logger helper - outputs to stdout for Electron to capture
 function logActivity(action: string, description?: string) {
   const timestamp = new Date().toLocaleString('tr-TR', {
@@ -270,11 +278,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const archivedTasksForDate = archivedTasks.filter((t: any) => {
         if (t.dueDate) {
-          const taskDate = t.dueDate.split('T')[0];
+          const taskDate = dateToTurkeyString(t.dueDate);
           return taskDate === date;
         }
         if (t.createdAt) {
-          const createdDate = new Date(t.createdAt).toISOString().split('T')[0];
+          const createdDate = dateToTurkeyString(t.createdAt);
           return createdDate === date;
         }
         return false;
@@ -2070,9 +2078,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         examNets.forEach((netData: any) => {
           const subject = netData.subject_name;
-          const net = netData.net_score || 0;
+          const net = Number(netData.net_score) || 0;
           
-          if (!branchRecords[subject] || net > branchRecords[subject].net) {
+          if (!branchRecords[subject] || net > Number(branchRecords[subject].net)) {
             branchRecords[subject] = { 
               net: net.toFixed(2), 
               exam_name: exam.exam_name, 
