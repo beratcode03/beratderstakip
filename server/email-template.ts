@@ -132,30 +132,32 @@ export function generateModernEmailTemplate(data: {
         
         /* TITLE SECTION */
         .title-section {
-          background: linear-gradient(135deg, #8e24aa 0%, #6a1b9a 100%);
-          color: white;
+          background: white;
+          color: #1a1a1a;
           padding: 30px 25px;
           text-align: center;
         }
         
         .title-section h1 {
-          font-size: 26px;
+          font-size: 28px;
           margin-bottom: 8px;
-          font-weight: 800;
+          font-weight: 900;
           letter-spacing: 1px;
+          color: #8e24aa;
         }
         
         .title-section .subtitle {
-          font-size: 16px;
-          font-weight: 700;
-          margin-bottom: 10px;
+          font-size: 18px;
+          font-weight: 800;
+          margin-bottom: 12px;
           letter-spacing: 0.5px;
+          color: #424242;
         }
         
         .title-section .date-info {
-          font-size: 14px;
-          opacity: 0.95;
-          font-weight: 500;
+          font-size: 15px;
+          font-weight: 600;
+          color: #666;
         }
         
         /* SOLVED QUESTIONS/EXAMS SECTION */
