@@ -15,7 +15,8 @@ export function generateModernEmailTemplate(data: {
   longestStreak: number;
   wrongTopicsCount: number;
   completedTopics: number;
-  maxTytNet: string;
+  maxTytNet: any;
+  maxAytNet: any;
   branchRecords: any;
   mostQuestionsDate: string;
   mostQuestionsCount: number;
@@ -52,6 +53,7 @@ export function generateModernEmailTemplate(data: {
     wrongTopicsCount,
     completedTopics,
     maxTytNet,
+    maxAytNet,
     branchRecords,
     mostQuestionsDate,
     mostQuestionsCount,
@@ -85,13 +87,13 @@ export function generateModernEmailTemplate(data: {
               <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
                 <tr>
                   <td style="padding: 40px 30px; text-align: center; background: white;">
-                    <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 140px; height: auto; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block; margin-left: auto; margin-right: auto;" />
-                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 18px; line-height: 1.7; color: #333; margin: 25px auto; max-width: 680px; font-weight: 400; letter-spacing: 0.2px;">
-                      "Biz her şeyi gençliğe bırakacağız. Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir."
+                    <img src="cid:turkbayragi" alt="Türk Bayrağı" style="width: 220px; height: auto; margin-bottom: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: block; margin-left: auto; margin-right: auto;" />
+                    <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px; line-height: 1.8; color: #1a1a1a; margin: 30px auto; max-width: 700px; font-weight: 700; font-style: italic; letter-spacing: 0.3px; border-left: 5px solid #b71c1c; padding-left: 25px; text-align: left;">
+                      &ldquo;Biz her şeyi gençliğe bırakacağız. Geleceğin ümidi, ışıklı çiçekleri onlardır. Bütün ümidim gençliktedir.&rdquo;
                     </div>
-                    <div style="color: #b71c1c; font-weight: 700; font-size: 16px; margin: 20px 0; letter-spacing: 1px; font-family: 'Segoe UI', Arial, sans-serif;">— Mustafa Kemal Atatürk —</div>
-                    <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 160px; height: auto; margin: 20px auto; display: block;" />
-                    <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 180px; height: auto; margin: 20px auto 0; display: block; border-radius: 12px; border: 5px solid #e91e63; box-shadow: 0 6px 25px rgba(0,0,0,0.3);" />
+                    <div style="color: #b71c1c; font-weight: 900; font-size: 18px; margin: 25px 0; letter-spacing: 1.2px; font-family: 'Segoe UI', Arial, sans-serif;">&mdash; Mustafa Kemal Atatürk &mdash;</div>
+                    <img src="cid:ataturkimza" alt="Atatürk İmza" style="width: 180px; height: auto; margin: 25px auto; display: block;" />
+                    <img src="cid:ataturk" alt="Mustafa Kemal Atatürk" style="width: 240px; height: auto; margin: 25px auto 0; display: block; border-radius: 14px; border: 6px solid #e91e63; box-shadow: 0 8px 30px rgba(0,0,0,0.35);" />
                   </td>
                 </tr>
                 <tr>
@@ -178,7 +180,7 @@ export function generateModernEmailTemplate(data: {
           <!-- ÇÖZÜLEN TÜM SORULAR - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+              <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 4px solid #9c27b0;">
                 <div style="font-size: 20px; font-weight: 800; margin-bottom: 25px; color: #424242; text-align: center;">📊 Çözülen Tüm Sorular</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
@@ -267,14 +269,22 @@ export function generateModernEmailTemplate(data: {
                     <td width="49%" style="vertical-align: top;">
                       <div style="border: 5px solid #ab47bc; border-radius: 18px; padding: 30px 25px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(171, 71, 188, 0.3);">
                         <div style="font-size: 15px; color: #6a1b9a; margin-bottom: 15px; font-weight: 800;">🏆 TYT Rekor Net</div>
-                        <div style="font-size: 56px; font-weight: 900; color: #8e24aa;">${maxTytNet}</div>
+                        <div style="font-size: 56px; font-weight: 900; color: #8e24aa;">${maxTytNet.net ? maxTytNet.net.toFixed(2) : '0.00'}</div>
+                        ${maxTytNet.exam_name ? `
+                        <div style="font-size: 13px; color: #6a1b9a; margin-top: 12px; font-weight: 600;">${maxTytNet.exam_name}</div>
+                        <div style="font-size: 11px; color: #9e9e9e; margin-top: 6px;">${new Date(maxTytNet.exam_date).toLocaleDateString('tr-TR')}</div>
+                        ` : ''}
                       </div>
                     </td>
                     <td width="2%"></td>
                     <td width="49%" style="vertical-align: top;">
                       <div style="border: 5px solid #ef5350; border-radius: 18px; padding: 30px 25px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(239, 83, 80, 0.3);">
                         <div style="font-size: 15px; color: #c62828; margin-bottom: 15px; font-weight: 800;">🏆 AYT Rekor Net</div>
-                        <div style="font-size: 56px; font-weight: 900; color: #e53935;">${Object.keys(branchRecords).length > 0 ? (Object.values(branchRecords)[0] as any).net : '0.00'}</div>
+                        <div style="font-size: 56px; font-weight: 900; color: #e53935;">${maxAytNet.net ? maxAytNet.net.toFixed(2) : '0.00'}</div>
+                        ${maxAytNet.exam_name ? `
+                        <div style="font-size: 13px; color: #c62828; margin-top: 12px; font-weight: 600;">${maxAytNet.exam_name}</div>
+                        <div style="font-size: 11px; color: #9e9e9e; margin-top: 6px;">${new Date(maxAytNet.exam_date).toLocaleDateString('tr-TR')}</div>
+                        ` : ''}
                       </div>
                     </td>
                   </tr>
@@ -298,7 +308,8 @@ export function generateModernEmailTemplate(data: {
                         <div style="border: 5px solid ${index % 3 === 0 ? '#7c4dff' : index % 3 === 1 ? '#26a69a' : '#ec407a'}; border-radius: 18px; padding: 30px 20px; text-align: center; background: white; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
                           <div style="font-size: 14px; color: #424242; margin-bottom: 12px; font-weight: 800;">🏆 ${subject}</div>
                           <div style="font-size: 48px; font-weight: 900; color: ${index % 3 === 0 ? '#6a1b9a' : index % 3 === 1 ? '#00897b' : '#d81b60'};">${record.net}</div>
-                          <div style="font-size: 11px; color: #9e9e9e; margin-top: 8px; font-weight: 600;">${new Date(record.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</div>
+                          <div style="font-size: 12px; color: #424242; margin-top: 12px; font-weight: 600; line-height: 1.4;">${record.exam_name}</div>
+                          <div style="font-size: 11px; color: #9e9e9e; margin-top: 6px; font-weight: 600;">${new Date(record.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
                       </td>
                     `).join('')}
@@ -424,10 +435,14 @@ export function generateModernEmailTemplate(data: {
                     };
                   }).filter(s => s.dogru !== undefined);
                   
+                  // Determine border color based on exam type: TYT = blue, AYT = orange
+                  const examType = exam.exam_type || 'TYT';
+                  const borderColor = examType.toUpperCase() === 'TYT' ? '#2196f3' : '#ff9800';
+                  
                   return `
-                    <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #dee2e6; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
+                    <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 4px solid ${borderColor}; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
                       <div style="color: #1565c0; font-size: 22px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.3px;">${exam.exam_name}</div>
-                      <div style="color: #6c757d; font-size: 14px; margin-bottom: 24px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${exam.exam_type || 'TYT'}</div>
+                      <div style="color: #6c757d; font-size: 14px; margin-bottom: 24px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${examType}</div>
                       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 32px; border-radius: 18px; font-size: 28px; font-weight: 900; text-align: center; margin: 24px 0; box-shadow: 0 10px 28px rgba(102,126,234,0.35); letter-spacing: 0.5px;">Toplam Net: ${totalNet.toFixed(2)}</div>
                       
                       ${subjects.map(sub => {
@@ -470,13 +485,13 @@ export function generateModernEmailTemplate(data: {
                             </tr>
                           </table>
                           ${wrongTopics.length > 0 ? `
-                          <div style="background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%); border: 2px solid #ff6b6b; border-left: 5px solid #e53935; border-radius: 12px; padding: 16px 20px; margin-top: 16px;">
-                            <div style="font-size: 13px; color: #c62828; margin: 0 0 12px 0; font-weight: 800; letter-spacing: 0.3px;">❌ Yanlış Yapılan Konular:</div>
+                          <div style="border-top: 1px solid #e0e0e0; padding-top: 14px; margin-top: 16px;">
+                            <div style="font-size: 12px; color: #d32f2f; margin: 0 0 10px 0; font-weight: 700;">❌ Yanlış Yapılan Konular:</div>
                             ${wrongTopics.map((topic: string) => `
-                            <div style="color: #495057; font-size: 13px; margin: 8px 0; font-weight: 600; padding: 8px 14px; background: rgba(255,255,255,0.8); border-radius: 8px; border-left: 3px solid #f44336;">✗ ${topic}</div>
+                            <div style="color: #424242; font-size: 12px; margin: 6px 0; font-weight: 500; padding-left: 8px;">• ${topic}</div>
                             `).join('')}
                           </div>
-                          ` : '<div style="background: linear-gradient(135deg, #f0f9f0 0%, #e6f4ea 100%); border: 2px solid #66bb6a; border-radius: 12px; padding: 14px; margin-top: 16px; text-align: center; color: #2e7d32; font-weight: 700; font-size: 13px; letter-spacing: 0.2px;">✨ Harika! Bu derse ait yanlış konu girilmedi.</div>'}
+                          ` : ''}
                         </div>
                         `;
                       }).join('')}
@@ -528,8 +543,12 @@ export function generateModernEmailTemplate(data: {
                     }
                   });
                   
+                  // Determine border color for branch exams: TYT = green, AYT = purple
+                  const examType = exam.exam_type || subject || 'TYT';
+                  const borderColor = examType.toUpperCase().includes('TYT') ? '#4caf50' : '#9c27b0';
+                  
                   return `
-                    <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #dee2e6; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
+                    <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 4px solid ${borderColor}; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
                       <div style="color: #1565c0; font-size: 22px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.3px;">${exam.exam_name}</div>
                       <div style="color: #6c757d; font-size: 14px; margin-bottom: 24px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${subject}</div>
                       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 32px; border-radius: 18px; font-size: 28px; font-weight: 900; text-align: center; margin: 24px 0; box-shadow: 0 10px 28px rgba(102,126,234,0.35); letter-spacing: 0.5px;">${subject} Net: ${net.toFixed(2)}</div>
@@ -566,13 +585,13 @@ export function generateModernEmailTemplate(data: {
                           </tr>
                         </table>
                         ${wrongTopicsArr.length > 0 ? `
-                        <div style="background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%); border: 2px solid #ff6b6b; border-left: 5px solid #e53935; border-radius: 12px; padding: 16px 20px; margin-top: 16px;">
-                          <div style="font-size: 13px; color: #c62828; margin: 0 0 12px 0; font-weight: 800; letter-spacing: 0.3px;">❌ Yanlış Yapılan Konular:</div>
+                        <div style="border-top: 1px solid #e0e0e0; padding-top: 14px; margin-top: 16px;">
+                          <div style="font-size: 12px; color: #d32f2f; margin: 0 0 10px 0; font-weight: 700;">❌ Yanlış Yapılan Konular:</div>
                           ${wrongTopicsArr.map((topic: string) => `
-                          <div style="color: #495057; font-size: 13px; margin: 8px 0; font-weight: 600; padding: 8px 14px; background: rgba(255,255,255,0.8); border-radius: 8px; border-left: 3px solid #f44336;">✗ ${topic}</div>
+                          <div style="color: #424242; font-size: 12px; margin: 6px 0; font-weight: 500; padding-left: 8px;">• ${topic}</div>
                           `).join('')}
                         </div>
-                        ` : '<div style="background: linear-gradient(135deg, #f0f9f0 0%, #e6f4ea 100%); border: 2px solid #66bb6a; border-radius: 12px; padding: 14px; margin-top: 16px; text-align: center; color: #2e7d32; font-weight: 700; font-size: 13px; letter-spacing: 0.2px;">✨ Harika! Bu derse ait yanlış konu girilmedi.</div>'}
+                        ` : ''}
                       </div>
                     </div>
                   `;
@@ -607,68 +626,11 @@ export function generateModernEmailTemplate(data: {
           </tr>
           ` : ''}
           
-          <!-- TAMAMLANAN HATALI SORULAR GEÇMİŞİ -->
-          ${completedQuestionsHistory.length > 0 ? `
-          <tr>
-            <td style="padding: 25px; background: #fafafa;">
-              <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
-                <div style="font-size: 17px; font-weight: 800; margin-bottom: 18px; color: #424242; text-align: center;">✅ Tamamlanan Hatalı Sorular Geçmişi</div>
-                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 2px solid #2196f3; border-radius: 12px; padding: 14px;">
-                  ${completedQuestionsHistory.map((question: any, index: number) => {
-                    const questionDate = question.completedAt || question.logDate;
-                    const qDate = questionDate ? new Date(questionDate) : null;
-                    const formattedDate = qDate && !isNaN(qDate.getTime()) 
-                      ? qDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
-                      : 'Tarih bilinmiyor';
-                    return `
-                    <div style="background: white; border-left: 4px solid #1976d2; border-radius: 8px; padding: 10px 14px; margin-bottom: ${index < completedQuestionsHistory.length - 1 ? '10px' : '0'}; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
-                      <div style="color: #1565c0; font-size: 13px; font-weight: 700; margin-bottom: 8px;">📖 ${question.subject}</div>
-                      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                        <tr>
-                          <td width="32%" style="text-align: center; padding: 4px;">
-                            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%); border: 1px solid #66bb6a; border-radius: 6px; padding: 6px;">
-                              <div style="font-size: 9px; color: #2e7d32; font-weight: 700;">✓ Doğru</div>
-                              <div style="font-size: 14px; color: #43a047; font-weight: 900;">${question.correctCount || 0}</div>
-                            </div>
-                          </td>
-                          <td width="2%"></td>
-                          <td width="32%" style="text-align: center; padding: 4px;">
-                            <div style="background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%); border: 1px solid #ef5350; border-radius: 6px; padding: 6px;">
-                              <div style="font-size: 9px; color: #c62828; font-weight: 700;">✗ Yanlış</div>
-                              <div style="font-size: 14px; color: #e53935; font-weight: 900;">${question.wrongCount || 0}</div>
-                            </div>
-                          </td>
-                          <td width="2%"></td>
-                          <td width="32%" style="text-align: center; padding: 4px;">
-                            <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%); border: 1px solid #ffa726; border-radius: 6px; padding: 6px;">
-                              <div style="font-size: 9px; color: #e65100; font-weight: 700;">○ Boş</div>
-                              <div style="font-size: 14px; color: #fb8c00; font-weight: 900;">${question.emptyCount || 0}</div>
-                            </div>
-                          </td>
-                        </tr>
-                      </table>
-                      ${question.wrongTopics && question.wrongTopics.length > 0 ? `
-                        <div style="background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%); border: 1px solid #ff6b6b; border-radius: 6px; padding: 8px; margin-top: 8px;">
-                          <div style="font-size: 10px; color: #c62828; font-weight: 700; margin-bottom: 4px;">❌ Yanlış Konular:</div>
-                          ${question.wrongTopics.map((topic: string) => `
-                            <div style="color: #424242; font-size: 10px; margin: 3px 0; font-weight: 600;">• ${topic}</div>
-                          `).join('')}
-                        </div>
-                      ` : ''}
-                      <div style="color: #9e9e9e; font-size: 10px; font-weight: 500; margin-top: 6px;">📅 ${formattedDate}</div>
-                    </div>
-                  `}).join('')}
-                </div>
-              </div>
-            </td>
-          </tr>
-          ` : ''}
-          
           <!-- FOOTER - KUTU İÇİNDE -->
           <tr>
             <td style="background: white; padding: 30px;">
               <div style="background: linear-gradient(135deg, #8e24aa 0%, #ab47bc 100%); border-radius: 18px; padding: 28px; text-align: center; box-shadow: 0 10px 30px rgba(142, 36, 170, 0.4);">
-                <div style="color: white; font-size: 15px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;">🚀 ${isManualRequest ? 'Kullanıcı Tarafından İstendi' : 'Otomatik Olarak Oluşturuldu'}</div>
+                <div style="color: white; font-size: 15px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;">${isManualRequest ? '👤 Kullanıcı Tarafından İstendi' : '🚀 Otomatik Olarak Oluşturuldu'}</div>
                 <div style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 600;">🇹🇷 Berat Cankır Kişisel Analiz Sistemi 🇹🇷</div>
               </div>
             </td>

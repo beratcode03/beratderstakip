@@ -1898,22 +1898,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const longestStudyDate = longestStudy ? new Date(longestStudy.study_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
       const longestStudyTime = longestStudy ? `${String(longestStudy.hours || 0).padStart(2, '0')}:${String(longestStudy.minutes || 0).padStart(2, '0')}:${String(longestStudy.seconds || 0).padStart(2, '0')}` : '00:00:00';
       
-      // Get average TYT net
-      const tytNets = recentExams.map((e: any) => {
-        const turkce = (e.turkce_dogru || 0) - (e.turkce_yanlis || 0) * 0.25;
-        const sosyal = (e.sosyal_dogru || 0) - (e.sosyal_yanlis || 0) * 0.25;
-        const mat = (e.mat_dogru || 0) - (e.mat_yanlis || 0) * 0.25;
-        const fen = (e.fen_dogru || 0) - (e.fen_yanlis || 0) * 0.25;
-        return turkce + sosyal + mat + fen;
-      });
-      const avgTytNet = tytNets.length > 0 ? (tytNets.reduce((a: number, b: number) => a + b, 0) / tytNets.length).toFixed(2) : '0.00';
-      
       // Separate general and branch exams
       const generalExams = recentExams.filter((e: any) => e.exam_scope !== 'branch');
       const branchExams = recentExams.filter((e: any) => e.exam_scope === 'branch');
       
-      // Calculate max TYT net and branch records
-      const maxTytNet = tytNets.length > 0 ? Math.max(...tytNets).toFixed(2) : '0.00';
+      // Calculate TYT and AYT record nets from examSubjectNets data
+      let maxTytNet = { net: 0, exam_name: '', exam_date: '' };
+      let maxAytNet = { net: 0, exam_name: '', exam_date: '' };
+      
+      generalExams.forEach((exam: any) => {
+        const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+        
+        // Calculate TYT net (Türkçe + Sosyal + Matematik + Fen)
+        const tytSubjects = examNets.filter((n: any) => 
+          ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject_name)
+        );
+        const tytNetValue = tytSubjects.reduce((sum: number, n: any) => sum + (n.net_score || 0), 0);
+        
+        if (tytNetValue > maxTytNet.net) {
+          maxTytNet = { net: tytNetValue, exam_name: exam.exam_name, exam_date: exam.exam_date };
+        }
+        
+        // Calculate AYT net (all AYT subjects)
+        const aytSubjects = examNets.filter((n: any) => 
+          !['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject_name)
+        );
+        const aytNetValue = aytSubjects.reduce((sum: number, n: any) => sum + (n.net_score || 0), 0);
+        
+        if (aytNetValue > maxAytNet.net) {
+          maxAytNet = { net: aytNetValue, exam_name: exam.exam_name, exam_date: exam.exam_date };
+        }
+      });
       
       // Calculate streak (En Uzun Çalışma Serisi)
       const allStudyDates = [...studyHours, ...archivedStudyHours]
@@ -2039,14 +2054,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Calculate branch exam records by subject
+      // Calculate branch exam records by subject from examSubjectNets
       const branchRecords: any = {};
       branchExams.forEach((exam: any) => {
-        const subject = exam.subject || exam.exam_type || 'Genel';
-        const net = (exam.correct_count || 0) - (exam.wrong_count || 0) * 0.25;
-        if (!branchRecords[subject] || net > branchRecords[subject].net) {
-          branchRecords[subject] = { net: net.toFixed(2), exam_name: exam.exam_name, date: exam.exam_date };
-        }
+        const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+        
+        examNets.forEach((netData: any) => {
+          const subject = netData.subject_name;
+          const net = netData.net_score || 0;
+          
+          if (!branchRecords[subject] || net > branchRecords[subject].net) {
+            branchRecords[subject] = { 
+              net: net.toFixed(2), 
+              exam_name: exam.exam_name, 
+              date: exam.exam_date,
+              subject: subject
+            };
+          }
+        });
       });
       
       // Get completed topics history (from both archived AND recent tasks for comprehensive data)
@@ -2096,7 +2121,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         longestStreak,
         wrongTopicsCount,
         completedTopics,
-        maxTytNet,
+        maxTytNet: maxTytNet.net > 0 ? maxTytNet : { net: 0, exam_name: '', exam_date: '' },
+        maxAytNet: maxAytNet.net > 0 ? maxAytNet : { net: 0, exam_name: '', exam_date: '' },
         branchRecords,
         mostQuestionsDate,
         mostQuestionsCount,
