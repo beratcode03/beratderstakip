@@ -1846,7 +1846,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const toEmails = recipients.join(', ');
 
       // Get all data for report including archived data
-      const [tasks, questionLogs, examResults, studyHours, archivedTasks, archivedQuestions, archivedExams, archivedStudyHours] = await Promise.all([
+      const [tasks, questionLogs, examResults, studyHours, archivedTasks, archivedQuestions, archivedExams, archivedStudyHours, examSubjectNets] = await Promise.all([
         storage.getTasks(),
         storage.getQuestionLogs(),
         storage.getExamResults(),
@@ -1854,7 +1854,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         storage.getArchivedTasks(),
         storage.getArchivedQuestionLogs(),
         storage.getArchivedExamResults(),
-        storage.getArchivedStudyHours()
+        storage.getArchivedStudyHours(),
+        storage.getExamSubjectNets()
       ]);
 
       // Calculate report statistics
@@ -1975,9 +1976,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
             
             .gradient-wrapper {
-              max-width: 700px;
+              max-width: 850px;
               margin: 0 auto;
-              padding: 15px;
+              padding: 18px;
               background: linear-gradient(135deg, 
                 #ef5350 0%, 
                 #ef5350 10%, 
@@ -2078,8 +2079,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .stats-middle { 
               display: grid; 
               grid-template-columns: repeat(3, 1fr); 
-              gap: 15px; 
+              gap: 18px; 
               padding: 0 25px 25px 25px; 
+              background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+            }
+            
+            .stats-row-three {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 18px;
+              padding: 25px;
               background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
             }
             
@@ -2188,28 +2197,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
             
             .special-stat-card { 
-              background: #fafafa; 
-              border-radius: 12px; 
-              padding: 20px 18px; 
+              border-radius: 18px; 
+              padding: 28px 22px; 
               text-align: center; 
-              border: 2px solid #e0e0e0; 
-              box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+              border: 3px solid; 
+              box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+              position: relative;
+              overflow: hidden;
+              background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
             }
-            .special-stat-purple { border-left: 4px solid #ab47bc; }
-            .special-stat-red { border-left: 4px solid #ef5350; }
-            .special-stat-green { border-left: 4px solid #66bb6a; }
+            .special-stat-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+              pointer-events: none;
+            }
+            .special-stat-purple { 
+              border-color: #ab47bc; 
+              background: linear-gradient(135deg, #f3e5f5 0%, #ffffff 100%);
+            }
+            .special-stat-red { 
+              border-color: #ef5350; 
+              background: linear-gradient(135deg, #ffebee 0%, #ffffff 100%);
+            }
+            .special-stat-green { 
+              border-color: #66bb6a; 
+              background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            }
             .special-stat-title { 
-              font-size: 11px; 
+              font-size: 12px; 
               color: #757575; 
-              margin-bottom: 10px; 
-              font-weight: 600;
+              margin-bottom: 14px; 
+              font-weight: 700;
               text-transform: uppercase;
-              letter-spacing: 0.6px;
+              letter-spacing: 0.8px;
             }
             .special-stat-value { 
-              font-size: 36px; 
-              font-weight: 800; 
-              margin: 8px 0;
+              font-size: 42px; 
+              font-weight: 900; 
+              margin: 12px 0;
+              text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             .special-stat-purple .special-stat-value { color: #8e24aa; }
             .special-stat-red .special-stat-value { color: #e53935; }
@@ -2394,7 +2425,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             <div class="title-section">
               <h2>🎓 BERAT CANKIR</h2>
               <div class="subtitle">KİŞİSEL ÇALIŞMA ANALİZ RAPORU</div>
-              <div class="date-info">📅 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | ⏰ ${recentExams.length} Deneme Kaydedildi</div>
+              <div class="date-info">📅 ${new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 🎯 Üniversite Kazanılacak !</div>
             </div>
             
             <div class="stats-top">
@@ -2408,24 +2439,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
               </div>
             </div>
             
-            <div class="stats-middle">
-              <div class="stat-card stat-blue" style="grid-column: span 3;">
+            <div class="stats-row-three">
+              <div class="stat-card stat-blue">
                 <div class="stat-label">📈 TOPLAM AKTİVİTE</div>
-                <div class="stat-value-small">${tasks.length}</div>
+                <div class="stat-value">${tasks.length}</div>
               </div>
-            </div>
-            
-            <div class="stats-middle">
-              <div class="stat-card stat-teal" style="grid-column: span 3;">
+              <div class="stat-card stat-teal">
                 <div class="stat-label">✅ TAMAMLANAN GÖREVLER</div>
-                <div class="stat-value-small">${completedTasks}</div>
+                <div class="stat-value">${completedTasks}</div>
               </div>
-            </div>
-            
-            <div class="stats-middle">
-              <div class="stat-card stat-amber" style="grid-column: span 3;">
+              <div class="stat-card stat-amber">
                 <div class="stat-label">⏱️ BU AY ÇALIŞMA SÜRESİ</div>
-                <div class="stat-value-small" style="font-size: 18px;">${Math.floor(totalStudyMinutes / 60)}:${String(totalStudyMinutes % 60).padStart(2, '0')}</div>
+                <div class="stat-value" style="font-size: 28px;">${Math.floor(totalStudyMinutes / 60)}:${String(totalStudyMinutes % 60).padStart(2, '0')}</div>
               </div>
             </div>
             
@@ -2440,7 +2465,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             <div class="section">
               <div class="section-title">📊 ÖZEL İSTATİSTİKLER</div>
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
                 <div class="special-stat-card special-stat-purple">
                   <div class="special-stat-title">📦 Arşivlenen Veriler</div>
                   <div class="special-stat-value">${archivedTasksCount + archivedQuestionsCount + archivedExamsCount}</div>
@@ -2464,15 +2489,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               </div>
             </div>
             
+            ${branchExams.length > 0 ? `
             <div class="section">
               <div class="section-title">📚 BRANŞ DENEME REKOR NETLERİ</div>
-              ${recentExams.length > 0 ? `
-                <div class="branch-record">
-                  <div class="branch-record-title">🏆 TYT Branş Rekor</div>
-                  <div class="branch-record-value">${maxTytNet}</div>
-                </div>
-              ` : '<p style="text-align: center; color: #999;">Henüz deneme sınavı kaydedilmemiş.</p>'}
+              <div class="branch-record">
+                <div class="branch-record-title">🏆 TYT Branş Rekor</div>
+                <div class="branch-record-value">${maxTytNet}</div>
+              </div>
             </div>
+            ` : ''}
             
             
             ${generalExams.length > 0 ? `
@@ -2483,6 +2508,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
                            ((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25) +
                            ((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25) +
                            ((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25);
+                
+                const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+                const getWrongTopics = (subject: string) => {
+                  const subjectNet = examNets.find((n: any) => n.subject === subject);
+                  if (subjectNet && subjectNet.wrong_topics_json) {
+                    try {
+                      const topics = JSON.parse(subjectNet.wrong_topics_json);
+                      return topics.map((t: any) => t.topic).join(', ');
+                    } catch(e) {
+                      return '';
+                    }
+                  }
+                  return '';
+                };
+                
                 return `
                   <div class="exam-card">
                     <div class="exam-name">${exam.exam_name}</div>
@@ -2498,7 +2538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.turkce_bos || 0}</div></div>
                         <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.turkce_dogru || 0) - (exam.turkce_yanlis || 0) * 0.25).toFixed(2)}</div></div>
                       </div>
-                      ${exam.turkce_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.turkce_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                      ${getWrongTopics('Türkçe') ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${getWrongTopics('Türkçe').split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                     ` : ''}
                     ${exam.sosyal_dogru !== undefined ? `
@@ -2510,7 +2550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.sosyal_bos || 0}</div></div>
                         <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.sosyal_dogru || 0) - (exam.sosyal_yanlis || 0) * 0.25).toFixed(2)}</div></div>
                       </div>
-                      ${exam.sosyal_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.sosyal_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                      ${getWrongTopics('Sosyal Bilimler') ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${getWrongTopics('Sosyal Bilimler').split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                     ` : ''}
                     ${exam.mat_dogru !== undefined ? `
@@ -2522,7 +2562,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.mat_bos || 0}</div></div>
                         <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.mat_dogru || 0) - (exam.mat_yanlis || 0) * 0.25).toFixed(2)}</div></div>
                       </div>
-                      ${exam.mat_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.mat_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                      ${getWrongTopics('Matematik') ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${getWrongTopics('Matematik').split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                     ` : ''}
                     ${exam.fen_dogru !== undefined ? `
@@ -2534,7 +2574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.fen_bos || 0}</div></div>
                         <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${((exam.fen_dogru || 0) - (exam.fen_yanlis || 0) * 0.25).toFixed(2)}</div></div>
                       </div>
-                      ${exam.fen_wrong_topics ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${exam.fen_wrong_topics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
+                      ${getWrongTopics('Fen Bilimleri') ? `<div class="wrong-topics"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${getWrongTopics('Fen Bilimleri').split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                     ` : ''}
                   </div>
@@ -2549,6 +2589,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${branchExams.map((exam: any) => {
                 const subject = exam.subject || exam.exam_type;
                 const net = (exam.correct_count || 0) - (exam.wrong_count || 0) * 0.25;
+                
+                const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
+                const wrongTopicsArr: string[] = [];
+                examNets.forEach((n: any) => {
+                  if (n.wrong_topics_json) {
+                    try {
+                      const topics = JSON.parse(n.wrong_topics_json);
+                      topics.forEach((t: any) => wrongTopicsArr.push(t.topic));
+                    } catch(e) {}
+                  }
+                });
+                const wrongTopics = wrongTopicsArr.join(', ');
+                
                 return `
                   <div class="exam-card">
                     <div class="exam-name">${exam.exam_name}</div>
@@ -2561,6 +2614,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         <div class="perf-box perf-empty"><div class="perf-label">○ Boş</div><div class="perf-value">${exam.empty_count || 0}</div></div>
                         <div class="perf-box perf-net"><div class="perf-label">★ Net</div><div class="perf-value">${net.toFixed(2)}</div></div>
                       </div>
+                      ${wrongTopics ? `<div class="wrong-topics" style="margin-top: 15px;"><h4>❌ Yanlış Yapılan Konular:</h4><ul>${wrongTopics.split(',').map((t: string) => `<li>${t.trim()}</li>`).join('')}</ul></div>` : ''}
                     </div>
                   </div>
                 `;
