@@ -132,16 +132,16 @@ export function generateModernEmailTemplate(data: {
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #7c4dff 0%, #651fff 100%);">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 12px 35px rgba(124, 77, 255, 0.4); background: linear-gradient(135deg, #9c27b0 0%, #7c4dff 50%, #651fff 100%); border: 3px solid rgba(255, 255, 255, 0.3);">
                       <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">📚 ÇÖZÜLEN SORU</div>
-                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${totalQuestions}</div>
+                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">${totalQuestions}</div>
                     </div>
                   </td>
                   <td width="2%"></td>
                   <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 12px 35px rgba(239, 83, 80, 0.4); background: linear-gradient(135deg, #f44336 0%, #ef5350 50%, #d32f2f 100%); border: 3px solid rgba(255, 255, 255, 0.3);">
                       <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">🎯 ÇÖZÜLEN DENEME</div>
-                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${recentExams.length}</div>
+                      <div style="font-size: 52px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">${recentExams.length}</div>
                     </div>
                   </td>
                 </tr>
@@ -155,17 +155,17 @@ export function generateModernEmailTemplate(data: {
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #26a69a 0%, #00897b 100%);">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 12px 35px rgba(38, 166, 154, 0.4); background: linear-gradient(135deg, #00bfa5 0%, #26a69a 50%, #00897b 100%); border: 3px solid rgba(255, 255, 255, 0.3);">
                       <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">📈 TOPLAM AKTİVİTE</div>
-                      <div style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${totalActivities}</div>
+                      <div style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">${totalActivities}</div>
                       <div style="font-size: 14px; opacity: 0.9; font-weight: 600;">kayıtlı aktivite</div>
                     </div>
                   </td>
                   <td width="2%"></td>
                   <td width="49%" style="vertical-align: top;">
-                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);">
+                    <div style="border-radius: 20px; padding: 35px 25px; text-align: center; color: white; box-shadow: 0 12px 35px rgba(171, 71, 188, 0.4); background: linear-gradient(135deg, #ce93d8 0%, #ab47bc 50%, #8e24aa 100%); border: 3px solid rgba(255, 255, 255, 0.3);">
                       <div style="font-size: 14px; font-weight: 700; margin-bottom: 18px; opacity: 0.95; letter-spacing: 0.5px;">✅ TAMAMLANAN GÖREVLER</div>
-                      <div style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">${completedTasks}/${tasks.length}</div>
+                      <div style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">${completedTasks}/${tasks.length}</div>
                       <div style="font-size: 14px; opacity: 0.9; font-weight: 600;">görev tamamlandı</div>
                     </div>
                   </td>
@@ -180,35 +180,35 @@ export function generateModernEmailTemplate(data: {
           <!-- ÇÖZÜLEN TÜM SORULAR - Gerçek Veriler -->
           <tr>
             <td style="padding: 30px; background: #fafafa;">
-              <div style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); border-radius: 24px; padding: 35px; box-shadow: 0 15px 40px rgba(156, 39, 176, 0.3); border: 5px solid #9c27b0;">
+              <div style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); border-radius: 24px; padding: 35px; box-shadow: 0 15px 40px rgba(156, 39, 176, 0.35); border: 5px solid #9c27b0;">
                 <div style="font-size: 22px; font-weight: 900; margin-bottom: 30px; color: #6a1b9a; text-align: center; letter-spacing: 0.5px;">📊 Çözülen Tüm Sorular</div>
                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                   <tr>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 5px solid #66bb6a; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%); box-shadow: 0 8px 20px rgba(102, 187, 106, 0.4);">
-                        <div style="font-size: 14px; color: #1b5e20; margin-bottom: 14px; font-weight: 800;">✓ Doğru</div>
-                        <div style="font-size: 44px; font-weight: 900; color: #2e7d32; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalCorrect}</div>
+                      <div style="border: 4px solid #66bb6a; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%); box-shadow: 0 10px 25px rgba(102, 187, 106, 0.45); border: 3px solid rgba(255, 255, 255, 0.4);">
+                        <div style="font-size: 14px; color: white; margin-bottom: 14px; font-weight: 800; opacity: 0.95;">✓ Doğru</div>
+                        <div style="font-size: 44px; font-weight: 900; color: white; text-shadow: 0 3px 10px rgba(0,0,0,0.3);">${totalCorrect}</div>
                       </div>
                     </td>
                     <td width="2%"></td>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 5px solid #ef5350; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%); box-shadow: 0 8px 20px rgba(239, 83, 80, 0.4);">
-                        <div style="font-size: 14px; color: #b71c1c; margin-bottom: 14px; font-weight: 800;">✗ Yanlış</div>
-                        <div style="font-size: 44px; font-weight: 900; color: #c62828; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalWrong}</div>
+                      <div style="border: 4px solid #ef5350; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #ef5350 0%, #e53935 100%); box-shadow: 0 10px 25px rgba(239, 83, 80, 0.45); border: 3px solid rgba(255, 255, 255, 0.4);">
+                        <div style="font-size: 14px; color: white; margin-bottom: 14px; font-weight: 800; opacity: 0.95;">✗ Yanlış</div>
+                        <div style="font-size: 44px; font-weight: 900; color: white; text-shadow: 0 3px 10px rgba(0,0,0,0.3);">${totalWrong}</div>
                       </div>
                     </td>
                     <td width="2%"></td>
                     <td width="32%" style="vertical-align: top;">
-                      <div style="border: 5px solid #ffa726; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%); box-shadow: 0 8px 20px rgba(255, 167, 38, 0.4);">
-                        <div style="font-size: 14px; color: #e65100; margin-bottom: 14px; font-weight: 800;">○ Boş</div>
-                        <div style="font-size: 44px; font-weight: 900; color: #ef6c00; text-shadow: 0 2px 8px rgba(0,0,0,0.1);">${totalEmpty}</div>
+                      <div style="border: 4px solid #ffa726; border-radius: 18px; padding: 28px 18px; text-align: center; background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%); box-shadow: 0 10px 25px rgba(255, 167, 38, 0.45); border: 3px solid rgba(255, 255, 255, 0.4);">
+                        <div style="font-size: 14px; color: white; margin-bottom: 14px; font-weight: 800; opacity: 0.95;">○ Boş</div>
+                        <div style="font-size: 44px; font-weight: 900; color: white; text-shadow: 0 3px 10px rgba(0,0,0,0.3);">${totalEmpty}</div>
                       </div>
                     </td>
                   </tr>
                 </table>
-                <div style="border: 5px solid #7c4dff; border-radius: 20px; padding: 32px; text-align: center; background: linear-gradient(135deg, #ede7f6 0%, #b39ddb 100%); margin-top: 28px; box-shadow: 0 10px 30px rgba(124, 77, 255, 0.4);">
-                  <div style="font-size: 52px; font-weight: 900; color: #4a148c; margin-bottom: 12px; text-shadow: 0 3px 10px rgba(0,0,0,0.2);">${successRate}%</div>
-                  <div style="font-size: 16px; color: #4a148c; font-weight: 800;">Başarı Oranım</div>
+                <div style="border: 4px solid #7c4dff; border-radius: 20px; padding: 32px; text-align: center; background: linear-gradient(135deg, #9c27b0 0%, #7c4dff 50%, #651fff 100%); color: white; margin-top: 28px; box-shadow: 0 12px 35px rgba(124, 77, 255, 0.5); border: 3px solid rgba(255, 255, 255, 0.3);">
+                  <div style="font-size: 52px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">${successRate}%</div>
+                  <div style="font-size: 16px; font-weight: 800; opacity: 0.95;">Başarı Oranım</div>
                 </div>
               </div>
             </td>
@@ -390,20 +390,20 @@ export function generateModernEmailTemplate(data: {
                   }
                   
                   const getSubjectData = (subjectName: string) => {
-                    const subjectNet = examNets.find((n: any) => n.subject_name === subjectName);
+                    const subjectNet = examNets.find((n: any) => (n.subject || n.subject_name) === subjectName);
                     if (subjectNet) {
                       return {
-                        dogru: parseInt(subjectNet.correct_count || 0),
-                        yanlis: parseInt(subjectNet.wrong_count || 0),
-                        bos: parseInt(subjectNet.blank_count || 0),
-                        net: parseFloat(subjectNet.net_score || 0)
+                        dogru: parseInt(subjectNet.correct_count || "0"),
+                        yanlis: parseInt(subjectNet.wrong_count || "0"),
+                        bos: parseInt(subjectNet.blank_count || "0"),
+                        net: parseFloat(subjectNet.net_score || "0")
                       };
                     }
                     return null;
                   };
                   
                   const getWrongTopics = (subject: string) => {
-                    const subjectNet = examNets.find((n: any) => n.subject_name === subject);
+                    const subjectNet = examNets.find((n: any) => (n.subject || n.subject_name) === subject);
                     if (subjectNet && subjectNet.wrong_topics_json) {
                       try {
                         const topics = JSON.parse(subjectNet.wrong_topics_json);
@@ -449,7 +449,7 @@ export function generateModernEmailTemplate(data: {
                     <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 4px solid ${borderColor}; border-radius: 20px; padding: 32px; margin-bottom: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);">
                       <div style="color: #1565c0; font-size: 22px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.3px;">${exam.exam_name}</div>
                       <div style="color: #6c757d; font-size: 14px; margin-bottom: 20px; font-weight: 600;">📅 ${new Date(exam.exam_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} | 📚 ${examType}</div>
-                      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 24px; border-radius: 14px; font-size: 22px; font-weight: 800; text-align: center; margin: 20px 0; box-shadow: 0 8px 20px rgba(102,126,234,0.3); letter-spacing: 0.3px;">Toplam Net: ${totalNet.toFixed(2)}</div>
+                      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 20px; border-radius: 12px; font-size: 19px; font-weight: 800; text-align: center; margin: 18px 0; box-shadow: 0 6px 18px rgba(102,126,234,0.3); letter-spacing: 0.3px;">Toplam Net: ${totalNet.toFixed(2)}</div>
                       
                       ${subjects.map(sub => {
                         if (sub.dogru === undefined) return '';

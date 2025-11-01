@@ -1878,7 +1878,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // SORUN 1 ÇÖZÜMÜ: Tüm soru loglarını kullan (arşivlenmiş + mevcut)
       const allQuestionLogs = [...questionLogs, ...archivedQuestions];
       const totalQuestions = allQuestionLogs.reduce((sum: number, q: any) => 
-        sum + (q.correct_count || 0) + (q.wrong_count || 0) + (q.empty_count || 0), 0
+        sum + parseInt(q.correct_count || "0") + parseInt(q.wrong_count || "0") + parseInt(q.empty_count || q.blank_count || "0"), 0
       );
       const totalStudyMinutes = recentStudy.reduce((sum: number, s: any) => 
         sum + (s.hours || 0) * 60 + (s.minutes || 0), 0
@@ -1889,9 +1889,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeTasks = tasks.filter((t: any) => !t.completed).length;
       
       // SORUN 2 ÇÖZÜMÜ: Tüm soru loglarından doğru/yanlış/boş hesapla
-      const totalCorrect = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.correct_count || 0), 0);
-      const totalWrong = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.wrong_count || 0), 0);
-      const totalEmpty = allQuestionLogs.reduce((sum: number, q: any) => sum + (q.empty_count || 0), 0);
+      const totalCorrect = allQuestionLogs.reduce((sum: number, q: any) => sum + parseInt(q.correct_count || "0"), 0);
+      const totalWrong = allQuestionLogs.reduce((sum: number, q: any) => sum + parseInt(q.wrong_count || "0"), 0);
+      const totalEmpty = allQuestionLogs.reduce((sum: number, q: any) => sum + parseInt(q.empty_count || q.blank_count || "0"), 0);
       
       // SORUN 3 ÇÖZÜMÜ: "Eksik Olduğum Konular" - tamamlanmamış wrong_topic kategorisindeki tasklar
       const wrongTopicsCount = tasks.filter((t: any) => t.category === 'wrong_topic' && !t.completed).length;
@@ -1928,9 +1928,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Calculate TYT net (Türkçe + Sosyal + Matematik + Fen)
         const tytSubjects = examNets.filter((n: any) => 
-          ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject_name)
+          ['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject || n.subject_name)
         );
-        const tytNetValue = tytSubjects.reduce((sum: number, n: any) => sum + (n.net_score || 0), 0);
+        const tytNetValue = tytSubjects.reduce((sum: number, n: any) => sum + parseFloat(n.net_score || 0), 0);
         
         if (tytNetValue > maxTytNet.net) {
           maxTytNet = { net: tytNetValue, exam_name: exam.exam_name, exam_date: exam.exam_date };
@@ -1938,9 +1938,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Calculate AYT net (all AYT subjects)
         const aytSubjects = examNets.filter((n: any) => 
-          !['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject_name)
+          !['Türkçe', 'Sosyal Bilimler', 'Matematik', 'Fen Bilimleri'].includes(n.subject || n.subject_name)
         );
-        const aytNetValue = aytSubjects.reduce((sum: number, n: any) => sum + (n.net_score || 0), 0);
+        const aytNetValue = aytSubjects.reduce((sum: number, n: any) => sum + parseFloat(n.net_score || 0), 0);
         
         if (aytNetValue > maxAytNet.net) {
           maxAytNet = { net: aytNetValue, exam_name: exam.exam_name, exam_date: exam.exam_date };
@@ -2026,15 +2026,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Calculate subject-based statistics from question logs
       const subjectStats: any = {};
-      recentQuestions.forEach((q: any) => {
+      allQuestionLogs.forEach((q: any) => {
         const subject = q.subject || 'Diğer';
         if (!subjectStats[subject]) {
           subjectStats[subject] = { correct: 0, wrong: 0, empty: 0, total: 0 };
         }
-        subjectStats[subject].correct += q.correct_count || 0;
-        subjectStats[subject].wrong += q.wrong_count || 0;
-        subjectStats[subject].empty += q.empty_count || 0;
-        subjectStats[subject].total += (q.correct_count || 0) + (q.wrong_count || 0) + (q.empty_count || 0);
+        subjectStats[subject].correct += parseInt(q.correct_count || "0");
+        subjectStats[subject].wrong += parseInt(q.wrong_count || "0");
+        subjectStats[subject].empty += parseInt(q.empty_count || q.blank_count || "0");
+        subjectStats[subject].total += parseInt(q.correct_count || "0") + parseInt(q.wrong_count || "0") + parseInt(q.empty_count || q.blank_count || "0");
       });
       
       // Sort subjects by different criteria
@@ -2056,9 +2056,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Find date with most questions solved
       const dateQuestionCount: any = {};
-      recentQuestions.forEach((q: any) => {
-        const date = new Date(q.log_date).toLocaleDateString('tr-TR');
-        const count = (q.correct_count || 0) + (q.wrong_count || 0) + (q.empty_count || 0);
+      allQuestionLogs.forEach((q: any) => {
+        const date = new Date(q.log_date || q.study_date).toLocaleDateString('tr-TR');
+        const count = parseInt(q.correct_count || "0") + parseInt(q.wrong_count || "0") + parseInt(q.empty_count || q.blank_count || "0");
         dateQuestionCount[date] = (dateQuestionCount[date] || 0) + count;
       });
       
@@ -2077,13 +2077,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const examNets = examSubjectNets.filter((n: any) => n.exam_id === exam.id);
         
         examNets.forEach((netData: any) => {
-          const subject = netData.subject_name;
+          const subject = netData.subject || netData.subject_name || 'Bilinmeyen';
           const net = Number(netData.net_score) || 0;
           
           if (!branchRecords[subject] || net > Number(branchRecords[subject].net)) {
             branchRecords[subject] = { 
               net: net.toFixed(2), 
-              exam_name: exam.exam_name, 
+              exam_name: exam.exam_name || exam.display_name, 
               date: exam.exam_date,
               subject: subject
             };
