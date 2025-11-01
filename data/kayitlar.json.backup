@@ -242,8 +242,8 @@
       "ayt_net": "23.25",
       "subjects_data": "{\"turkce\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"matematik\":{\"correct\":\"6\",\"wrong\":\"5\",\"blank\":\"\",\"wrong_topics\":[\"Ghjk\"]},\"sosyal\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"fen\":{\"correct\":\"\",\"wrong\":\"\",\"blank\":\"\",\"wrong_topics\":[]},\"fizik\":{\"correct\":\"6\",\"wrong\":\"6\",\"blank\":\"\",\"wrong_topics\":[\"Kgjhk\"]},\"kimya\":{\"correct\":\"6\",\"wrong\":\"6\",\"blank\":\"\",\"wrong_topics\":[\"Jhgkm\"]},\"biyoloji\":{\"correct\":\"6\",\"wrong\":\"6\",\"blank\":\"\",\"wrong_topics\":[\"Kbhn\"]},\"geometri\":{\"correct\":\"6\",\"wrong\":\"4\",\"blank\":\"\",\"wrong_topics\":[\"Ghjkytıu\"]}}",
       "time_spent_minutes": 0,
-      "deleted": false,
-      "deletedAt": null,
+      "deleted": true,
+      "deletedAt": "2025-11-01T15:58:46.817Z",
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-11-01T15:51:44.150Z"

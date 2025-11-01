@@ -205,6 +205,24 @@
       "archived": false,
       "archivedAt": null,
       "createdAt": "2025-11-01T15:51:15.618Z"
+    },
+    {
+      "id": "415ee611-80a9-41b6-9bdd-ba90e565f987",
+      "exam_type": "TYT",
+      "subject": "Türkçe",
+      "topic": null,
+      "correct_count": "15",
+      "wrong_count": "15",
+      "blank_count": "0",
+      "wrong_topics": [],
+      "wrong_topics_json": null,
+      "time_spent_minutes": null,
+      "study_date": "2025-11-01",
+      "deleted": false,
+      "deletedAt": null,
+      "archived": false,
+      "archivedAt": null,
+      "createdAt": "2025-11-01T16:18:14.839Z"
     }
   ],
   "sinavSonuclari": [
